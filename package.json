@@ -1,0 +1,22 @@
+{
+    "name": "cph",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.ts",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "parcel index.html"
+    },
+    "author": "bloss0mx",
+    "devDependencies": {
+        "babel-preset-env": "^1.7.0",
+        "parcel-bundler": "^1.9.6",
+        "typescript": "^3.1.5"
+    },
+    "dependencies": {
+        "jquery": "^1.12",
+        "lodash": "^4.17.11",
+        "moment": "^2.22.2",
+        "rxjs": "^6.3.3"
+    }
+}
