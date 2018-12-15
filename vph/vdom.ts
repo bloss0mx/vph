@@ -2,7 +2,7 @@ import { testType, log } from './utils';
 import _ from 'lodash';
 import $ from 'jquery';
 import { DataUnit, Arrayy, Objecty, dataFactory } from './DataUnit';
-import { TextDom, PlainText, AttrObj } from './domObj';
+import { TextDom, PlainText, AttrObj, BaseObj } from './domObj';
 import { vdFactory } from './index';
 import { IfDirective, forDirective, onDirective } from './directive';
 import { ARRAYY_OPERATE } from './constant';
@@ -11,31 +11,31 @@ import { ARRAYY_OPERATE } from './constant';
  * 初始化时，dom操作必须同步
  */
 export default class VirtualDom {
-  private dom;
+  private dom: DocumentFragment | HTMLElement;
+  father: VirtualDom;
+  index: number;
+  actions: Array<Function>;
+  childrenPt: Array<VirtualDom | BaseObj>;
+  private children: Array<BaseObj | Object | string>;
   private init;
-  private name;
-  private tag;
-  private attr;
-  private attrPt;
-  private children;
-  private childrenPt;
-  private ifDirective;
-  private forDirective;
-  private onDirective;
-  private varibleName;
-  private baseDataName;
-  private store;
-  private props;
-  private actions;
-  private ifDirectivePt;
-  private forDirectivePt;
-  private father;
-  private index;
-  private forIndex;
-  private forDomPt;
+  private tag: string;
+  private attr: Array<string>;
+  private attrPt: Array<AttrObj>;
+  private varibleName: string;
+  private baseDataName: string;
+  private store: DataUnit;
+  private props: DataUnit;
+  private ifDirective: IfDirective;
+  private forDirective: forDirective;
+  private onDirective: onDirective;
+  // private name: string;
+  // private ifDirectivePt;
+  // private forDirectivePt;
+  // private forIndex;
+  // private forDomPt;
   constructor(init) {
     this.init = init;
-    this.name = init.name;
+    // this.name = init.name;
     this.tag = init.tag;
     this.attr = init.attr;
     this.attrPt = [];
@@ -53,7 +53,7 @@ export default class VirtualDom {
     this.props = init.props === undefined ? {} : init.props;//父节点传入store
     this.actions = init.actions;
 
-    this.forDirective ? this.initForDom() : this.initDom();
+    init.forDirective ? this.initForDom() : this.initDom();
     this.bindActions();
     init.state === undefined ? null : this.initState(init.state);
     !init.forDirective && this.makeChildren();
@@ -63,9 +63,9 @@ export default class VirtualDom {
       }, 0);
     }
     this.attrPt = this.initAttr();
-    this.onDirective = this.initOn();
-    this.ifDirectivePt = this.initIf();
-    this.forDirective ? this.forDirectivePt = this.initFor() : null;
+    this.onDirective = this.initOn(init.onDirective);
+    this.ifDirective = this.initIf(init.ifDirective);
+    init.forDirective ? this.forDirective = this.initFor(init.forDirective) : null;
   }
 
   /**
@@ -100,8 +100,7 @@ export default class VirtualDom {
   /**
    * 初始化if指令
    */
-  initIf() {
-    const ifDirective = this.ifDirective;
+  initIf(ifDirective) {
     if (!ifDirective) {
       return;
     }
@@ -111,21 +110,19 @@ export default class VirtualDom {
   /**
    * 初始化for指令
    */
-  initFor() {
-    const _directive = this.forDirective;
+  initFor(_directive) {
     if (!_directive) {
       return;
     }
-    this.forIndex = 0;//for指令的index
-    this.forDomPt = [];
+    // this.forIndex = 0;//for指令的index
+    // this.forDomPt = [];
     return new forDirective({ directive: _directive, pt: this, store: this.store });
   }
 
   /**
    * 初始化on指令
    */
-  initOn() {
-    const _directive = this.onDirective;
+  initOn(_directive) {
     if (!_directive) return;
     return new onDirective({ directive: _directive, pt: this, store: this.store });
   }
@@ -159,38 +156,40 @@ export default class VirtualDom {
    * 初始化子节点
    */
   makeChildren() {
-    this.childrenPt = this.children === undefined ? [] : this.children.map((item, index) => {
-      if (item && item.__proto__.constructor === VirtualDom) {
-        item.setFather(this, index);
-        this.dom.appendChild(item.giveDom());
-        return item;
-      } else if (testType(item) === 'string') {
-        if (item.match(/\{\{[^\s]*\}\}/)) {
-          const textNode = new TextDom(item,
-            this.store,
-            this.varibleName !== undefined ? this.varibleName : index,
-            this.baseDataName
-          );
-          this.dom.appendChild(textNode.giveDom());
-          return textNode;
-        } else {
-          const textNode = new PlainText(item);
-          this.dom.appendChild(textNode.giveDom());
-          return textNode;
+    this.childrenPt = this.children === undefined
+      ? []
+      : this.children.map((item, index) => {
+        if (item instanceof VirtualDom) {
+          item.setFather(this, index);
+          this.dom.appendChild(item.giveDom());
+          return item;
+        } else if (typeof item === 'string') {
+          if (item.match(/\{\{[^\s]*\}\}/)) {
+            const textNode = new TextDom(item,
+              this.store,
+              this.varibleName !== undefined ? this.varibleName : index,
+              this.baseDataName
+            );
+            this.dom.appendChild(textNode.giveDom());
+            return textNode;
+          } else {
+            const textNode = new PlainText(item);
+            this.dom.appendChild(textNode.giveDom());
+            return textNode;
+          }
+        } else if (typeof item === 'object') {
+          const { ...other } = item;
+          const node = vdFactory({
+            baseDataName: this.baseDataName,
+            store: this.store,
+            father: this,
+            index: index,
+            ...other
+          });
+          this.dom.appendChild(node.giveDom());
+          return node;
         }
-      } else if (testType(item) === 'object') {
-        const { store, ...other } = item;
-        const node = vdFactory({
-          baseDataName: this.baseDataName,
-          store: this.store,
-          father: this,
-          index: index,
-          ...other
-        });
-        this.dom.appendChild(node.giveDom());
-        return node;
-      }
-    });
+      });
   }
 
   /**
@@ -258,12 +257,12 @@ export default class VirtualDom {
     this.childrenPt.map(item => {
       item.rmSelf && item.rmSelf();
     });
-    if (this.ifDirective === 'index')
-      console.log(this.childrenPt, this.children);
+    // if (this.ifDirective === 'index')
+    //   console.log(this.childrenPt, this.children);
     this.attrPt.map(item => {
       item.rmSelf && item.rmSelf();
     });
-    this.ifDirectivePt && this.ifDirectivePt.rmSelf();
+    this.ifDirective && this.ifDirective.rmSelf();
     // if (this.childrenPt) {
     //   console.log(this.childrenPt);
     //   for (let i = 0; i < this.childrenPt.length; i++) {

@@ -2,10 +2,12 @@ import { testType, log } from './utils';
 import _ from 'lodash';
 import $ from 'jquery';
 import { exposeToWindow } from './Lady_tool';
+import { DataUnit } from './DataUnit';
 
 const TEMPLATE_REGEXP = /\{\{[^\s]+\}\}/;
 
 class BaseObj {
+  protected dom;
   /**
    * 初始化
    * @param {*} name 
@@ -32,7 +34,9 @@ class BaseObj {
   /**
    * 输出dom
    */
-  giveDom() { }
+  giveDom() {
+    return this.dom;
+  }
   /**
    * 删除自己，去掉所有引用
    */
@@ -40,11 +44,10 @@ class BaseObj {
 }
 
 class TextDom extends BaseObj {
-  private name;
-  private template;
-  private baseDataName;
-  private dom;
-  private store;
+  private name: string;
+  private template: string;
+  private baseDataName: string;
+  private store: DataUnit;
   constructor(name, store, index, baseDataName) {
     super(name, store, index, baseDataName);
     this.name = name;
@@ -76,8 +79,8 @@ class TextDom extends BaseObj {
   }
 
   giveDom() {
-    if (this.name.match(TEMPLATE_REGEXP))
-      exposeToWindow(Math.floor(Math.random() * 100), this.dom);
+    // if (this.name.match(TEMPLATE_REGEXP))
+    //   exposeToWindow(Math.floor(Math.random() * 100), this.dom);
     return this.dom;
   }
 
@@ -96,8 +99,6 @@ class TextDom extends BaseObj {
 }
 
 class PlainText extends BaseObj {
-  private name;
-  private dom;
   constructor(name) {
     super(name);
     this.dom = document.createTextNode(name);
@@ -110,11 +111,10 @@ class PlainText extends BaseObj {
 }
 
 class AttrObj extends BaseObj {
-  private dom;
-  private name;
-  private store;
-  private template;
-  private value;
+  private name: string;
+  private store: DataUnit;
+  private template: string;
+  private value: string;
   constructor(init) {
     super(init);
     this.dom = init.dom;

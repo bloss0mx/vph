@@ -298,13 +298,13 @@ function dataFactory(data) {
   }
 }
 
-function checkNConvert(data) {
-  const type = testType(data);
-  if (type === 'object' || type === 'array') {
-    return dataFactory(data);
-  } else {
-    return data;
-  }
-}
+// function checkNConvert(data) {
+//   const type = testType(data);
+//   if (type === 'object' || type === 'array') {
+//     return dataFactory(data);
+//   } else {
+//     return data;
+//   }
+// }
 
 export { DataUnit, Arrayy, Objecty, dataFactory };

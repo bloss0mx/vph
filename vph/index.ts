@@ -25,9 +25,9 @@ export function vdFactory(init) {
  */
 export function init(selector, vdom, productEnv = false) {
   if (productEnv) {
-    console.assert(window.vdom === undefined, 'window.vdom 已被占用');
-    if (window.vdom === undefined) {
-      window.vdom = vdom;
+    console.assert(Window.vdom === undefined, 'window.vdom 已被占用');
+    if (Window.vdom === undefined) {
+      Window.vdom = vdom;
       console.warn('在控制台打出vdom来跟踪 virtual dom 变化！');
     }
   }

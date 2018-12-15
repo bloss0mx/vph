@@ -2,6 +2,12 @@ import { testType, log } from './utils';
 import _ from 'lodash';
 import $ from 'jquery';
 import { ARRAYY_OPERATE } from './constant';
+import { DataUnit } from './DataUnit';
+import VirtualDom from './vdom';
+
+
+// TODO 不要让指令直接操作vdom
+
 
 class Directive {
   constructor(init) { }
@@ -28,10 +34,10 @@ class Directive {
 }
 
 class IfDirective extends Directive {
-  private flagName;
-  private store;
-  private pt;
-  private key;
+  private flagName: string;
+  private store: DataUnit;
+  private pt: VirtualDom;
+  private key: String;
   constructor(init) {
     super(init);
     this.flagName = init.flagName;
@@ -62,7 +68,7 @@ class IfDirective extends Directive {
     if (flag) {
       this.pt.show();
     } else {
-      this.pt.hide('how');
+      this.pt.hide();
     }
   }
 
@@ -75,12 +81,12 @@ class IfDirective extends Directive {
 
 }
 class forDirective extends Directive {
-  private store;
-  private pt;
-  private childrenPt;
-  private childrenDom;
+  private store: DataUnit;
+  private pt: VirtualDom;
+  private childrenPt: Array<any>;
+  private childrenDom: Array<any>;
   private varibleName;
-  private baseDataName;
+  private baseDataName: string;
   constructor(init) {
     super(init);
     this.store = init.store;
@@ -118,7 +124,7 @@ class forDirective extends Directive {
         baseDataName: this.baseDataName,
         // ...item
       });
-      this.pt.dom.appendChild(tmpDom);
+      this.pt.giveDom().appendChild(tmpDom);
       // this.pt.insertToAvilableBefore(tmpDom, index);
 
       this.pt.childrenPt.push(tmpChildrenPt);
@@ -148,12 +154,12 @@ class forDirective extends Directive {
     });
     if (this.pt.childrenPt.length === 0 && this.pt.index > 0) {
       if (this.pt.father.childrenPt.length === 0) {
-        $(this.pt.father.dom).prepend(tmpDom);
+        $(this.pt.father.giveDom()).prepend(tmpDom);
       } else {
-        $(tmpDom).insertAfter($(this.pt.father.childrenPt[this.pt.index - 1].dom));
+        $(tmpDom).insertAfter($(this.pt.father.childrenPt[this.pt.index - 1].giveDom()));
       }
     } else if (this.pt.childrenPt.length === 0 && this.pt.index === 0) {
-      $(this.pt.father.dom).prepend(tmpDom);
+      $(this.pt.father.giveDom()).prepend(tmpDom);
     } else if (this.childrenDom[targetIndex - 1]) {
       $(tmpDom).insertAfter(this.childrenDom[targetIndex - 1]);
     }
@@ -182,12 +188,12 @@ class forDirective extends Directive {
 }
 
 class onDirective extends Directive {
-  private store;
-  private pt;
-  private callback;
-  private directive;
-  private eventType;
-  private callbackName;
+  private store: DataUnit;
+  private pt: VirtualDom;
+  private callback: any;// FIX ME
+  private directive: string;
+  private eventType: string;
+  private callbackName: string;
   constructor(init) {
     super(init);
     this.store = init.store;
@@ -211,7 +217,7 @@ class onDirective extends Directive {
 
   findOrigin() {
     if (this.eventType && this.callback) {
-      this.pt.dom.addEventListener(this.eventType, this.callback);
+      this.pt.giveDom().addEventListener(this.eventType, this.callback);
     }
   }
 
@@ -233,7 +239,7 @@ class onDirective extends Directive {
   }
 
   rmSelf() {
-    this.pt.dom.removeEventListener(this.eventType, this.callback);
+    this.pt.giveDom().removeEventListener(this.eventType, this.callback);
   }
 
 }
@@ -242,29 +248,29 @@ export { IfDirective, forDirective, onDirective };
 
 
 
-function nextNBrother(dom, n) {
-  let tmp = dom;
-  for (let i = 0; i < n; i++) {
-    tmp = $(tmp).next();
-  }
-  return tmp;
-}
+// function nextNBrother(dom, n) {
+//   let tmp = dom;
+//   for (let i = 0; i < n; i++) {
+//     tmp = $(tmp).next();
+//   }
+//   return tmp;
+// }
 
-function checkConstructor(test, reference) {
-  return test.__proto__.constructor === reference;
-}
+// function checkConstructor(test, reference) {
+//   return test.__proto__.constructor === reference;
+// }
 
-function setDataArrayy() {
+// function setDataArrayy() {
 
-}
+// }
 
 
-/**
- * not using
- * @param {*} data 
- * @param {*} index 
- * @param {*} operate 
- */
+// /**
+//  * not using
+//  * @param {*} data 
+//  * @param {*} index 
+//  * @param {*} operate 
+//  */
 // function forDirectiveOperate(data, index, operate) {
 //   if (operate === ARRAYY_OPERATE['add']) {
 //     if (this.pt.forDomPt.length === 0) {
