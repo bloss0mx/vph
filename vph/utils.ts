@@ -1,4 +1,3 @@
-// import _ from 'lodash';
 /**
  * 柯里化
  * @param fn 

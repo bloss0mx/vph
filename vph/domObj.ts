@@ -79,8 +79,6 @@ class TextDom extends BaseObj {
   }
 
   giveDom() {
-    // if (this.name.match(TEMPLATE_REGEXP))
-    //   exposeToWindow(Math.floor(Math.random() * 100), this.dom);
     return this.dom;
   }
 
@@ -161,12 +159,5 @@ class AttrObj extends BaseObj {
   }
 
 }
-
-// TODO 
-// class InputObj extends BaseObj {
-//   constructor(){
-//     super();
-//   }
-// }
 
 export { BaseObj, TextDom, PlainText, AttrObj };

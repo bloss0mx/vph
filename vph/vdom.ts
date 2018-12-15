@@ -1,4 +1,3 @@
-import { testType, log } from './utils';
 import _ from 'lodash';
 import $ from 'jquery';
 import { DataUnit, Arrayy, Objecty, dataFactory } from './DataUnit';
@@ -28,14 +27,8 @@ export default class VirtualDom {
   private ifDirective: IfDirective;
   private forDirective: forDirective;
   private onDirective: onDirective;
-  // private name: string;
-  // private ifDirectivePt;
-  // private forDirectivePt;
-  // private forIndex;
-  // private forDomPt;
   constructor(init) {
     this.init = init;
-    // this.name = init.name;
     this.tag = init.tag;
     this.attr = init.attr;
     this.attrPt = [];
@@ -114,8 +107,6 @@ export default class VirtualDom {
     if (!_directive) {
       return;
     }
-    // this.forIndex = 0;//for指令的index
-    // this.forDomPt = [];
     return new forDirective({ directive: _directive, pt: this, store: this.store });
   }
 
@@ -216,7 +207,6 @@ export default class VirtualDom {
    * 输出dom
    */
   giveDom() {
-    // if (this.ifDirective === 'index') console.log('index', this.father);
     return this.dom;
   }
 
@@ -227,12 +217,9 @@ export default class VirtualDom {
     this.childrenPt.map(item => {
       item.rmSelf && item.rmSelf();
     });
-    // if (this.ifDirective === 'index')
-    //   console.log(this.childrenPt, this.children);
     this.attrPt.map(item => {
       item.rmSelf && item.rmSelf();
     });
-    // this.ifDirectivePt && this.ifDirectivePt.rmSelf();
     $(this.dom).remove();
     this.dom = null;
   }
@@ -257,19 +244,10 @@ export default class VirtualDom {
     this.childrenPt.map(item => {
       item.rmSelf && item.rmSelf();
     });
-    // if (this.ifDirective === 'index')
-    //   console.log(this.childrenPt, this.children);
     this.attrPt.map(item => {
       item.rmSelf && item.rmSelf();
     });
     this.ifDirective && this.ifDirective.rmSelf();
-    // if (this.childrenPt) {
-    //   console.log(this.childrenPt);
-    //   for (let i = 0; i < this.childrenPt.length; i++) {
-    //     this.childrenPt[i].rmSelf && this.childrenPt[i].rmSelf();
-    //     this.childrenPt = null;
-    //   }
-    // }
     $(this.dom).remove();
     this.dom = null;
   }
