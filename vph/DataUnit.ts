@@ -1,4 +1,4 @@
-import { testType, log } from './utils';
+import { testType } from './utils';
 import _ from 'lodash';
 import {
   ARRAYY_OPERATE,
@@ -297,14 +297,5 @@ function dataFactory(data) {
     return _data;
   }
 }
-
-// function checkNConvert(data) {
-//   const type = testType(data);
-//   if (type === 'object' || type === 'array') {
-//     return dataFactory(data);
-//   } else {
-//     return data;
-//   }
-// }
 
 export { DataUnit, Arrayy, Objecty, dataFactory };

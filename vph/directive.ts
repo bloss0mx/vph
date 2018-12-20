@@ -1,4 +1,3 @@
-import { testType, log } from './utils';
 import _ from 'lodash';
 import $ from 'jquery';
 import { ARRAYY_OPERATE } from './constant';
@@ -245,46 +244,3 @@ class onDirective extends Directive {
 }
 
 export { IfDirective, forDirective, onDirective };
-
-
-
-// function nextNBrother(dom, n) {
-//   let tmp = dom;
-//   for (let i = 0; i < n; i++) {
-//     tmp = $(tmp).next();
-//   }
-//   return tmp;
-// }
-
-// function checkConstructor(test, reference) {
-//   return test.__proto__.constructor === reference;
-// }
-
-// function setDataArrayy() {
-
-// }
-
-
-// /**
-//  * not using
-//  * @param {*} data 
-//  * @param {*} index 
-//  * @param {*} operate 
-//  */
-// function forDirectiveOperate(data, index, operate) {
-//   if (operate === ARRAYY_OPERATE['add']) {
-//     if (this.pt.forDomPt.length === 0) {
-//       const { tmpDom, tmpChildrenPt } = this.pt.makeForChildren();
-//       this.pt.insertToAvilableBefore(tmpDom);
-//       this.pt.forDomPt.push(tmpChildrenPt);
-//     } else {
-//       const { tmpDom, tmpChildrenPt } = this.pt.makeForChildren();
-//       const targetDom = nextNBrother(this.pt.previousBrother());
-//       this.pt.forDomPt.push(tmpChildrenPt);
-//       targetDom.append(tmpDom);
-//       // 列表to do 注册attr
-//     }
-//   } else if (operate === ARRAYY_OPERATE['set']) {
-//   } else if (operate === ARRAYY_OPERATE['rm']) {
-//   }
-// }
