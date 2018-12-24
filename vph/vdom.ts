@@ -1,4 +1,4 @@
-import _ from 'lodash';
+const _ = require('lodash');
 import $ from 'jquery';
 import { DataUnit, Arrayy, Objecty, dataFactory } from './DataUnit';
 import { TextDom, PlainText, AttrObj, BaseObj } from './domObj';
@@ -23,11 +23,13 @@ export default class VirtualDom {
   private varibleName: string;
   private baseDataName: string;
   private store: DataUnit;
+  private forStore: object;
   private props: DataUnit;
   private ifDirective: IfDirective;
   private forDirective: forDirective;
   private onDirective: onDirective;
   constructor(init) {
+    // 复制
     this.init = init;
     this.tag = init.tag;
     this.attr = init.attr;
@@ -41,14 +43,17 @@ export default class VirtualDom {
     this.baseDataName = init.baseDataName !== undefined ? init.baseDataName : undefined;
     this.setFather(init.father, init.index);
 
+    // store和dom初始化
     this.store = init.store === undefined ? {} : init.store;//本地store存储
-    this.store = init.forStore === undefined ? this.store : init.forStore;
+    this.forStore = init.forStore === undefined ? {} : init.forStore;
     this.props = init.props === undefined ? {} : init.props;//父节点传入store
     this.actions = init.actions;
 
     init.forDirective ? this.initForDom() : this.initDom();
     this.bindActions();
     init.state === undefined ? null : this.initState(init.state);
+
+    // render
     !init.forDirective && this.makeChildren();
     if (init.whenInit !== undefined && typeof init.whenInit === 'function') {
       setTimeout(() => {
@@ -56,6 +61,8 @@ export default class VirtualDom {
       }, 0);
     }
     this.attrPt = this.initAttr();
+
+    // 初始化指令
     this.onDirective = this.initOn(init.onDirective);
     this.ifDirective = this.initIf(init.ifDirective);
     init.forDirective ? this.forDirective = this.initFor(init.forDirective) : null;
@@ -97,7 +104,7 @@ export default class VirtualDom {
     if (!ifDirective) {
       return;
     }
-    return new IfDirective({ flagName: ifDirective, pt: this, store: this.store });
+    return new IfDirective({ flagName: ifDirective, pt: this, store: this.store, forStore: this.forStore });
   }
 
   /**
@@ -107,7 +114,7 @@ export default class VirtualDom {
     if (!_directive) {
       return;
     }
-    return new forDirective({ directive: _directive, pt: this, store: this.store });
+    return new forDirective({ directive: _directive, pt: this, store: this.store, forStore: this.forStore });
   }
 
   /**
@@ -115,7 +122,7 @@ export default class VirtualDom {
    */
   initOn(_directive) {
     if (!_directive) return;
-    return new onDirective({ directive: _directive, pt: this, store: this.store });
+    return new onDirective({ directive: _directive, pt: this, store: this.store, forStore: this.forStore });
   }
 
   /**
@@ -158,8 +165,10 @@ export default class VirtualDom {
           if (item.match(/\{\{[^\s]*\}\}/)) {
             const textNode = new TextDom(item,
               this.store,
-              this.varibleName !== undefined ? this.varibleName : index,
-              this.baseDataName
+              index,
+              this.baseDataName,
+              this.varibleName,
+              this.forStore,
             );
             this.dom.appendChild(textNode.giveDom());
             return textNode;
@@ -171,6 +180,7 @@ export default class VirtualDom {
         } else if (typeof item === 'object') {
           const { ...other } = item;
           const node = vdFactory({
+            forStore: { ...this.forStore },
             baseDataName: this.baseDataName,
             store: this.store,
             father: this,
@@ -194,7 +204,9 @@ export default class VirtualDom {
     init.varibleName = childInitMsg.varibleName;
     init.baseDataName = childInitMsg.baseDataName;
     init.store = this.store;
-    init.forStore = childInitMsg.forStore;
+    const _forStore = { ...this.forStore };
+    _forStore[init.varibleName] = childInitMsg.forStore.outputData(childInitMsg.index);
+    init.forStore = _forStore;
     init.props = this.props;
     const vdom = vdFactory(init);
     return {

@@ -1,5 +1,5 @@
 import { testType } from './utils';
-import _ from 'lodash';
+const _ = require('lodash');
 import {
   ARRAYY_OPERATE,
 } from './constant';
@@ -12,7 +12,7 @@ class DataUnit {
   protected type: String;
 
   constructor(data: any) {
-    this.data;
+    this.data = data;
     this.pushList = [];
     this.type = testType(data);
 
@@ -180,7 +180,7 @@ class Arrayy extends DataUnit {
    */
   addCallback(newData, index) {
     this.pushList.map((item) => {
-      item.addToList(newData, index);
+      item.addToList && item.addToList(newData, index);
     });
   }
   /**
@@ -193,7 +193,7 @@ class Arrayy extends DataUnit {
       item.rmSelf();
     });
     this.pushList.map((item) => {
-      item.rmFromList(_data, index);
+      item.rmFromList && item.rmFromList(_data, index);
     });
   }
 
@@ -276,6 +276,15 @@ class Objecty extends DataUnit {
     });
     return _data;
   }
+
+
+  // map(callback) {
+  //   const answer = [];
+  //   for (let i in this.data) {
+  //     answer.push(callback(i));
+  //   }
+  //   return answer;
+  // }
 
 }
 
