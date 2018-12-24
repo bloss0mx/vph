@@ -1,5 +1,5 @@
 import { testType, log } from './utils';
-import _ from 'lodash';
+const _ = require('lodash');
 import $ from 'jquery';
 import { exposeToWindow } from './Lady_tool';
 import { DataUnit } from './DataUnit';
@@ -47,25 +47,42 @@ class TextDom extends BaseObj {
   private name: string;
   private template: string;
   private baseDataName: string;
+  private varibleName: string;
+  private forStore: object;
   private store: DataUnit;
-  constructor(name, store, index, baseDataName) {
+  constructor(name, store, index, baseDataName, varibleName, forStore) {
     super(name, store, index, baseDataName);
     this.name = name;
     this.template = name;
     this.baseDataName = baseDataName;
+    this.varibleName = varibleName;
     this.dom = document.createTextNode(name);
     this.store = store === undefined ? {} : store;
-    if (baseDataName !== undefined) {
-      if (index === undefined) {
-        throw ('TextDom no index with baseDataName!');
-      }
-      this.findOrigin(`${index}`);
-    } else {
+    this.forStore = forStore;
+    // if (baseDataName !== undefined) {
+    //   if (index === undefined) {
+    //     throw ('TextDom no index with baseDataName!');
+    //   }
+    //   this.findOrigin(`${index}`);
+    // } else 
+    {
       this.findOrigin(name.replace(/\{|\}/g, ''));
     }
   }
 
   findOrigin(name) {
+    if (Object.keys(this.forStore).length !== 0) {
+      const _name = name.split('.');
+      if (_name.length > 1) {
+        if (this.forStore[_name[0]].outputData) {
+          this.forStore[_name[0]].outputData(_.drop(_name)).addPush(this);
+          return;
+        }
+      } else {
+        this.forStore[_name[0]].addPush(this);
+        return;
+      }
+    }
     const found = this.store.outputData(name);
     if (found !== undefined) {
       found.addPush(this);

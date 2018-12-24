@@ -4,11 +4,14 @@ import { interval } from 'rxjs';
 import time from './src/time';
 import testIf from './src/testIf';
 import component1 from './src/component1';
+import table from './src/table';
 
 
 window.vD1 = vdFactory(
   div({
     children: [
+      time,
+      table,
       component1,
       span({
         children: ['这一坨不变是二：'],
@@ -36,12 +39,15 @@ window.vD1 = vdFactory(
         children: ['yo~'],
         onDirective: 'click.onClickYo',
       }),
-      time,
       testIf,
     ],
     attr: [],
     state: {
-      array1: [0, 0, 0, 0],
+      array1: [-4, -3, -2, -1],
+      array2: [
+        ['hey', '!', '~'],
+        ['ha', '!!!', 'yo~~~'],
+      ],
       first: 0,
       second: 0,
       third: 3,
@@ -66,15 +72,15 @@ window.vD1 = vdFactory(
             array1.shift();
           }
         });
-        setTimeout(() => {
-          // this.store.delete('third');
-          // this.store.setData('hey', 'third');
-        }, 2000);
+        // setTimeout(() => {
+        //   this.store.delete('third');
+        //   this.store.setData('hey', 'third');
+        // }, 2000);
       },
       interval() {
         const { second, first, third } = this.store.getValues('second', 'first', 'third');
         // this.store.setData('hey', 'hey');
-        interval(1000).subscribe({
+        interval(100).subscribe({
           next: item => {
             first.setData(item);
             third.setData(item + 3);

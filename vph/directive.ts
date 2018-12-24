@@ -1,4 +1,4 @@
-import _ from 'lodash';
+const _ = require('lodash')
 import $ from 'jquery';
 import { ARRAYY_OPERATE } from './constant';
 import { DataUnit } from './DataUnit';
@@ -37,11 +37,13 @@ class IfDirective extends Directive {
   private store: DataUnit;
   private pt: VirtualDom;
   private key: String;
+  private forStore: object;
   constructor(init) {
     super(init);
     this.flagName = init.flagName;
 
     this.store = init.store;
+    this.forStore = init.forStore;
     this.pt = init.pt;
 
     this.key = init.key ? init.key : true;//
@@ -49,7 +51,8 @@ class IfDirective extends Directive {
   }
 
   findOrigin() {
-    const found = this.store.outputData(this.flagName);
+    // const found = this.store.outputData(this.flagName);
+    const found = Object.keys(this.forStore).length !== 0 ? this.forStore[this.flagName] : this.store.outputData(this.flagName);
     if (found !== undefined) {
       found.addPush(this);
     }
@@ -81,6 +84,7 @@ class IfDirective extends Directive {
 }
 class forDirective extends Directive {
   private store: DataUnit;
+  private forStore: object;
   private pt: VirtualDom;
   private childrenPt: Array<any>;
   private childrenDom: Array<any>;
@@ -89,10 +93,10 @@ class forDirective extends Directive {
   constructor(init) {
     super(init);
     this.store = init.store;
+    this.forStore = init.forStore;
     this.pt = init.pt;
     this.childrenPt = [];
     this.childrenDom = [];
-
     this.findOrigin(init.directive);
   }
 
@@ -101,10 +105,10 @@ class forDirective extends Directive {
     const handled = splited.map(item => {
       return item.replace(/[\s]*/, '');
     });
-    this.varibleName = handled[0];
+    this.varibleName = handled[0].replace(/ /g, '');
     this.baseDataName = handled[1];
 
-    const found = this.store.outputData(this.baseDataName);
+    const found = Object.keys(this.forStore).length !== 0 ? this.forStore[this.baseDataName] : this.store.outputData(this.baseDataName);
     if (found !== undefined) {
       found.addPush(this);
       this.init();
@@ -112,15 +116,17 @@ class forDirective extends Directive {
   }
 
   init() {
-    const baseData = this.store.outputData(this.baseDataName);
+    const baseData = Object.keys(this.forStore).length !== 0 ? this.forStore[this.baseDataName] : this.store.outputData(this.baseDataName);
+    // const baseData = this.store.outputData(this.baseDataName);
     const childrenStore = baseData.map((item, index) => {
       return item;
     });
     childrenStore.map((item, index) => {
       const { tmpDom, tmpChildrenPt } = this.pt.makeForChildren({
-        varibleName: index,
+        varibleName: this.varibleName,
         forStore: baseData,
         baseDataName: this.baseDataName,
+        index,
         // ...item
       });
       this.pt.giveDom().appendChild(tmpDom);
@@ -133,10 +139,6 @@ class forDirective extends Directive {
     });
   }
 
-  run(data, type, index, operate) {
-    this.forDirectiveOperate(data, index, operate);
-  }
-
   /**
    * 添加dom到dom列表
    * @param {*} data 
@@ -147,7 +149,8 @@ class forDirective extends Directive {
     const baseData = this.store.outputData(this.baseDataName)
     const childrenStore = baseData.outputData(targetIndex);
     const { tmpDom, tmpChildrenPt } = this.pt.makeForChildren({
-      varibleName: targetIndex,
+      varibleName: this.varibleName,
+      index: targetIndex,
       forStore: baseData,
       baseDataName: this.baseDataName,
     });
@@ -181,13 +184,11 @@ class forDirective extends Directive {
     this.childrenDom.splice(index, 1);
   }
 
-  forDirectiveOperate(data, index, operate) {
-  }
-
 }
 
 class onDirective extends Directive {
   private store: DataUnit;
+  private forStore: object;
   private pt: VirtualDom;
   private callback: any;// FIX ME
   private directive: string;
@@ -196,6 +197,7 @@ class onDirective extends Directive {
   constructor(init) {
     super(init);
     this.store = init.store;
+    this.forStore = init.forStore;
     this.pt = init.pt;
     this.callback = init.callback;
     this.directive = init.directive;//'input.'
