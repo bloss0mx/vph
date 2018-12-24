@@ -117,19 +117,19 @@ const testType = (value) => {
   if (value !== value) {
     return 'NaN';
   }
-  const proto = value.__proto__;
+  const proto = Object.getPrototypeOf(value);
   switch (proto) {
-    case (0).__proto__:
+    case Object.getPrototypeOf(0):
       return 'number';
-    case ('').__proto__:
+    case Object.getPrototypeOf(''):
       return 'string';
-    case (true).__proto__:
+    case Object.getPrototypeOf(true):
       return 'bool';
-    case ([]).__proto__:
+    case Object.getPrototypeOf([]):
       return 'array';
-    case ({}).__proto__:
+    case Object.getPrototypeOf({}):
       return 'object';
-    case (() => { }).__proto__:
+    case Object.getPrototypeOf(() => { }):
       return 'function';
   }
 };

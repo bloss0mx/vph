@@ -1,3 +1,10 @@
+interface Window {
+  expose?: any;
+  fetchFromWindow?: any;
+}
+
+declare var window: Window;
+
 const exposeToWindow = (name, pt) => {
   if (!window.expose) {
     window.expose = {};
