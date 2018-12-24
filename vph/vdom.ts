@@ -1,4 +1,4 @@
-const _ = require('lodash');
+import _ from 'lodash';
 import $ from 'jquery';
 import { DataUnit, Arrayy, Objecty, dataFactory } from './DataUnit';
 import { TextDom, PlainText, AttrObj, BaseObj } from './domObj';

@@ -1,5 +1,5 @@
 import { testType, log } from './utils';
-const _ = require('lodash');
+import _ from 'lodash';
 import $ from 'jquery';
 import { exposeToWindow } from './Lady_tool';
 import { DataUnit } from './DataUnit';

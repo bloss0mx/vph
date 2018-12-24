@@ -1,5 +1,5 @@
 import { testType } from './utils';
-const _ = require('lodash');
+import _ from 'lodash';
 import {
   ARRAYY_OPERATE,
 } from './constant';
