@@ -3,6 +3,8 @@ const { div, table, tbody, tr, td } = tags;
 import { interval } from 'rxjs';
 import moment from 'moment-timezone';
 
+const timer = area => moment().tz(area).format('YYYY-MM-DD HH:mm:ss');
+
 const Table = vdFactory(
   table({
     children: [
@@ -24,9 +26,9 @@ const Table = vdFactory(
       array2: [
         ['北京', '东京', '纽约'],
         [
-          moment().tz("Asia/Taipei").format('YYYY-MM-DD HH:mm:ss'),
-          moment().tz("Asia/Tokyo").format('YYYY-MM-DD HH:mm:ss'),
-          moment().tz("America/New_York").format('YYYY-MM-DD HH:mm:ss')
+          timer("Asia/Taipei"),
+          timer("Asia/Tokyo"),
+          timer("America/New_York"),
         ],
       ]
     },
@@ -35,10 +37,9 @@ const Table = vdFactory(
         const { array2 } = this.storeKeeper.outputStore().getValues('array2');
         interval(1000).subscribe({
           next: () => {
-            const value = moment().format('YYYY-MM-DD HH:mm:ss');
-            array2.outputData('1.0').setData(moment().tz("Asia/Taipei").format('YYYY-MM-DD HH:mm:ss'));
-            array2.outputData('1.1').setData(moment().tz("Asia/Tokyo").format('YYYY-MM-DD HH:mm:ss'));
-            array2.outputData('1.2').setData(moment().tz("America/New_York").format('YYYY-MM-DD HH:mm:ss'));
+            array2.outputData('1.0').setData(timer("Asia/Taipei"));
+            array2.outputData('1.1').setData(timer("Asia/Tokyo"));
+            array2.outputData('1.2').setData(timer("America/New_York"));
           }
         });
       }

@@ -11,29 +11,14 @@ class StoreKeeper {
   }
 
   register(name: string, pt, callback?: Function) {
-    // console.log(name);
-    let found;
-    if (this.forStore[name] !== undefined) {
-      found = this.forStore[name];
-    } else if (this.props[name] !== undefined) {
-      found = this.props[name];
-    } else {
-      found = this.store.outputData(name);
-    }
+    let found = this.findBaseData(name);
     if (found !== undefined) {
       found.addPush(pt);
       callback && callback.apply(pt);
     }
   }
   unregister(name: string, pt, callback?: Function) {
-    let found;
-    if (this.forStore[name] !== undefined) {
-      found = this.forStore[name];
-    } else if (this.props[name] !== undefined) {
-      found = this.props[name];
-    } else {
-      found = this.store.outputData(name);
-    }
+    let found = this.findBaseData(name);
     if (found !== undefined) {
       found.rmPush && found.rmPush(pt);
       callback && callback();
@@ -55,14 +40,14 @@ class StoreKeeper {
   outputProps() {
     return this.props;
   }
-  outputAll(): object {
+  outputAll(): [DataUnit, object, object] {
     return [
       this.store,
       this.forStore,
       this.props,
     ]
   }
-  outputForData(baseDataName) {
+  findBaseData(baseDataName) {
     let found;
     if (this.forStore[baseDataName] !== undefined) {
       found = this.forStore[baseDataName];

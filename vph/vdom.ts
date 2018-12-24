@@ -24,8 +24,6 @@ export default class VirtualDom {
   private varibleName: string;
   private baseDataName: string;
   private storeKeeper: StoreKeeper;
-  private store: DataUnit;
-  private forStore: object;
   private props: DataUnit;
   private ifDirective: IfDirective;
   private forDirective: forDirective;
@@ -46,9 +44,7 @@ export default class VirtualDom {
     this.setFather(init.father, init.index);
 
     // store和dom初始化
-    this.store = init.store === undefined ? {} : init.store;//本地store存储
     this.storeKeeper = init.storeKeeper === undefined ? new StoreKeeper(dataFactory({})) : init.storeKeeper;//StoreKeeper
-    this.forStore = init.forStore === undefined ? {} : init.forStore;
     this.props = init.props === undefined ? {} : init.props;//父节点传入store
     this.actions = init.actions;
 
@@ -98,7 +94,6 @@ export default class VirtualDom {
    */
   initState(init) {
     this.storeKeeper = new StoreKeeper(dataFactory(init));
-    this.store = dataFactory(init);
   }
 
   /**
@@ -108,7 +103,7 @@ export default class VirtualDom {
     if (!ifDirective) {
       return;
     }
-    return new IfDirective({ flagName: ifDirective, pt: this, store: this.store, forStore: this.forStore, storeKeeper: this.storeKeeper });
+    return new IfDirective({ flagName: ifDirective, pt: this, storeKeeper: this.storeKeeper });
   }
 
   /**
@@ -118,7 +113,7 @@ export default class VirtualDom {
     if (!_directive) {
       return;
     }
-    return new forDirective({ directive: _directive, pt: this, store: this.store, forStore: this.forStore, storeKeeper: this.storeKeeper });
+    return new forDirective({ directive: _directive, pt: this, storeKeeper: this.storeKeeper });
   }
 
   /**
@@ -126,7 +121,7 @@ export default class VirtualDom {
    */
   initOn(_directive) {
     if (!_directive) return;
-    return new onDirective({ directive: _directive, pt: this, store: this.store, forStore: this.forStore, storeKeeper: this.storeKeeper });
+    return new onDirective({ directive: _directive, pt: this, storeKeeper: this.storeKeeper });
   }
 
   /**
@@ -150,7 +145,7 @@ export default class VirtualDom {
       return [];
     }
     return attrArray.map((item, index) => {
-      return new AttrObj({ attr: item, dom: this.dom, store: this.store, storeKeeper: this.storeKeeper });
+      return new AttrObj({ attr: item, dom: this.dom, storeKeeper: this.storeKeeper });
     });
   }
 
@@ -169,11 +164,9 @@ export default class VirtualDom {
           if (item.match(/\{\{[^\s]*\}\}/)) {
             const textNode = new TextDom(
               item,
-              this.store,
               index,
               this.baseDataName,
               this.varibleName,
-              this.forStore,
               this.storeKeeper,
             );
             this.dom.appendChild(textNode.giveDom());
@@ -186,9 +179,7 @@ export default class VirtualDom {
         } else if (typeof item === 'object') {
           const { ...other } = item;
           const node = vdFactory({
-            forStore: { ...this.forStore },
             baseDataName: this.baseDataName,
-            store: this.store,
             storeKeeper: this.storeKeeper,
             father: this,
             index: index,
@@ -210,17 +201,14 @@ export default class VirtualDom {
     delete init.forDirective;
     init.varibleName = childInitMsg.varibleName;
     init.baseDataName = childInitMsg.baseDataName;
-    init.store = this.store;
-    const _forStore = { ...this.forStore };
+
     init.storeKeeper = new StoreKeeper(...this.storeKeeper.outputAll());
     init.storeKeeper.setForStore((store, forStore, props) => {
       const _forStore = { ...forStore };
-      _forStore[init.varibleName] = childInitMsg.forStore.outputData(childInitMsg.index);
+      _forStore[init.varibleName] = childInitMsg.baseData.outputData(childInitMsg.index);
       return _forStore;
     });
-    _forStore[init.varibleName] = childInitMsg.forStore.outputData(childInitMsg.index);
-    init.forStore = _forStore;
-    init.props = this.props;
+
     const vdom = vdFactory(init);
     return {
       tmpDom: vdom.giveDom(),

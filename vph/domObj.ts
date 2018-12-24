@@ -49,18 +49,14 @@ class TextDom extends BaseObj {
   private template: string;
   private baseDataName: string;
   private varibleName: string;
-  private forStore: object;
   private storeKeeper: StoreKeeper;
-  private store: DataUnit;
-  constructor(name, store, index, baseDataName, varibleName, forStore, storeKeeper) {
-    super(name, store, index, baseDataName);
+  constructor(name, index, baseDataName, varibleName, storeKeeper) {
+    super(name, index, baseDataName);
     this.name = name;
     this.template = name;
     this.baseDataName = baseDataName;
     this.varibleName = varibleName;
     this.dom = document.createTextNode(name);
-    this.store = store === undefined ? {} : store;
-    this.forStore = forStore;
     this.storeKeeper = storeKeeper;
     // if (baseDataName !== undefined) {
     //   if (index === undefined) {
@@ -74,24 +70,6 @@ class TextDom extends BaseObj {
     this.storeKeeper.register(name.replace(/\{|\}/g, ''), this);
   }
 
-  findOrigin(name) {
-    if (Object.keys(this.forStore).length !== 0) {
-      const _name = name.split('.');
-      if (_name.length > 1) {
-        if (this.forStore[_name[0]].outputData) {
-          this.forStore[_name[0]].outputData(_.drop(_name)).addPush(this);
-          return;
-        }
-      } else {
-        this.forStore[_name[0]].addPush(this);
-        return;
-      }
-    }
-    const found = this.store.outputData(name);
-    if (found !== undefined) {
-      found.addPush(this);
-    }
-  }
 
   run(data, type, index) {
     if (this.name.match(TEMPLATE_REGEXP)) {
@@ -108,10 +86,6 @@ class TextDom extends BaseObj {
     if (valueName[0]) {
       const value = valueName[0] && valueName[0].replace(/\{|\}/g, '');
       this.storeKeeper.unregister(value, this);
-      const found = this.store.outputData(value);
-      if (found !== undefined) {
-        found.rmPush(this);
-      }
     }
     this.dom = null;
   }
@@ -132,7 +106,6 @@ class PlainText extends BaseObj {
 
 class AttrObj extends BaseObj {
   private name: string;
-  private store: DataUnit;
   private storeKeeper: StoreKeeper;
   private template: string;
   private value: string;
@@ -141,7 +114,6 @@ class AttrObj extends BaseObj {
     this.dom = init.dom;
     const attrData = init.attr.split('=');
     this.name = attrData[0] ? attrData[0] : '';
-    this.store = init.store;
     this.storeKeeper = init.storeKeeper;
     this.template = attrData[1] ? attrData[1] : undefined;
     this.value = attrData[1] ? attrData[1] : undefined;
@@ -153,11 +125,6 @@ class AttrObj extends BaseObj {
     if (valueName) {
       const value = valueName[0] && valueName[0].replace(/\{|\}/g, '');
       this.storeKeeper.register(value, this);
-      // const found = this.store.outputData(value);
-      // if (found !== undefined) {
-      //   found.addPush(this);
-      //   this.run(found.outputData());
-      // }
     }
   }
 
@@ -166,10 +133,6 @@ class AttrObj extends BaseObj {
     if (valueName[0]) {
       const value = valueName[0] && valueName[0].replace(/\{|\}/g, '');
       this.storeKeeper.unregister(value, this);
-      const found = this.store.outputData(value);
-      if (found !== undefined) {
-        found.rmPush(this);
-      }
     }
     this.dom = null;
   }
