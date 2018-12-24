@@ -32,7 +32,7 @@ const Table = vdFactory(
     },
     actions: {
       interval() {
-        const { array2 } = this.store.getValues('array2');
+        const { array2 } = this.storeKeeper.outputStore().getValues('array2');
         interval(1000).subscribe({
           next: () => {
             const value = moment().format('YYYY-MM-DD HH:mm:ss');

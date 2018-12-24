@@ -58,7 +58,7 @@ const component1 = vdFactory(
           color6,
           color7,
           switcher
-        } = this.store.getValues(
+        } = this.storeKeeper.outputStore().getValues(
           'value',
           'color',
           'color0',

@@ -14,7 +14,7 @@ const time = vdFactory(
     },
     actions: {
       interval() {
-        const { time } = this.store.getValues('time');
+        const { time } = this.storeKeeper.outputStore().getValues('time');
         interval(1000).subscribe({
           next: () => {
             const value = moment().format('YYYY-MM-DD HH:mm:ss');

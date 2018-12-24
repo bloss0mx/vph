@@ -5,6 +5,7 @@ import { TextDom, PlainText, AttrObj, BaseObj } from './domObj';
 import { vdFactory } from './index';
 import { IfDirective, forDirective, onDirective } from './directive';
 import { ARRAYY_OPERATE } from './constant';
+import StoreKeeper from './store';
 
 /**
  * 初始化时，dom操作必须同步
@@ -22,6 +23,7 @@ export default class VirtualDom {
   private attrPt: Array<AttrObj>;
   private varibleName: string;
   private baseDataName: string;
+  private storeKeeper: StoreKeeper;
   private store: DataUnit;
   private forStore: object;
   private props: DataUnit;
@@ -45,6 +47,7 @@ export default class VirtualDom {
 
     // store和dom初始化
     this.store = init.store === undefined ? {} : init.store;//本地store存储
+    this.storeKeeper = init.storeKeeper === undefined ? new StoreKeeper(dataFactory({})) : init.storeKeeper;//StoreKeeper
     this.forStore = init.forStore === undefined ? {} : init.forStore;
     this.props = init.props === undefined ? {} : init.props;//父节点传入store
     this.actions = init.actions;
@@ -94,6 +97,7 @@ export default class VirtualDom {
    * @param {*} init 
    */
   initState(init) {
+    this.storeKeeper = new StoreKeeper(dataFactory(init));
     this.store = dataFactory(init);
   }
 
@@ -104,7 +108,7 @@ export default class VirtualDom {
     if (!ifDirective) {
       return;
     }
-    return new IfDirective({ flagName: ifDirective, pt: this, store: this.store, forStore: this.forStore });
+    return new IfDirective({ flagName: ifDirective, pt: this, store: this.store, forStore: this.forStore, storeKeeper: this.storeKeeper });
   }
 
   /**
@@ -114,7 +118,7 @@ export default class VirtualDom {
     if (!_directive) {
       return;
     }
-    return new forDirective({ directive: _directive, pt: this, store: this.store, forStore: this.forStore });
+    return new forDirective({ directive: _directive, pt: this, store: this.store, forStore: this.forStore, storeKeeper: this.storeKeeper });
   }
 
   /**
@@ -122,7 +126,7 @@ export default class VirtualDom {
    */
   initOn(_directive) {
     if (!_directive) return;
-    return new onDirective({ directive: _directive, pt: this, store: this.store, forStore: this.forStore });
+    return new onDirective({ directive: _directive, pt: this, store: this.store, forStore: this.forStore, storeKeeper: this.storeKeeper });
   }
 
   /**
@@ -146,7 +150,7 @@ export default class VirtualDom {
       return [];
     }
     return attrArray.map((item, index) => {
-      return new AttrObj({ attr: item, dom: this.dom, store: this.store });
+      return new AttrObj({ attr: item, dom: this.dom, store: this.store, storeKeeper: this.storeKeeper });
     });
   }
 
@@ -163,12 +167,14 @@ export default class VirtualDom {
           return item;
         } else if (typeof item === 'string') {
           if (item.match(/\{\{[^\s]*\}\}/)) {
-            const textNode = new TextDom(item,
+            const textNode = new TextDom(
+              item,
               this.store,
               index,
               this.baseDataName,
               this.varibleName,
               this.forStore,
+              this.storeKeeper,
             );
             this.dom.appendChild(textNode.giveDom());
             return textNode;
@@ -183,6 +189,7 @@ export default class VirtualDom {
             forStore: { ...this.forStore },
             baseDataName: this.baseDataName,
             store: this.store,
+            storeKeeper: this.storeKeeper,
             father: this,
             index: index,
             ...other
@@ -205,6 +212,12 @@ export default class VirtualDom {
     init.baseDataName = childInitMsg.baseDataName;
     init.store = this.store;
     const _forStore = { ...this.forStore };
+    init.storeKeeper = new StoreKeeper(...this.storeKeeper.outputAll());
+    init.storeKeeper.setForStore((store, forStore, props) => {
+      const _forStore = { ...forStore };
+      _forStore[init.varibleName] = childInitMsg.forStore.outputData(childInitMsg.index);
+      return _forStore;
+    });
     _forStore[init.varibleName] = childInitMsg.forStore.outputData(childInitMsg.index);
     init.forStore = _forStore;
     init.props = this.props;

@@ -58,14 +58,14 @@ window.vD1 = vdFactory(
     },
     actions: {
       inputCallBack(e) {
-        const { text } = this.store.getValues('text');
+        const { text } = this.storeKeeper.outputStore().getValues('text');
         text.setData(e.target.value);
       },
       onClickYo(e) {
         alert('hahaha');
       },
       start() {
-        const { array1, third, x } = this.store.getValues('array1', 'third', 'x');
+        const { array1, third, x } = this.storeKeeper.outputStore().getValues('array1', 'third', 'x');
         interval(100).subscribe({
           next: item => {
             array1.push(item);
@@ -73,13 +73,13 @@ window.vD1 = vdFactory(
           }
         });
         // setTimeout(() => {
-        //   this.store.delete('third');
-        //   this.store.setData('hey', 'third');
+        //   this.storeKeeper.outputStore().delete('third');
+        //   this.storeKeeper.outputStore().setData('hey', 'third');
         // }, 2000);
       },
       interval() {
-        const { second, first, third } = this.store.getValues('second', 'first', 'third');
-        // this.store.setData('hey', 'hey');
+        const { second, first, third } = this.storeKeeper.outputStore().getValues('second', 'first', 'third');
+        // this.storeKeeper.outputStore().setData('hey', 'hey');
         interval(100).subscribe({
           next: item => {
             first.setData(item);

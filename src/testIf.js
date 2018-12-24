@@ -27,7 +27,7 @@ const testIf = vdFactory(
     },
     actions: {
       start() {
-        const { index, index2 } = this.store.getValues('index', 'index2');
+        const { index, index2 } = this.storeKeeper.outputStore().getValues('index', 'index2');
 
         interval(100).subscribe({
           next: item => {

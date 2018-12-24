@@ -3,6 +3,7 @@ const _ = require('lodash');
 import $ from 'jquery';
 import { exposeToWindow } from './Lady_tool';
 import { DataUnit } from './DataUnit';
+import StoreKeeper from './store';
 
 const TEMPLATE_REGEXP = /\{\{[^\s]+\}\}/;
 
@@ -49,8 +50,9 @@ class TextDom extends BaseObj {
   private baseDataName: string;
   private varibleName: string;
   private forStore: object;
+  private storeKeeper: StoreKeeper;
   private store: DataUnit;
-  constructor(name, store, index, baseDataName, varibleName, forStore) {
+  constructor(name, store, index, baseDataName, varibleName, forStore, storeKeeper) {
     super(name, store, index, baseDataName);
     this.name = name;
     this.template = name;
@@ -59,6 +61,7 @@ class TextDom extends BaseObj {
     this.dom = document.createTextNode(name);
     this.store = store === undefined ? {} : store;
     this.forStore = forStore;
+    this.storeKeeper = storeKeeper;
     // if (baseDataName !== undefined) {
     //   if (index === undefined) {
     //     throw ('TextDom no index with baseDataName!');
@@ -66,8 +69,9 @@ class TextDom extends BaseObj {
     //   this.findOrigin(`${index}`);
     // } else 
     {
-      this.findOrigin(name.replace(/\{|\}/g, ''));
+      // this.findOrigin(name.replace(/\{|\}/g, ''));
     }
+    this.storeKeeper.register(name.replace(/\{|\}/g, ''), this);
   }
 
   findOrigin(name) {
@@ -103,6 +107,7 @@ class TextDom extends BaseObj {
     const valueName = this.template.match(TEMPLATE_REGEXP);
     if (valueName[0]) {
       const value = valueName[0] && valueName[0].replace(/\{|\}/g, '');
+      this.storeKeeper.unregister(value, this);
       const found = this.store.outputData(value);
       if (found !== undefined) {
         found.rmPush(this);
@@ -128,6 +133,7 @@ class PlainText extends BaseObj {
 class AttrObj extends BaseObj {
   private name: string;
   private store: DataUnit;
+  private storeKeeper: StoreKeeper;
   private template: string;
   private value: string;
   constructor(init) {
@@ -136,6 +142,7 @@ class AttrObj extends BaseObj {
     const attrData = init.attr.split('=');
     this.name = attrData[0] ? attrData[0] : '';
     this.store = init.store;
+    this.storeKeeper = init.storeKeeper;
     this.template = attrData[1] ? attrData[1] : undefined;
     this.value = attrData[1] ? attrData[1] : undefined;
     this.findOrigin(this.value, this.dom);
@@ -145,11 +152,12 @@ class AttrObj extends BaseObj {
     const valueName = tmp.match(TEMPLATE_REGEXP);
     if (valueName) {
       const value = valueName[0] && valueName[0].replace(/\{|\}/g, '');
-      const found = this.store.outputData(value);
-      if (found !== undefined) {
-        found.addPush(this);
-        this.run(found.outputData());
-      }
+      this.storeKeeper.register(value, this);
+      // const found = this.store.outputData(value);
+      // if (found !== undefined) {
+      //   found.addPush(this);
+      //   this.run(found.outputData());
+      // }
     }
   }
 
@@ -157,6 +165,7 @@ class AttrObj extends BaseObj {
     const valueName = this.template.match(TEMPLATE_REGEXP);
     if (valueName[0]) {
       const value = valueName[0] && valueName[0].replace(/\{|\}/g, '');
+      this.storeKeeper.unregister(value, this);
       const found = this.store.outputData(value);
       if (found !== undefined) {
         found.rmPush(this);
