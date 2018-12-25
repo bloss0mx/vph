@@ -1,5 +1,5 @@
 import { testType } from './utils';
-const _ = require('lodash');
+import _ from 'lodash';
 import {
   ARRAYY_OPERATE,
 } from './constant';
@@ -102,6 +102,8 @@ class DataUnit {
    */
   setData(data, name?: string): DataUnit {
     let isChanged = '';
+
+    if (name === 'time') console.log(name);
 
     if (this.type === 'object' && name !== undefined) {
       this.outputData(name).setData(data);
@@ -276,15 +278,6 @@ class Objecty extends DataUnit {
     });
     return _data;
   }
-
-
-  // map(callback) {
-  //   const answer = [];
-  //   for (let i in this.data) {
-  //     answer.push(callback(i));
-  //   }
-  //   return answer;
-  // }
 
 }
 

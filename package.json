@@ -9,13 +9,14 @@
     },
     "author": "bloss0mx",
     "devDependencies": {
+        "@types/jquery": "^3.3.28",
+        "@types/lodash": "^4.14.119",
         "babel-preset-env": "^1.7.0",
         "parcel-bundler": "^1.9.6",
         "typescript": "^3.1.5"
     },
     "dependencies": {
-        "jquery": "^1.12",
-        "lodash": "^4.17.11",
+        "jquery": "^3.3.1",
         "moment": "^2.22.2",
         "moment-timezone": "^0.5.23",
         "rxjs": "^6.3.3"

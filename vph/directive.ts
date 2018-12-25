@@ -1,8 +1,9 @@
-const _ = require('lodash')
+import _ from 'lodash';
 import $ from 'jquery';
 import { ARRAYY_OPERATE } from './constant';
 import { DataUnit } from './DataUnit';
 import VirtualDom from './vdom';
+import StoreKeeper from './store';
 
 
 // TODO 不要让指令直接操作vdom
@@ -34,28 +35,18 @@ class Directive {
 
 class IfDirective extends Directive {
   private flagName: string;
-  private store: DataUnit;
   private pt: VirtualDom;
   private key: String;
-  private forStore: object;
+  private storeKeeper: StoreKeeper;
   constructor(init) {
     super(init);
     this.flagName = init.flagName;
 
-    this.store = init.store;
-    this.forStore = init.forStore;
+    this.storeKeeper = init.storeKeeper;
     this.pt = init.pt;
 
     this.key = init.key ? init.key : true;//
-    this.findOrigin();
-  }
-
-  findOrigin() {
-    // const found = this.store.outputData(this.flagName);
-    const found = Object.keys(this.forStore).length !== 0 ? this.forStore[this.flagName] : this.store.outputData(this.flagName);
-    if (found !== undefined) {
-      found.addPush(this);
-    }
+    this.storeKeeper.register(this.flagName, this);
   }
 
   run(data) {
@@ -75,16 +66,12 @@ class IfDirective extends Directive {
   }
 
   rmSelf() {
-    const found = this.store.outputData(this.flagName);
-    if (found !== undefined) {
-      found.rmPush(this);
-    }
+    this.storeKeeper.unregister(this.flagName, this);
   }
 
 }
 class forDirective extends Directive {
-  private store: DataUnit;
-  private forStore: object;
+  private storeKeeper: StoreKeeper;
   private pt: VirtualDom;
   private childrenPt: Array<any>;
   private childrenDom: Array<any>;
@@ -92,8 +79,7 @@ class forDirective extends Directive {
   private baseDataName: string;
   constructor(init) {
     super(init);
-    this.store = init.store;
-    this.forStore = init.forStore;
+    this.storeKeeper = init.storeKeeper;
     this.pt = init.pt;
     this.childrenPt = [];
     this.childrenDom = [];
@@ -108,23 +94,21 @@ class forDirective extends Directive {
     this.varibleName = handled[0].replace(/ /g, '');
     this.baseDataName = handled[1];
 
-    const found = Object.keys(this.forStore).length !== 0 ? this.forStore[this.baseDataName] : this.store.outputData(this.baseDataName);
-    if (found !== undefined) {
-      found.addPush(this);
-      this.init();
-    }
+
+    this.storeKeeper.register(this.baseDataName, this, this.init);
   }
 
   init() {
-    const baseData = Object.keys(this.forStore).length !== 0 ? this.forStore[this.baseDataName] : this.store.outputData(this.baseDataName);
-    // const baseData = this.store.outputData(this.baseDataName);
+    const baseData = this.storeKeeper.findBaseData(this.baseDataName);
     const childrenStore = baseData.map((item, index) => {
       return item;
     });
+
     childrenStore.map((item, index) => {
       const { tmpDom, tmpChildrenPt } = this.pt.makeForChildren({
         varibleName: this.varibleName,
-        forStore: baseData,
+        storeKeeper: this.storeKeeper,
+        baseData: baseData,// TODO 查清这个的用法
         baseDataName: this.baseDataName,
         index,
         // ...item
@@ -146,12 +130,17 @@ class forDirective extends Directive {
    */
   addToList(data, index) {
     const targetIndex = index - 1;
-    const baseData = this.store.outputData(this.baseDataName)
+    const _storeKeeper = new StoreKeeper(...this.storeKeeper.outputAll());
+    _storeKeeper.setForStore((store, forStore, props) => {
+      return store.outputData(this.baseDataName);
+    });
+    const baseData=this.storeKeeper.findBaseData(this.baseDataName);
     const childrenStore = baseData.outputData(targetIndex);
     const { tmpDom, tmpChildrenPt } = this.pt.makeForChildren({
       varibleName: this.varibleName,
       index: targetIndex,
-      forStore: baseData,
+      storeKeeper: this.storeKeeper,
+      baseData: baseData,
       baseDataName: this.baseDataName,
     });
     if (this.pt.childrenPt.length === 0 && this.pt.index > 0) {
@@ -187,8 +176,7 @@ class forDirective extends Directive {
 }
 
 class onDirective extends Directive {
-  private store: DataUnit;
-  private forStore: object;
+  private storeKeeper: StoreKeeper;
   private pt: VirtualDom;
   private callback: any;// FIX ME
   private directive: string;
@@ -196,8 +184,7 @@ class onDirective extends Directive {
   private callbackName: string;
   constructor(init) {
     super(init);
-    this.store = init.store;
-    this.forStore = init.forStore;
+    this.storeKeeper = init.storeKeeper;
     this.pt = init.pt;
     this.callback = init.callback;
     this.directive = init.directive;//'input.'

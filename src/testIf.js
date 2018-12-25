@@ -1,10 +1,10 @@
-import { vdFactory, tags, init } from '../vph';
+import { Component, tags, init } from '../vph';
 const { div, p, span, input, button, ul, li } = tags;
 import { interval } from 'rxjs';
 import $ from 'jquery';
 import moment from 'moment';
 
-const testIf = vdFactory(
+const testIf = Component(
   div({
     children: [
       'hey',
@@ -27,7 +27,7 @@ const testIf = vdFactory(
     },
     actions: {
       start() {
-        const { index, index2 } = this.store.getValues('index', 'index2');
+        const { index, index2 } = this.getDatas('index', 'index2');
 
         interval(100).subscribe({
           next: item => {

@@ -1,9 +1,9 @@
-import { vdFactory, tags } from '../vph';
+import { Component, tags } from '../vph';
 const { div } = tags;
 import { interval } from 'rxjs';
 import moment from 'moment';
 
-const time = vdFactory(
+const time = Component(
   div({
     children: [
       '现在时间：',
@@ -14,7 +14,7 @@ const time = vdFactory(
     },
     actions: {
       interval() {
-        const { time } = this.store.getValues('time');
+        const { time } = this.getDatas('time');
         interval(1000).subscribe({
           next: () => {
             const value = moment().format('YYYY-MM-DD HH:mm:ss');

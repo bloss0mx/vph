@@ -1,8 +1,9 @@
 import { testType, log } from './utils';
-const _ = require('lodash');
+import _ from 'lodash';
 import $ from 'jquery';
 import { exposeToWindow } from './Lady_tool';
 import { DataUnit } from './DataUnit';
+import StoreKeeper from './store';
 
 const TEMPLATE_REGEXP = /\{\{[^\s]+\}\}/;
 
@@ -48,46 +49,18 @@ class TextDom extends BaseObj {
   private template: string;
   private baseDataName: string;
   private varibleName: string;
-  private forStore: object;
-  private store: DataUnit;
-  constructor(name, store, index, baseDataName, varibleName, forStore) {
-    super(name, store, index, baseDataName);
+  private storeKeeper: StoreKeeper;
+  constructor(name, index, baseDataName, varibleName, storeKeeper) {
+    super(name, index, baseDataName);
     this.name = name;
     this.template = name;
     this.baseDataName = baseDataName;
     this.varibleName = varibleName;
     this.dom = document.createTextNode(name);
-    this.store = store === undefined ? {} : store;
-    this.forStore = forStore;
-    // if (baseDataName !== undefined) {
-    //   if (index === undefined) {
-    //     throw ('TextDom no index with baseDataName!');
-    //   }
-    //   this.findOrigin(`${index}`);
-    // } else 
-    {
-      this.findOrigin(name.replace(/\{|\}/g, ''));
-    }
+    this.storeKeeper = storeKeeper;
+    this.storeKeeper.register(name.replace(/\{|\}/g, ''), this);
   }
 
-  findOrigin(name) {
-    if (Object.keys(this.forStore).length !== 0) {
-      const _name = name.split('.');
-      if (_name.length > 1) {
-        if (this.forStore[_name[0]].outputData) {
-          this.forStore[_name[0]].outputData(_.drop(_name)).addPush(this);
-          return;
-        }
-      } else {
-        this.forStore[_name[0]].addPush(this);
-        return;
-      }
-    }
-    const found = this.store.outputData(name);
-    if (found !== undefined) {
-      found.addPush(this);
-    }
-  }
 
   run(data, type, index) {
     if (this.name.match(TEMPLATE_REGEXP)) {
@@ -103,10 +76,7 @@ class TextDom extends BaseObj {
     const valueName = this.template.match(TEMPLATE_REGEXP);
     if (valueName[0]) {
       const value = valueName[0] && valueName[0].replace(/\{|\}/g, '');
-      const found = this.store.outputData(value);
-      if (found !== undefined) {
-        found.rmPush(this);
-      }
+      this.storeKeeper.unregister(value, this);
     }
     this.dom = null;
   }
@@ -127,7 +97,7 @@ class PlainText extends BaseObj {
 
 class AttrObj extends BaseObj {
   private name: string;
-  private store: DataUnit;
+  private storeKeeper: StoreKeeper;
   private template: string;
   private value: string;
   constructor(init) {
@@ -135,7 +105,7 @@ class AttrObj extends BaseObj {
     this.dom = init.dom;
     const attrData = init.attr.split('=');
     this.name = attrData[0] ? attrData[0] : '';
-    this.store = init.store;
+    this.storeKeeper = init.storeKeeper;
     this.template = attrData[1] ? attrData[1] : undefined;
     this.value = attrData[1] ? attrData[1] : undefined;
     this.findOrigin(this.value, this.dom);
@@ -145,11 +115,7 @@ class AttrObj extends BaseObj {
     const valueName = tmp.match(TEMPLATE_REGEXP);
     if (valueName) {
       const value = valueName[0] && valueName[0].replace(/\{|\}/g, '');
-      const found = this.store.outputData(value);
-      if (found !== undefined) {
-        found.addPush(this);
-        this.run(found.outputData());
-      }
+      this.storeKeeper.register(value, this);
     }
   }
 
@@ -157,10 +123,7 @@ class AttrObj extends BaseObj {
     const valueName = this.template.match(TEMPLATE_REGEXP);
     if (valueName[0]) {
       const value = valueName[0] && valueName[0].replace(/\{|\}/g, '');
-      const found = this.store.outputData(value);
-      if (found !== undefined) {
-        found.rmPush(this);
-      }
+      this.storeKeeper.unregister(value, this);
     }
     this.dom = null;
   }

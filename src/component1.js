@@ -1,9 +1,9 @@
-import { vdFactory, tags } from '../vph';
+import { Component, tags } from '../vph';
 const { div } = tags;
 import { interval } from 'rxjs';
 
 
-const component1 = vdFactory(
+const component1 = Component(
   div({
     children: [
       '这是个组件：',
@@ -58,7 +58,7 @@ const component1 = vdFactory(
           color6,
           color7,
           switcher
-        } = this.store.getValues(
+        } = this.getDatas(
           'value',
           'color',
           'color0',
