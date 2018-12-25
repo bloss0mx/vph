@@ -1,9 +1,16 @@
 import { testType, log } from './utils';
-import _ from 'lodash';
 import $ from 'jquery';
 import { exposeToWindow } from './Lady_tool';
 import { DataUnit } from './DataUnit';
 import StoreKeeper from './store';
+import {
+  prepend,
+  insertAfter,
+  remove,
+  attr,
+  removeAttr,
+  append,
+} from './domOperator';
 
 const TEMPLATE_REGEXP = /\{\{[^\s]+\}\}/;
 
@@ -132,9 +139,9 @@ class AttrObj extends BaseObj {
     if (data) {
       this.value = data;
       const value = this.template.replace(TEMPLATE_REGEXP, data);
-      $(this.dom).attr(this.name, value);
+      attr(this.dom, this.name, value);
     } else {
-      $(this.dom).removeAttr(this.name);
+      removeAttr(this.dom, this.name);
     }
   }
 

@@ -1,5 +1,5 @@
 import { testType } from './utils';
-import _ from 'lodash';
+import { difference, uniq } from 'lodash';
 import {
   ARRAYY_OPERATE,
 } from './constant';
@@ -42,7 +42,7 @@ class DataUnit {
    */
   addPush(pushOrigin) {
     this.pushList.push(pushOrigin);
-    this.pushList = _.uniq(this.pushList);
+    this.pushList = uniq(this.pushList);
   }
 
   /**
@@ -50,7 +50,7 @@ class DataUnit {
    * @param pushOrigin 
    */
   rmPush(pushOrigin) {
-    this.pushList = _.difference(this.pushList, [pushOrigin]);
+    this.pushList = difference(this.pushList, [pushOrigin]);
   }
 
   /**
@@ -207,7 +207,7 @@ class Arrayy extends DataUnit {
 
   pop() {
     const _data = this.difference(this.data.length, 1)
-    this.data = _.difference(this.data, _data);
+    this.data = difference(this.data, _data);
     this.rmCallback(_data, this.data.length);
     return _data;
   }
@@ -221,7 +221,7 @@ class Arrayy extends DataUnit {
   shift() {
     if (this.data.length === 0) return;
     const _data = this.difference(0, 1);
-    this.data = _.difference(this.data, _data);
+    this.data = difference(this.data, _data);
     this.rmCallback(_data, 0);
     return _data;
   }
@@ -234,7 +234,7 @@ class Arrayy extends DataUnit {
 
   rmFrom(index) {
     const _data = this.difference(index, 1)
-    this.data = _.difference(this.data, _data);
+    this.data = difference(this.data, _data);
     this.rmCallback(_data, index);
     return _data
   }
