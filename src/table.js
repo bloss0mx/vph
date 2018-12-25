@@ -37,9 +37,9 @@ const Table = Component(
         const { array2 } = this.getDatas('array2');
         interval(1000).subscribe({
           next: () => {
-            array2.outputData('1.0').setData(timer("Asia/Taipei"));
-            array2.outputData('1.1').setData(timer("Asia/Tokyo"));
-            array2.outputData('1.2').setData(timer("America/New_York"));
+            array2.showData('1.0').setData(timer("Asia/Taipei"));
+            array2.showData('1.1').setData(timer("Asia/Tokyo"));
+            array2.showData('1.2').setData(timer("America/New_York"));
           }
         });
       }

@@ -64,8 +64,9 @@ window.vD1 = vdFactory(
         const { text } = this.getDatas('text');
         text.setData(e.target.value);
       },
-      onClickYo(e) {
-        alert('hahaha');
+      onClickYo() {
+        const { text } = this.getDatas('text');
+        alert(text.showData());
       },
       start() {
         const { array1, third, x } = this.getDatas('array1', 'third', 'x');

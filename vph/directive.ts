@@ -1,9 +1,16 @@
-import _ from 'lodash';
 import $ from 'jquery';
 import { ARRAYY_OPERATE } from './constant';
 import { DataUnit } from './DataUnit';
 import VirtualDom from './vdom';
 import StoreKeeper from './store';
+import {
+  prepend,
+  insertAfter,
+  remove,
+  attr,
+  removeAttr,
+  append,
+} from './domOperator';
 
 
 // TODO 不要让指令直接操作vdom
@@ -132,10 +139,10 @@ class forDirective extends Directive {
     const targetIndex = index - 1;
     const _storeKeeper = new StoreKeeper(...this.storeKeeper.outputAll());
     _storeKeeper.setForStore((store, forStore, props) => {
-      return store.outputData(this.baseDataName);
+      return store.showData(this.baseDataName);
     });
-    const baseData=this.storeKeeper.findBaseData(this.baseDataName);
-    const childrenStore = baseData.outputData(targetIndex);
+    const baseData = this.storeKeeper.findBaseData(this.baseDataName);
+    const childrenStore = baseData.showData(targetIndex);
     const { tmpDom, tmpChildrenPt } = this.pt.makeForChildren({
       varibleName: this.varibleName,
       index: targetIndex,
@@ -145,12 +152,12 @@ class forDirective extends Directive {
     });
     if (this.pt.childrenPt.length === 0 && this.pt.index > 0) {
       if (this.pt.father.childrenPt.length === 0) {
-        $(this.pt.father.giveDom()).prepend(tmpDom);
+        prepend(this.pt.father.giveDom(), tmpDom);
       } else {
         $(tmpDom).insertAfter($(this.pt.father.childrenPt[this.pt.index - 1].giveDom()));
       }
     } else if (this.pt.childrenPt.length === 0 && this.pt.index === 0) {
-      $(this.pt.father.giveDom()).prepend(tmpDom);
+      prepend(this.pt.father.giveDom(), tmpDom);
     } else if (this.childrenDom[targetIndex - 1]) {
       $(tmpDom).insertAfter(this.childrenDom[targetIndex - 1]);
     }
@@ -169,7 +176,7 @@ class forDirective extends Directive {
     this.pt.childrenPt.splice(index, 1);
     this.childrenPt[index].rmSelf();
     this.childrenPt.splice(index, 1);
-    $(this.childrenDom[index]).remove();
+    remove(this.childrenDom[index]);
     this.childrenDom.splice(index, 1);
   }
 
