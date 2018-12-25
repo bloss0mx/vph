@@ -1,11 +1,11 @@
-import { vdFactory, tags } from '../vph';
+import { Component, tags } from '../vph';
 const { div, table, tbody, tr, td } = tags;
 import { interval } from 'rxjs';
 import moment from 'moment-timezone';
 
 const timer = area => moment().tz(area).format('YYYY-MM-DD HH:mm:ss');
 
-const Table = vdFactory(
+const Table = Component(
   table({
     children: [
       tbody({
@@ -34,7 +34,7 @@ const Table = vdFactory(
     },
     actions: {
       interval() {
-        const { array2 } = this.storeKeeper.outputStore().getValues('array2');
+        const { array2 } = this.getDatas('array2');
         interval(1000).subscribe({
           next: () => {
             array2.outputData('1.0').setData(timer("Asia/Taipei"));

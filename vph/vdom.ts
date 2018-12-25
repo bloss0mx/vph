@@ -2,7 +2,7 @@ import _ from 'lodash';
 import $ from 'jquery';
 import { DataUnit, Arrayy, Objecty, dataFactory } from './DataUnit';
 import { TextDom, PlainText, AttrObj, BaseObj } from './domObj';
-import { vdFactory } from './index';
+import { vdFactory, Component } from './index';
 import { IfDirective, forDirective, onDirective } from './directive';
 import { ARRAYY_OPERATE } from './constant';
 import StoreKeeper from './store';
@@ -24,7 +24,7 @@ export default class VirtualDom {
   private varibleName: string;
   private baseDataName: string;
   private storeKeeper: StoreKeeper;
-  private props: DataUnit;
+  // private props: DataUnit;
   private ifDirective: IfDirective;
   private forDirective: forDirective;
   private onDirective: onDirective;
@@ -44,13 +44,16 @@ export default class VirtualDom {
     this.setFather(init.father, init.index);
 
     // store和dom初始化
-    this.storeKeeper = init.storeKeeper === undefined ? new StoreKeeper(dataFactory({})) : init.storeKeeper;//StoreKeeper
-    this.props = init.props === undefined ? {} : init.props;//父节点传入store
+    this.storeKeeper = init.storeKeeper instanceof StoreKeeper
+      ? init.storeKeeper
+      : new StoreKeeper(dataFactory({}));//StoreKeeper
+    // this.props = init.props === undefined ? {} : init.props;//父节点传入store
     this.actions = init.actions;
 
     init.forDirective ? this.initForDom() : this.initDom();
     this.bindActions();
     init.state === undefined ? null : this.initState(init.state);
+    init.props === undefined ? null : this.initProps(init.props);
 
     // render
     !init.forDirective && this.makeChildren();
@@ -90,10 +93,19 @@ export default class VirtualDom {
 
   /**
    * 初始化state
-   * @param {*} init 
+   * @param {*} data 
    */
-  initState(init) {
-    this.storeKeeper = new StoreKeeper(dataFactory(init));
+  initState(data) {
+    this.storeKeeper.setStore(dataFactory(data));
+  }
+
+  /**
+   * 初始化props
+   * @param data 
+   */
+  initProps(data) {
+    // console.log(data, this.getDatas(...data).time.outputData());
+    this.storeKeeper.setProps(() => this.getDatas(...data));
   }
 
   /**
@@ -160,6 +172,11 @@ export default class VirtualDom {
           item.setFather(this, index);
           this.dom.appendChild(item.giveDom());
           return item;
+        } else if (typeof item === 'function') {
+          const _item = item(this.storeKeeper);
+          _item.setFather(this, index);
+          this.dom.appendChild(_item.giveDom());
+          return _item;
         } else if (typeof item === 'string') {
           if (item.match(/\{\{[^\s]*\}\}/)) {
             const textNode = new TextDom(
@@ -319,6 +336,16 @@ export default class VirtualDom {
           return this.father.childrenPt[i].giveDom();
         }
       }
+    }
+  }
+
+  /**
+   * 
+   */
+  getDatas(...params) {
+    const store = this.storeKeeper.outputStore();
+    if (store instanceof Objecty) {
+      return store.getValues(...params);
     }
   }
 

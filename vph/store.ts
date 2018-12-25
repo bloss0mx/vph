@@ -1,10 +1,10 @@
 import { DataUnit, Arrayy, Objecty } from './DataUnit';
 
 class StoreKeeper {
-  private store: DataUnit;
+  private store: DataUnit | Objecty | Arrayy;
   private forStore: object;
   private props: object;
-  constructor(_store: DataUnit, _forStore?: object, _props?: object) {
+  constructor(_store: DataUnit | Objecty | Arrayy, _forStore?: object, _props?: object) {
     this.store = _store;
     this.forStore = _forStore || {};
     this.props = _props || {};
@@ -25,13 +25,18 @@ class StoreKeeper {
     }
   }
 
+  setStore(data) {
+    this.store = data;
+  }
   setProps(callback) {
+    console.error('setProps');
     this.props = callback(this.store, this.forStore, this.props);
   }
+  // 只在for指令工作时使用
   setForStore(callback) {
     this.forStore = callback(this.store, this.forStore, this.props);
   }
-  outputStore() {
+  outputStore(): DataUnit | Objecty | Arrayy {
     return this.store;
   }
   outputForStore() {
@@ -46,6 +51,11 @@ class StoreKeeper {
       this.forStore,
       this.props,
     ]
+  }
+  getValues(...params): object {
+    if (this.store instanceof Objecty) {
+      return this.store.getValues(...params);
+    }
   }
   findBaseData(baseDataName) {
     let found;

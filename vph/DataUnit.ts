@@ -103,6 +103,8 @@ class DataUnit {
   setData(data, name?: string): DataUnit {
     let isChanged = '';
 
+    if (name === 'time') console.log(name);
+
     if (this.type === 'object' && name !== undefined) {
       this.outputData(name).setData(data);
     } else if (this.type === 'array' && name !== undefined) {

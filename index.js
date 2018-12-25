@@ -1,18 +1,20 @@
 import { vdFactory, tags, init } from './vph';
 const { div, span, input, button } = tags;
 import { interval } from 'rxjs';
-import time from './src/time';
-import testIf from './src/testIf';
-import component1 from './src/component1';
-import table from './src/table';
+import Time from './src/time';
+import TestIf from './src/testIf';
+import Component1 from './src/component1';
+import Table from './src/table';
 
 
 window.vD1 = vdFactory(
   div({
     children: [
-      time,
-      table,
-      component1,
+      Time({
+        props: ['time']
+      }),
+      Table(),
+      Component1(),
       span({
         children: ['这一坨不变是二：'],
         attr: [],
@@ -39,7 +41,7 @@ window.vD1 = vdFactory(
         children: ['yo~'],
         onDirective: 'click.onClickYo',
       }),
-      testIf,
+      TestIf(),
     ],
     attr: [],
     state: {
@@ -48,6 +50,7 @@ window.vD1 = vdFactory(
         ['hey', '!', '~'],
         ['ha', '!!!', 'yo~~~'],
       ],
+      time: 0,
       first: 0,
       second: 0,
       third: 3,
@@ -58,14 +61,14 @@ window.vD1 = vdFactory(
     },
     actions: {
       inputCallBack(e) {
-        const { text } = this.storeKeeper.outputStore().getValues('text');
+        const { text } = this.getDatas('text');
         text.setData(e.target.value);
       },
       onClickYo(e) {
         alert('hahaha');
       },
       start() {
-        const { array1, third, x } = this.storeKeeper.outputStore().getValues('array1', 'third', 'x');
+        const { array1, third, x } = this.getDatas('array1', 'third', 'x');
         interval(100).subscribe({
           next: item => {
             array1.push(item);
@@ -78,12 +81,13 @@ window.vD1 = vdFactory(
         // }, 2000);
       },
       interval() {
-        const { second, first, third } = this.storeKeeper.outputStore().getValues('second', 'first', 'third');
+        const { second, first, third, time } = this.getDatas('second', 'first', 'third', 'time');
         // this.storeKeeper.outputStore().setData('hey', 'hey');
         interval(100).subscribe({
           next: item => {
             first.setData(item);
             third.setData(item + 3);
+            time.setData((item - item % 10) / 10);
           }
         });
         interval(100).subscribe({

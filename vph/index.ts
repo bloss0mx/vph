@@ -1,6 +1,8 @@
 import $ from 'jquery';
 import VirtualDom from './vdom';
 import { TAGS } from './constant';
+import StoreKeeper from './store';
+import { dataFactory } from './DataUnit';
 
 const _tags = {};
 
@@ -15,6 +17,34 @@ export const tags = _tags;
 
 export function vdFactory(init) {
   return new VirtualDom(init);
+}
+
+/**
+ * 组件初始化
+ * @param init 
+ */
+export function Component(
+  init: {
+    tag: string,
+    children?: [],
+    attr?: [],
+    forDirective?: string,
+    onDirective?: string,
+    IfDirective?: string,
+  }
+): Function {
+  return function (
+    props: { props?: [] }
+  ): Function {
+    return function (store: StoreKeeper): VirtualDom {
+      const _props = props ? store.getValues(...props.props) : {};
+      const _init = {
+        ...init,
+        storeKeeper: new StoreKeeper(dataFactory({}), {}, _props),
+      };
+      return vdFactory(_init);
+    }
+  }
 }
 
 interface Window {
