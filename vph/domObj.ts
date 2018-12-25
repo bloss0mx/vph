@@ -58,15 +58,6 @@ class TextDom extends BaseObj {
     this.varibleName = varibleName;
     this.dom = document.createTextNode(name);
     this.storeKeeper = storeKeeper;
-    // if (baseDataName !== undefined) {
-    //   if (index === undefined) {
-    //     throw ('TextDom no index with baseDataName!');
-    //   }
-    //   this.findOrigin(`${index}`);
-    // } else 
-    {
-      // this.findOrigin(name.replace(/\{|\}/g, ''));
-    }
     this.storeKeeper.register(name.replace(/\{|\}/g, ''), this);
   }
 

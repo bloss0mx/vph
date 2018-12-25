@@ -277,15 +277,6 @@ class Objecty extends DataUnit {
     return _data;
   }
 
-
-  // map(callback) {
-  //   const answer = [];
-  //   for (let i in this.data) {
-  //     answer.push(callback(i));
-  //   }
-  //   return answer;
-  // }
-
 }
 
 
