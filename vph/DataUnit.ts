@@ -57,7 +57,7 @@ class DataUnit {
    * 输出值
    * @param index 
    */
-  outputData(index?: string): any {
+  showData(index?: string): any {
     //深度取值
     if (
       index
@@ -65,7 +65,7 @@ class DataUnit {
       && index.split('.').length > 1
     ) {
       return [this.data, ...index.split('.')].reduce((t, i) => {
-        return t.outputData ? t.outputData(i) : t[i];
+        return t.showData ? t.showData(i) : t[i];
       });
     }
     //数组，无参数 => 取全部
@@ -106,9 +106,9 @@ class DataUnit {
     if (name === 'time') console.log(name);
 
     if (this.type === 'object' && name !== undefined) {
-      this.outputData(name).setData(data);
+      this.showData(name).setData(data);
     } else if (this.type === 'array' && name !== undefined) {
-      this.outputData(name).setData(data);
+      this.showData(name).setData(data);
     } else if (
       (this.type === 'object' || this.type === 'array')
       && name === undefined
@@ -274,7 +274,7 @@ class Objecty extends DataUnit {
     const queue = [...params];
     const _data = {};
     queue.forEach(item => {
-      _data[item] = this.outputData(item);
+      _data[item] = this.showData(item);
     });
     return _data;
   }

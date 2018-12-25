@@ -104,7 +104,7 @@ export default class VirtualDom {
    * @param data 
    */
   initProps(data) {
-    // console.log(data, this.getDatas(...data).time.outputData());
+    // console.log(data, this.getDatas(...data).time.showData());
     this.storeKeeper.setProps(() => this.getDatas(...data));
   }
 
@@ -222,7 +222,7 @@ export default class VirtualDom {
     init.storeKeeper = new StoreKeeper(...this.storeKeeper.outputAll());
     init.storeKeeper.setForStore((store, forStore, props) => {
       const _forStore = { ...forStore };
-      _forStore[init.varibleName] = childInitMsg.baseData.outputData(childInitMsg.index);
+      _forStore[init.varibleName] = childInitMsg.baseData.showData(childInitMsg.index);
       return _forStore;
     });
 

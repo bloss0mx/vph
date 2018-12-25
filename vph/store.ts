@@ -40,9 +40,11 @@ class StoreKeeper {
     return this.store;
   }
   outputForStore() {
+    console.error('outputForStore');
     return this.forStore;
   }
   outputProps() {
+    console.error('outputProps');
     return this.props;
   }
   outputAll(): [DataUnit, object, object] {
@@ -64,7 +66,7 @@ class StoreKeeper {
     } else if (this.props[baseDataName] !== undefined) {
       found = this.props[baseDataName];
     } else {
-      found = this.store.outputData(baseDataName);
+      found = this.store.showData(baseDataName);
     }
     return found;
   }
