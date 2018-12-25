@@ -3,7 +3,7 @@ import $ from 'jquery';
 import { DataUnit, Arrayy, Objecty, dataFactory } from './DataUnit';
 import { TextDom, PlainText, AttrObj, BaseObj } from './domObj';
 import { vdFactory, Component } from './index';
-import { IfDirective, forDirective, onDirective } from './directive';
+import { IfDirective, forDirective, onDirective, ValueBind } from './directive';
 import { ARRAYY_OPERATE } from './constant';
 import StoreKeeper from './store';
 
@@ -28,6 +28,7 @@ export default class VirtualDom {
   private ifDirective: IfDirective;
   private forDirective: forDirective;
   private onDirective: onDirective;
+  private valueBind: ValueBind;
   constructor(init) {
     // 复制
     this.init = init;
@@ -68,6 +69,7 @@ export default class VirtualDom {
     this.onDirective = this.initOn(init.onDirective);
     this.ifDirective = this.initIf(init.ifDirective);
     init.forDirective ? this.forDirective = this.initFor(init.forDirective) : null;
+    this.valueBind = this.initValueBind(init.valueBind);
   }
 
   /**
@@ -134,6 +136,15 @@ export default class VirtualDom {
   initOn(_directive) {
     if (!_directive) return;
     return new onDirective({ directive: _directive, pt: this, storeKeeper: this.storeKeeper });
+  }
+
+  /**
+   * store到dom
+   * @param _directive 
+   */
+  initValueBind(_directive) {
+    if (!_directive) return;
+    return new ValueBind({ directive: _directive, pt: this, storeKeeper: this.storeKeeper });
   }
 
   /**
