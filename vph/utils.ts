@@ -138,7 +138,7 @@ const testType = (value) => {
  * 代替console.log
  */
 function log() {
-  console.log(...arguments);
+  // console.log(...arguments);
 }
 
 export {
