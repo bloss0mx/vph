@@ -142,7 +142,7 @@ class forDirective extends Directive {
       return store.showData(this.baseDataName);
     });
     const baseData = this.storeKeeper.findBaseData(this.baseDataName);
-    const childrenStore = baseData.showData(targetIndex);
+    const childrenStore = baseData.outputData(targetIndex);
     const { tmpDom, tmpChildrenPt } = this.pt.makeForChildren({
       varibleName: this.varibleName,
       index: targetIndex,
@@ -239,4 +239,38 @@ class onDirective extends Directive {
 
 }
 
-export { IfDirective, forDirective, onDirective };
+class ValueBind extends Directive {
+  private storeKeeper: StoreKeeper;
+  private pt: VirtualDom;
+  private directive: string;
+  private valueType: string;
+  private valueName: string;
+  constructor(init) {
+    super(init);
+    this.storeKeeper = init.storeKeeper;
+    this.pt = init.pt;
+    this.directive = init.directive;//'input.'
+
+    this.init();
+    this.findOrigin();
+  }
+
+  init() {
+    const splited = this.directive.split('.');
+    const handled = splited.map(item => {
+      return item.replace(/[\s]*/, '');
+    });
+    this.valueType = handled[0];
+    this.valueName = handled[1];
+  }
+
+  findOrigin() {
+    this.storeKeeper.register(this.valueName, this);
+  }
+
+  run(data) {
+    this.pt.giveDom()[this.valueType] = data;
+  }
+}
+
+export { IfDirective, forDirective, onDirective, ValueBind };
