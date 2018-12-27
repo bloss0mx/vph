@@ -243,6 +243,10 @@ class Arrayy extends DataUnit {
     return this.data.map(callback);
   }
 
+  getLen() {
+    return this.data.length;
+  }
+
 }
 
 

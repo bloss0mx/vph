@@ -1,5 +1,5 @@
 import { vdFactory, tags, init } from './vph';
-const { div, span, input, button } = tags;
+const { div, span, input, button, table, th, td, tr, tbody } = tags;
 import { interval } from 'rxjs';
 import Time from './src/time';
 // import TestIf from './src/testIf';
@@ -24,23 +24,52 @@ window.vD1 = vdFactory(
       // }),
       // '这一坨是一：',
       // '{{first}}',
+      span({
+        children: ['输入的内容：'],
+      }),
       input({
         onDirective: 'input.inputCallBack',
         valueBind: 'value.text',
         attr: ['id=yo']
       }),
-      div({
-        children: ['输入的内容：', '{{text}}'],
-      }),
+      ' '
+      ,
       button({
         name: 'yo~',
-        children: ['yo~'],
+        children: ['添加到列表'],
         onDirective: 'click.onClickYo',
       }),
-      div({
-        children: ['=> ', '{{x}}'],
-        forDirective: 'x in array1'
-      }),
+      table({
+        children: [
+          tbody({
+            children: [
+              tr({
+                children: [
+                  th({
+                    children: [
+                      'ID'
+                    ]
+                  }),
+                  th({
+                    children: [
+                      '事件'
+                    ]
+                  }),
+                ]
+              }),
+              tr({
+                children: [
+                  td({
+                    children: ['{{y}}'],
+                    forDirective: 'y in x'
+                  })
+                ],
+                forDirective: 'x in array1'
+              })
+            ]
+          })
+        ]
+      })
       // TestIf(),
     ],
     attr: [],
@@ -66,7 +95,7 @@ window.vD1 = vdFactory(
       },
       onClickYo() {
         const { text, array1 } = this.getDatas('text', 'array1');
-        array1.push(text.outputData());
+        array1.push([Math.floor(Math.random() * 1000), text.outputData()]);
         text.setData('');
       },
       // start() {

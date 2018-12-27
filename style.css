@@ -1,11 +1,16 @@
-tr {
-  border: 1px solid black;
+th {
+  background-color: #eee;
 }
 
-td {
-  border: 1px solid black;
+td,
+th,
+table,
+tr {
+  border: 1px solid #999;
+  margin-top: 4px;
+  padding: 2px;
 }
 
 table {
-  border: 1px solid black;
+  width: 295px;
 }
