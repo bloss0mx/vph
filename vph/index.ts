@@ -3,6 +3,14 @@ import VirtualDom from './vdom';
 import { TAGS } from './constant';
 import StoreKeeper from './store';
 import { dataFactory } from './DataUnit';
+import {
+  prepend,
+  insertAfter,
+  remove,
+  attr,
+  removeAttr,
+  append,
+} from './domOperator';
 
 const _tags = {};
 
@@ -68,6 +76,6 @@ export function init(selector, vdom, productEnv = false) {
     }
   }
   setTimeout(() => {
-    $(selector).append(vdom.giveDom());
+    append(selector, vdom.giveDom());
   }, 0);
 }

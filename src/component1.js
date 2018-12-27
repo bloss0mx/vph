@@ -73,7 +73,7 @@ const component1 = Component(
         );
         interval(100).subscribe({
           next: item => {
-            value.outputData('index').setData(item);
+            value.showData('index').setData(item);
           }
         });
         interval(1000).subscribe({
@@ -83,14 +83,14 @@ const component1 = Component(
         });
         interval(100).subscribe({
           next: () => {
-            color7.setData(color6.outputData());
-            color6.setData(color5.outputData());
-            color5.setData(color4.outputData());
-            color4.setData(color3.outputData());
-            color3.setData(color2.outputData());
-            color2.setData(color1.outputData());
-            color1.setData(color0.outputData());
-            color0.setData(color.outputData());
+            color7.setData(color6.showData());
+            color6.setData(color5.showData());
+            color5.setData(color4.showData());
+            color4.setData(color3.showData());
+            color3.setData(color2.showData());
+            color2.setData(color1.showData());
+            color1.setData(color0.showData());
+            color0.setData(color.showData());
             color.setData('#' + Math.floor(Math.random() * (parseInt('ffffff', 16))).toString(16));
           }
         });

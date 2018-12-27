@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import $ from 'jquery';
 import { DataUnit, Arrayy, Objecty, dataFactory } from './DataUnit';
 import { TextDom, PlainText, AttrObj, BaseObj } from './domObj';
@@ -6,6 +5,14 @@ import { vdFactory, Component } from './index';
 import { IfDirective, forDirective, onDirective, ValueBind } from './directive';
 import { ARRAYY_OPERATE } from './constant';
 import StoreKeeper from './store';
+import {
+  prepend,
+  insertAfter,
+  remove,
+  attr,
+  removeAttr,
+  append,
+} from './domOperator';
 
 /**
  * 初始化时，dom操作必须同步
@@ -106,7 +113,7 @@ export default class VirtualDom {
    * @param data 
    */
   initProps(data) {
-    // console.log(data, this.getDatas(...data).time.outputData());
+    // console.log(data, this.getDatas(...data).time.showData());
     this.storeKeeper.setProps(() => this.getDatas(...data));
   }
 
@@ -233,7 +240,7 @@ export default class VirtualDom {
     init.storeKeeper = new StoreKeeper(...this.storeKeeper.outputAll());
     init.storeKeeper.setForStore((store, forStore, props) => {
       const _forStore = { ...forStore };
-      _forStore[init.varibleName] = childInitMsg.baseData.outputData(childInitMsg.index);
+      _forStore[init.varibleName] = childInitMsg.baseData.showData(childInitMsg.index);
       return _forStore;
     });
 
@@ -261,7 +268,7 @@ export default class VirtualDom {
     this.attrPt.map(item => {
       item.rmSelf && item.rmSelf();
     });
-    $(this.dom).remove();
+    remove(this.dom);
     this.dom = null;
   }
 
@@ -289,7 +296,7 @@ export default class VirtualDom {
       item.rmSelf && item.rmSelf();
     });
     this.ifDirective && this.ifDirective.rmSelf();
-    $(this.dom).remove();
+    remove(this.dom);
     this.dom = null;
   }
 
@@ -321,7 +328,7 @@ export default class VirtualDom {
    * @param {*} dom 
    */
   insertPre(dom) {
-    $(this.dom).prepend($(dom));
+    prepend(this.dom, dom);
   }
 
   /**

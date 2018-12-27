@@ -32,13 +32,14 @@ const testIf = Component(
         interval(100).subscribe({
           next: item => {
             index.setData(item % 2);
+            index2.setData(item % 4);
           }
         });
-        interval(200).subscribe({
-          next: item => {
-            index2.setData(item % 2);
-          }
-        });
+        // interval(200).subscribe({
+        //   next: item => {
+        //     index2.setData(item % 2);
+        //   }
+        // });
 
       }
     },

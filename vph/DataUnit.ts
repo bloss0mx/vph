@@ -1,5 +1,5 @@
 import { testType } from './utils';
-import _ from 'lodash';
+import { difference, uniq } from 'lodash';
 import {
   ARRAYY_OPERATE,
 } from './constant';
@@ -42,7 +42,7 @@ class DataUnit {
    */
   addPush(pushOrigin) {
     this.pushList.push(pushOrigin);
-    this.pushList = _.uniq(this.pushList);
+    this.pushList = uniq(this.pushList);
   }
 
   /**
@@ -50,14 +50,14 @@ class DataUnit {
    * @param pushOrigin 
    */
   rmPush(pushOrigin) {
-    this.pushList = _.difference(this.pushList, [pushOrigin]);
+    this.pushList = difference(this.pushList, [pushOrigin]);
   }
 
   /**
    * 输出值
    * @param index 
    */
-  outputData(index?: string): any {
+  showData(index?: string): any {
     //深度取值
     if (
       index
@@ -65,7 +65,7 @@ class DataUnit {
       && index.split('.').length > 1
     ) {
       return [this.data, ...index.split('.')].reduce((t, i) => {
-        return t.outputData ? t.outputData(i) : t[i];
+        return t.showData ? t.showData(i) : t[i];
       });
     }
     //数组，无参数 => 取全部
@@ -106,9 +106,9 @@ class DataUnit {
     if (name === 'time') console.log(name);
 
     if (this.type === 'object' && name !== undefined) {
-      this.outputData(name).setData(data);
+      this.showData(name).setData(data);
     } else if (this.type === 'array' && name !== undefined) {
-      this.outputData(name).setData(data);
+      this.showData(name).setData(data);
     } else if (
       (this.type === 'object' || this.type === 'array')
       && name === undefined
@@ -207,7 +207,7 @@ class Arrayy extends DataUnit {
 
   pop() {
     const _data = this.difference(this.data.length, 1)
-    this.data = _.difference(this.data, _data);
+    this.data = difference(this.data, _data);
     this.rmCallback(_data, this.data.length);
     return _data;
   }
@@ -221,7 +221,7 @@ class Arrayy extends DataUnit {
   shift() {
     if (this.data.length === 0) return;
     const _data = this.difference(0, 1);
-    this.data = _.difference(this.data, _data);
+    this.data = difference(this.data, _data);
     this.rmCallback(_data, 0);
     return _data;
   }
@@ -234,7 +234,7 @@ class Arrayy extends DataUnit {
 
   rmFrom(index) {
     const _data = this.difference(index, 1)
-    this.data = _.difference(this.data, _data);
+    this.data = difference(this.data, _data);
     this.rmCallback(_data, index);
     return _data
   }
@@ -278,7 +278,7 @@ class Objecty extends DataUnit {
     const queue = [...params];
     const _data = {};
     queue.forEach(item => {
-      _data[item] = this.outputData(item);
+      _data[item] = this.showData(item);
     });
     return _data;
   }
