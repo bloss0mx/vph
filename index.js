@@ -95,7 +95,7 @@ window.vD1 = vdFactory(
       },
       onClickYo() {
         const { text, array1 } = this.getDatas('text', 'array1');
-        array1.push([Math.floor(Math.random() * 1000), text.outputData()]);
+        array1.push([Math.floor(Math.random() * 1000), text.showData()]);
         text.setData('');
       },
       // start() {

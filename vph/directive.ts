@@ -142,7 +142,7 @@ class forDirective extends Directive {
       return store.showData(this.baseDataName);
     });
     const baseData = this.storeKeeper.findBaseData(this.baseDataName);
-    const childrenStore = baseData.outputData(targetIndex);
+    const childrenStore = baseData.showData(targetIndex);
     const { tmpDom, tmpChildrenPt } = this.pt.makeForChildren({
       varibleName: this.varibleName,
       index: targetIndex,
