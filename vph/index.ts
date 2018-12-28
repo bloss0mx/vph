@@ -33,10 +33,8 @@ export function Component(
     props: { props?: [] }
   ): Function {
     return function (store: StoreKeeper): VirtualDom {
-      // console.log(props.props);
       const _props = props ? store.getMultiValue(...props.props) : {};
       // const _props = props ? store.getValues(...props.props) : {};
-      console.log(_props);
       const _init = {
         ...init,
         storeKeeper: new StoreKeeper(dataFactory({}), {}, _props),

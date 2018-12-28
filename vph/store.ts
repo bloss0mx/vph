@@ -112,7 +112,7 @@ class StoreKeeper {
   getMultiValue(...names: Array<string>): object {
     const answer = {};
     names.map(item => {
-      answer[item.replace(/^for\.|^props\.|^state\./, '')] = this.findDataByType(item);
+      answer[item.replace(/^for@|^props@|^state@/, '')] = this.findDataByType(item);
     });
     return answer;
   }
@@ -138,10 +138,15 @@ class StoreKeeper {
    */
   rmSelf() { }
 
+  /**
+   * 使用带type的name查找
+   * name = store.name | props.name | for.name | name
+   * @param name 
+   */
   findDataByType(name) {
-    let type = name.match(/^for\.|^props\.|^state\./);
-    type = type && type[0].replace(/.$/, '');
-    const _name = name.replace(/^for\.|^props\.|^state\./, '');
+    let type = name.match(/^for@|^props@|^state@/);
+    type = type && type[0].replace(/@/, '');
+    const _name = name.replace(/^for@|^props@|^state@/, '');
     if (type) {
       if (type === 'for') {
         return this.forStore[_name];

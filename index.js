@@ -11,10 +11,8 @@ window.vD1 = vdFactory(
   div({
     children: [
       Time({
-        props: ['state.time']
+        props: ['state@time']
       }),
-      Table(),
-      Component1(),
       // span({
       //   children: ['这一坨不变是二：'],
       //   attr: [],
@@ -31,7 +29,7 @@ window.vD1 = vdFactory(
       }),
       input({
         onDirective: 'input.inputCallBack',
-        valueBind: 'value.state.text',
+        valueBind: 'value.state@text',
         attr: ['id=yo']
       }),
       ' '
@@ -66,12 +64,14 @@ window.vD1 = vdFactory(
                     forDirective: 'y in x'
                   })
                 ],
-                forDirective: 'x in state.array1'
+                forDirective: 'x in state@array1'
               })
             ]
           })
         ]
       }),
+      Table(),
+      Component1(),
       TestIf(),
     ],
     attr: [],
