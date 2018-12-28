@@ -105,7 +105,6 @@ export default class VirtualDom {
    * @param data 
    */
   initProps(data) {
-    // console.log(data, this.getDatas(...data).time.showData());
     this.storeKeeper.setProps(() => this.getDatas(...data));
   }
 

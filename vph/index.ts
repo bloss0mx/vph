@@ -11,21 +11,9 @@ import {
   removeAttr,
   append,
 } from './domOperator';
+import { forDirective, IfDirective, onDirective, ValueBind } from './directive';
+// import * as _Tags from './Tags';
 
-const _tags = {};
-
-TAGS.split(',').map(item => {
-  _tags[item] = function (init) {
-    init.tag = item;
-    return init;
-  }
-});
-
-export const tags = _tags;
-
-export function vdFactory(init) {
-  return new VirtualDom(init);
-}
 
 /**
  * 组件初始化
@@ -45,7 +33,10 @@ export function Component(
     props: { props?: [] }
   ): Function {
     return function (store: StoreKeeper): VirtualDom {
-      const _props = props ? store.getValues(...props.props) : {};
+      // console.log(props.props);
+      const _props = props ? store.getMultiValue(...props.props) : {};
+      // const _props = props ? store.getValues(...props.props) : {};
+      console.log(_props);
       const _init = {
         ...init,
         storeKeeper: new StoreKeeper(dataFactory({}), {}, _props),
@@ -53,6 +44,11 @@ export function Component(
       return vdFactory(_init);
     }
   }
+}
+
+
+export function vdFactory(init) {
+  return new VirtualDom(init);
 }
 
 interface Window {

@@ -138,8 +138,9 @@ class forDirective extends Directive {
   addToList(data, index) {
     const targetIndex = index - 1;
     const _storeKeeper = new StoreKeeper(...this.storeKeeper.outputAll());
-    _storeKeeper.setForStore((store, forStore, props) => {
-      return store.showData(this.baseDataName);
+    _storeKeeper.setForStore((store, forStore, props, pt) => {
+      // return store.showData(this.baseDataName);
+      return pt.findDataByType(this.baseDataName);
     });
     const baseData = this.storeKeeper.findDataByType(this.baseDataName);
     const childrenStore = baseData.showData(targetIndex);

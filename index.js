@@ -1,5 +1,5 @@
-import { vdFactory, tags, init } from './vph';
-const { div, span, input, button, table, th, td, tr, tbody } = tags;
+import { vdFactory, init } from './vph';
+import { div, span, input, button, table, th, td, tr, tbody } from './vph/Tags';
 import { interval } from 'rxjs';
 import Time from './src/time';
 import TestIf from './src/testIf';
@@ -10,7 +10,9 @@ import Table from './src/table';
 window.vD1 = vdFactory(
   div({
     children: [
-      Time(),
+      Time({
+        props: ['state.time']
+      }),
       Table(),
       Component1(),
       // span({
@@ -29,7 +31,7 @@ window.vD1 = vdFactory(
       }),
       input({
         onDirective: 'input.inputCallBack',
-        valueBind: 'value.text',
+        valueBind: 'value.state.text',
         attr: ['id=yo']
       }),
       ' '
@@ -64,7 +66,7 @@ window.vD1 = vdFactory(
                     forDirective: 'y in x'
                   })
                 ],
-                forDirective: 'x in array1'
+                forDirective: 'x in state.array1'
               })
             ]
           })
@@ -79,7 +81,7 @@ window.vD1 = vdFactory(
       //   ['hey', '!', '~'],
       //   ['ha', '!!!', 'yo~~~'],
       // ],
-      // time: 0,
+      time: 0,
       // first: 0,
       // second: 0,
       // third: 3,
@@ -90,7 +92,7 @@ window.vD1 = vdFactory(
     },
     actions: {
       inputCallBack(e) {
-        const { text } = this.getDatas('text');
+        const { text, time } = this.getDatas('time', 'text');
         text.setData(e.target.value);
       },
       onClickYo() {
@@ -111,25 +113,25 @@ window.vD1 = vdFactory(
       //   //   this.storeKeeper.outputStore().setData('hey', 'third');
       //   // }, 2000);
       // },
-      // interval() {
-      //   const { second, first, third, time } = this.getDatas('second', 'first', 'third', 'time');
-      //   // this.storeKeeper.outputStore().setData('hey', 'hey');
-      //   interval(100).subscribe({
-      //     next: item => {
-      //       first.setData(item);
-      //       third.setData(item + 3);
-      //       time.setData((item - item % 10) / 10);
-      //     }
-      //   });
-      //   interval(100).subscribe({
-      //     next: item => {
-      //       second.setData(item * 2);
-      //     }
-      //   });
-      // }
+      interval() {
+        const { second, first, third, time } = this.getDatas('second', 'first', 'third', 'time');
+        // this.storeKeeper.outputStore().setData('hey', 'hey');
+        interval(100).subscribe({
+          next: item => {
+            // first.setData(item);
+            // third.setData(item + 3);
+            time.setData((item - item % 10) / 10);
+          }
+        });
+        // interval(100).subscribe({
+        //   next: item => {
+        //     second.setData(item * 2);
+        //   }
+        // });
+      }
     },
     whenInit() {
-      // this.interval();
+      this.interval();
       // this.start();
     }
   })

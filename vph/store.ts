@@ -20,8 +20,7 @@ class StoreKeeper {
    * @param callback 回调
    */
   register(name: string, pt, callback?: Function) {
-    console.log(name);
-    let found = this.findBaseData(name);
+    let found = this.findDataByType(name);
     if (found !== undefined) {
       found.addPush(pt);
       callback && callback.apply(pt);
@@ -34,7 +33,7 @@ class StoreKeeper {
    * @param callback 
    */
   unregister(name: string, pt, callback?: Function) {
-    let found = this.findBaseData(name);
+    let found = this.findDataByType(name);
     if (found !== undefined) {
       found.rmPush && found.rmPush(pt);
       callback && callback();
@@ -53,17 +52,17 @@ class StoreKeeper {
    * 设置props
    * @param callback 
    */
-  setProps(callback) {
+  setProps(callback: (store?: DataUnit, forStore?: Object, props?: Object, pt?: StoreKeeper) => {}) {
     console.error('setProps');
-    this.props = callback(this.store, this.forStore, this.props);
+    this.props = callback(this.store, this.forStore, this.props, this);
   }
   // 只在for指令工作时使用
   /**
    * 设置forStore
    * @param callback 
    */
-  setForStore(callback) {
-    this.forStore = callback(this.store, this.forStore, this.props);
+  setForStore(callback: (store?: DataUnit, forStore?: Object, props?: Object, pt?: StoreKeeper) => {}) {
+    this.forStore = callback(this.store, this.forStore, this.props, this);
   }
 
   /**
@@ -110,6 +109,14 @@ class StoreKeeper {
     }
   }
 
+  getMultiValue(...names: Array<string>): object {
+    const answer = {};
+    names.map(item => {
+      answer[item.replace(/^for\.|^props\.|^state\./, '')] = this.findDataByType(item);
+    });
+    return answer;
+  }
+
   /**
    * 使用name查找store，props，forStore
    * @param name 
@@ -135,7 +142,6 @@ class StoreKeeper {
     let type = name.match(/^for\.|^props\.|^state\./);
     type = type && type[0].replace(/.$/, '');
     const _name = name.replace(/^for\.|^props\.|^state\./, '');
-    console.log(type, _name);
     if (type) {
       if (type === 'for') {
         return this.forStore[_name];
@@ -147,7 +153,7 @@ class StoreKeeper {
         throw (`found an error from findDataByType, param is ${name}`);
       }
     } else {
-      return this.findBaseData(name);
+      return this.findBaseData(_name);
     }
   }
 }

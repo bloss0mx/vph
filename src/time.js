@@ -1,5 +1,5 @@
-import { Component, tags } from '../vph';
-const { div } = tags;
+import { Component } from '../vph';
+import { div, span, input, button, table, th, td, tr, tbody } from '../vph/Tags';
 import { interval } from 'rxjs';
 import moment from 'moment';
 
