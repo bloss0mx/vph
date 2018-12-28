@@ -2,17 +2,17 @@ import { vdFactory, tags, init } from './vph';
 const { div, span, input, button, table, th, td, tr, tbody } = tags;
 import { interval } from 'rxjs';
 import Time from './src/time';
-// import TestIf from './src/testIf';
-// import Component1 from './src/component1';
-// import Table from './src/table';
+import TestIf from './src/testIf';
+import Component1 from './src/component1';
+import Table from './src/table';
 
 
 window.vD1 = vdFactory(
   div({
     children: [
       Time(),
-      // Table(),
-      // Component1(),
+      Table(),
+      Component1(),
       // span({
       //   children: ['这一坨不变是二：'],
       //   attr: [],
@@ -69,8 +69,8 @@ window.vD1 = vdFactory(
             ]
           })
         ]
-      })
-      // TestIf(),
+      }),
+      TestIf(),
     ],
     attr: [],
     state: {

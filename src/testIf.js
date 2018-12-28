@@ -29,7 +29,7 @@ const testIf = Component(
       start() {
         const { index, index2 } = this.getDatas('index', 'index2');
 
-        interval(100).subscribe({
+        interval(1000).subscribe({
           next: item => {
             index.setData(item % 2);
             index2.setData(item % 4);

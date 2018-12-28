@@ -18,35 +18,32 @@ import {
  * 初始化时，dom操作必须同步
  */
 export default class VirtualDom {
-  private dom: DocumentFragment | HTMLElement;
-  father: VirtualDom;
   index: number;
+  father: VirtualDom;
   actions: Array<Function>;
   childrenPt: Array<VirtualDom | BaseObj>;
-  private children: Array<BaseObj | Object | string>;
+
   private init;
   private tag: string;
-  private attr: Array<string>;
-  private attrPt: Array<AttrObj>;
+  // private props: DataUnit;
   private varibleName: string;
   private baseDataName: string;
-  private storeKeeper: StoreKeeper;
-  // private props: DataUnit;
-  private ifDirective: IfDirective;
-  private forDirective: forDirective;
-  private onDirective: onDirective;
+  // private attr: Array<string>;
+  private attrPt: Array<AttrObj>;
   private valueBind: ValueBind;
+  private storeKeeper: StoreKeeper;
+  private ifDirective: IfDirective;
+  private onDirective: onDirective;
+  private forDirective: forDirective;
+  private dom: DocumentFragment | HTMLElement;
+  private children: Array<BaseObj | Object | string>;
   constructor(init) {
     // 复制
     this.init = init;
-    this.tag = init.tag;
-    this.attr = init.attr;
     this.attrPt = [];
+    this.tag = init.tag;
     this.children = init.children;
     this.childrenPt = [];//
-    this.ifDirective = init.ifDirective || null;
-    this.forDirective = init.forDirective || null;
-    this.onDirective = init.onDirective || null;
     this.varibleName = init.varibleName !== undefined ? init.varibleName : undefined;
     this.baseDataName = init.baseDataName !== undefined ? init.baseDataName : undefined;
     this.setFather(init.father, init.index);
@@ -55,7 +52,6 @@ export default class VirtualDom {
     this.storeKeeper = init.storeKeeper instanceof StoreKeeper
       ? init.storeKeeper
       : new StoreKeeper(dataFactory({}));//StoreKeeper
-    // this.props = init.props === undefined ? {} : init.props;//父节点传入store
     this.actions = init.actions;
 
     init.forDirective ? this.initForDom() : this.initDom();
@@ -65,17 +61,13 @@ export default class VirtualDom {
 
     // render
     !init.forDirective && this.makeChildren();
-    if (init.whenInit !== undefined && typeof init.whenInit === 'function') {
-      setTimeout(() => {
-        init.whenInit.apply(this);
-      }, 0);
-    }
+    this.fireWhenInit(init.whenInit);
     this.attrPt = this.initAttr();
 
     // 初始化指令
     this.onDirective = this.initOn(init.onDirective);
     this.ifDirective = this.initIf(init.ifDirective);
-    init.forDirective ? this.forDirective = this.initFor(init.forDirective) : null;
+    this.forDirective = this.initFor(init.forDirective);
     this.valueBind = this.initValueBind(init.valueBind);
   }
 
@@ -155,6 +147,18 @@ export default class VirtualDom {
   }
 
   /**
+   * 触发whenInit钩子
+   * @param whenInit 
+   */
+  fireWhenInit(whenInit) {
+    if (typeof whenInit === 'function') {
+      // setTimeout(() => {
+      whenInit.apply(this);
+      // }, 0);
+    }
+  }
+
+  /**
    * 绑定action
    */
   bindActions() {
@@ -170,7 +174,7 @@ export default class VirtualDom {
    * 初始化属性
    */
   initAttr() {
-    const attrArray = this.attr;
+    const attrArray = this.init.attr;
     if (!attrArray) {
       return [];
     }

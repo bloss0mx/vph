@@ -106,7 +106,7 @@ class forDirective extends Directive {
   }
 
   init() {
-    const baseData = this.storeKeeper.findBaseData(this.baseDataName);
+    const baseData = this.storeKeeper.findDataByType(this.baseDataName);
     const childrenStore = baseData.map((item, index) => {
       return item;
     });
@@ -141,7 +141,7 @@ class forDirective extends Directive {
     _storeKeeper.setForStore((store, forStore, props) => {
       return store.showData(this.baseDataName);
     });
-    const baseData = this.storeKeeper.findBaseData(this.baseDataName);
+    const baseData = this.storeKeeper.findDataByType(this.baseDataName);
     const childrenStore = baseData.showData(targetIndex);
     const { tmpDom, tmpChildrenPt } = this.pt.makeForChildren({
       varibleName: this.varibleName,
