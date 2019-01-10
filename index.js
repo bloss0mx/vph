@@ -1,11 +1,18 @@
 import { vdFactory, init } from './vph';
-import { div, span, input, button, table, th, td, tr, tbody } from './vph/Tags';
+import { div, span, input, button, table, th, td, tr, tbody, s } from './vph/Tags';
 import { interval } from 'rxjs';
 import Time from './src/time';
 import TestIf from './src/testIf';
 import Component1 from './src/component1';
 import Table from './src/table';
+import tmpAnalyse from './testAlgorithm';
 
+window.div = div;
+window.table = table;
+window.th = th;
+window.td = td;
+window.tr = tr;
+window.tbody = tbody;
 
 window.vD1 = vdFactory(
   div({
@@ -39,37 +46,25 @@ window.vD1 = vdFactory(
         children: ['添加到列表'],
         onDirective: 'click.onClickYo',
       }),
-      table({
-        children: [
-          tbody({
-            children: [
-              tr({
-                children: [
-                  th({
-                    children: [
-                      'ID'
-                    ]
-                  }),
-                  th({
-                    children: [
-                      '事件'
-                    ]
-                  }),
-                ]
-              }),
-              tr({
-                children: [
-                  td({
-                    children: ['{{y}}'],
-                    forDirective: 'y in x'
-                  })
-                ],
-                forDirective: 'x in state@array1'
-              })
-            ]
-          })
-        ]
-      }),
+      eval(tmpAnalyse(`
+      <table>
+        <tbody>
+          <tr>
+            <th>
+              ID
+            </th>
+            <th>
+              事&nbsp;件
+            </th>
+          </tr>
+          <tr :for='x in state@array1'>
+            <td :for='y in x'>
+            {{y}}
+          </td>
+          </tr>
+        </tbody>
+      </table>
+      `)),
       Table(),
       Component1(),
       TestIf(),

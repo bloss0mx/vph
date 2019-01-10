@@ -1,12 +1,16 @@
 import { DataUnit, Arrayy, Objecty } from './DataUnit';
 
+interface forStore { }
+
+interface props { }
+
 /**
  * 数据托管器
  */
 class StoreKeeper {
   private store: DataUnit | Objecty | Arrayy;
-  private forStore: object;
-  private props: object;
+  private forStore: forStore;
+  private props: props;
   constructor(_store: DataUnit | Objecty | Arrayy, _forStore?: object, _props?: object) {
     this.store = _store;
     this.forStore = _forStore || {};
@@ -91,7 +95,7 @@ class StoreKeeper {
   /**
    * 输出全部
    */
-  outputAll(): [DataUnit, object, object] {
+  outputAll(): [DataUnit, forStore, props] {
     return [
       this.store,
       this.forStore,
@@ -140,7 +144,7 @@ class StoreKeeper {
 
   /**
    * 使用带type的name查找
-   * name = store.name | props.name | for.name | name
+   * name = store@name | props@name | for@name | name
    * @param name 
    */
   findDataByType(name) {

@@ -28,6 +28,7 @@ Implemented the basic functions of vdom.
 7. ValueBind：`valueBind: 'value.text'`当`text`值发生变化时会影响到绑定的`value`值
 8. whenInit()：当初始化时执行钩子（目前只实现了这个钩子）
 9. props：向组件传值
+
 ---
 1. children：subcomponents and text contents
 2. state：state datas will be transform to DataUnit object
@@ -53,7 +54,7 @@ const time = Component(
   div({
     children: [
       '现在时间：',
-      '{{time}}'
+      '{{state@time}}'
     ],
     state: {
       time: moment().format('YYYY-MM-DD HH:mm:ss'),
