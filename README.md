@@ -88,30 +88,32 @@ When the value in ths DataUnit changes, the DataUnit will traverses the vdoms an
 
 ## TODO
 ### 增强--Enhance
-1. AttrObj：增加一条属性多个值绑定的支持
-2. AttrObj：增加class，id，style等的具体实现
-3. DataUnit：增加更多api
-4. forDirective：支持index
-5. onDirective：支持直接执行函数
-6. ifDirective：支持if elseif else和switch
+- [ ] AttrObj：增加一条属性多个值绑定的支持
+- [ ] AttrObj：增加class，id，style等的具体实现
+- [ ] DataUnit：增加更多api
+- [ ] forDirective：支持index
+- [ ] onDirective：支持直接执行函数
+- [ ] ifDirective：支持if elseif else和switch
 
 ---
-1. AttrObj: Add support for multiple value bindings for one attribute
-2. AttrObj: increase the concrete implementation of class, id, style, etc.
-3. DataUnit: Add more apis
-4. forDirective: support index
-5. onDirective: support direct execution function
-6. ifDirective: support if elseif else and switch
+- [ ] AttrObj: Add support for multiple value bindings for one attribute
+- [ ] AttrObj: increase the concrete implementation of class, id, style, etc.
+- [ ] DataUnit: Add more apis
+- [ ] forDirective: support index
+- [ ] onDirective: support direct execution function
+- [ ] ifDirective: support if elseif else and switch
 
 
 ### 补充--Supplement
-1. state：增加diff方法，使用函数式写法来操作数据
-2. state：增加状态管理器
-3. 增加路由功能
-4. 增加webpack-loader，提供更友好的书写方式
+- [x] 增加模板解析
+- [ ] state：增加diff方法，使用函数式写法来操作数据
+- [ ] state：增加状态管理器
+- [ ] 增加路由功能
+- [ ] 增加webpack-loader，提供更友好的书写方式
 
 ---
-1. state: increase the diff method, use functional programming to manipulate states
-2. state: increase the state manager
-3. Add router function
-4. Add webpack-loader to provide a more friendly way to write
+- [x] Add template anaylse function
+- [ ] state: increase the diff method, use functional programming to manipulate states
+- [ ] state: increase the state manager
+- [ ] Add router function
+- [ ] Add webpack-loader to provide a more friendly way to write
