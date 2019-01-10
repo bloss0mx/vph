@@ -49,12 +49,11 @@ export function vdFactory(init) {
   return new VirtualDom(init);
 }
 
-interface Window {
-  vdom?: any
+declare global {
+  interface Window {
+    vdom?: any
+  }
 }
-
-declare var window: Window;
-
 /**
  * 初始化
  * @param {*} selector 选择器
