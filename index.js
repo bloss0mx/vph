@@ -13,6 +13,9 @@ window.th = th;
 window.td = td;
 window.tr = tr;
 window.tbody = tbody;
+window.button = button;
+window.input = input;
+window.span = span;
 
 window.vD1 = vdFactory(
   div({
@@ -31,39 +34,51 @@ window.vD1 = vdFactory(
       // }),
       // '这一坨是一：',
       // '{{first}}',
-      span({
-        children: ['输入的内容：'],
-      }),
-      input({
-        onDirective: 'input.inputCallBack',
-        valueBind: 'value.state@text',
-        attr: ['id=yo']
-      }),
+      // span({
+      //   children: ['输入的内容：'],
+      // }),
+      // input({
+      //   onDirective: 'input.inputCallBack',
+      //   valueBind: 'value.state@text',
+      //   attr: ['id=yo']
+      // }),
       ' '
       ,
-      button({
-        name: 'yo~',
-        children: ['添加到列表'],
-        onDirective: 'click.onClickYo',
-      }),
+      // button({
+      //   children: ['添加到列表'],
+      //   onDirective: 'click.onClickYo',
+      // }),
       eval(tmpAnalyse(`
-      <table>
-        <tbody>
-          <tr>
-            <th>
-              ID
-            </th>
-            <th>
-              事&nbsp;件
-            </th>
-          </tr>
-          <tr :for='x in state@array1'>
-            <td :for='y in x'>
-            {{y}}
-          </td>
-          </tr>
-        </tbody>
-      </table>
+      <div>
+        <span>
+          输入的内容：
+        </span>
+        <input 
+          :on="input.inputCallBack"
+          :bind="value.state@text"
+          id='yo'
+        >
+        <button :on='click.onClickYo'>
+          添加到列表
+        </button>
+        <table>
+          <tbody>
+            <tr>
+              <th>
+                ID
+              </th>
+              <th>
+                事件
+              </th>
+            </tr>
+            <tr :for='x in state@array1'>
+              <td :for='y in x'>
+              {{y}}
+            </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
       `)),
       Table(),
       Component1(),

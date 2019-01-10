@@ -44,7 +44,7 @@ function iterator(container) {
   code += ifDirective ? `ifDirective:${ifDirective},` : '';
   code += forDirective ? `forDirective:${forDirective},` : '';
   code += onDirective ? `onDirective:${onDirective},` : '';
-  code += bindDirective ? `bindDirective:${bindDirective},` : '';
+  code += bindDirective ? `valueBind:${bindDirective},` : '';
   if (children && children.length > 0) {
     const childrenCode = children.map(item => {
       if (typeof item === 'string') {

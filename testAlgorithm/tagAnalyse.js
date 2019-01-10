@@ -173,6 +173,15 @@ const tmp = `
 `;
 
 const checkBaseTag = name => tags.find(i => i === name);
+const SINGLE_TAGS = 'br,hr,img,input,param,meta,link'.split(',');
+
+const testTag = origin => !!origin.match(/^<[^>]+>$/);
+const testSingleTag = origin => {
+	const tag = origin.match(/^<[^\s>]+/)[0].replace(/</, '');
+	return !!SINGLE_TAGS.find(i => i === tag);
+}
+const testSingle = origin => testTag(origin) && testSingleTag(origin);
+const singleComponent = origin => !!origin.match(/^<[A-Z][^>]+\/>$/);
 
 /**
  * 分割模板
@@ -255,7 +264,9 @@ function tagMaker(splitedTmp) {
 		const headTag = getTagFromHead(currentTag);
 		const tailTag = getTagFromTail(currentTag);
 
-		if (false) {//单标签
+		if (testSingle(currentTag) || singleComponent(currentTag)) {//单标签
+			const newContainer = new Container(currentTag);
+			tagStack[tagStack.length - 1].pushChildren(newContainer);
 		} else if (headTag) {//头
 			const newContainer = new Container(currentTag);
 			tagStack[tagStack.length - 1].pushChildren(newContainer);
