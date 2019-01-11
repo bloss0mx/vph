@@ -16,25 +16,25 @@ class DataUnit {
     this.pushList = [];
     this.type = testType(data);
 
-    this.dataInit(data);
+    // this.dataInit(data);
   }
 
-  /**
-   * 异步
-   * @param data 
-   */
-  protected dataInit(data) {
-    // 数组和对象不进行数值初始化
-    if (this.type === 'array' || this.type === 'object') {
-    } else {
-      setTimeout(() => {
-        this.pushList && this.pushList.map((item, index) => {
-          this.data = data;
-          item.run && item.run(data, this.type, index, ARRAYY_OPERATE['add']);
-        });
-      }, 0);
-    }
-  }
+  // /**
+  //  * 异步
+  //  * @param data 
+  //  */
+  // protected dataInit(data) {
+  //   // 数组和对象不进行数值初始化
+  //   if (this.type === 'array' || this.type === 'object') {
+  //   } else {
+  //     setTimeout(() => {
+  //       this.pushList && this.pushList.map((item, index) => {
+  //         this.data = data;
+  //         item.run && item.run(data, this.type, index, ARRAYY_OPERATE['add']);
+  //       });
+  //     }, 0);
+  //   }
+  // }
 
   /**
    * 增加依赖
@@ -43,6 +43,9 @@ class DataUnit {
   addPush(pushOrigin) {
     this.pushList.push(pushOrigin);
     this.pushList = uniq(this.pushList);
+    setTimeout(() => {
+      pushOrigin.run && pushOrigin.run(this.data);
+    }, 0);
   }
 
   /**

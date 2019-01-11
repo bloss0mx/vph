@@ -72,7 +72,9 @@ class TextDom extends BaseObj {
   run(data, type, index) {
     if (this.name.match(TEMPLATE_REGEXP)) {
     }
-    this.dom.textContent = data;
+    if (this.dom && this.dom.textContent) {
+      this.dom.textContent = data;
+    }
   }
 
   giveDom() {

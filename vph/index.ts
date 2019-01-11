@@ -12,7 +12,10 @@ import {
   append,
 } from './domOperator';
 import { forDirective, IfDirective, onDirective, ValueBind } from './directive';
+import tmpAnalyse from './templateCompiler/index';
 // import * as _Tags from './Tags';
+
+import Time from '../src/time';
 
 
 /**
@@ -24,22 +27,76 @@ export function Component(
     tag: string,
     children?: [],
     attr?: [],
-    forDirective?: string,
-    onDirective?: string,
-    IfDirective?: string,
   }
 ): Function {
   return function (
-    props: { props?: [] }
+    props: {
+      attr?: string,
+      props?: string,
+      children?: Array<any>;
+      valueBind?: string,
+      forDirective?: string,
+      onDirective?: string,
+      ifDirective?: string
+    }
   ): Function {
     return function (store: StoreKeeper): VirtualDom {
-      const _props = props ? store.getMultiValue(...props.props) : {};
-      // const _props = props ? store.getValues(...props.props) : {};
+      const _props = props.props ? store.getMultiValue(...props.props.split(' ')) : {};
+      delete props.props;
+      delete props.children;
       const _init = {
         ...init,
+        ...props,
         storeKeeper: new StoreKeeper(dataFactory({}), {}, _props),
       };
-      return vdFactory(_init);
+      console.log(_init, { ..._init, ...props });
+      return new VirtualDom(_init);
+    }
+  }
+}
+
+/**
+ * 组件初始化
+ * @param init 
+ */
+export function _Component(
+  init: {
+    render: string,
+    attr?: string,
+    state?: object,
+    actions?: object,
+    components?: object,
+    whenInit?: Function,
+  }
+): Function {
+  return function (
+    props: {
+      attr?: string,
+      props?: string,
+      children?: Array<any>;
+      valueBind?: string,
+      forDirective?: string,
+      onDirective?: string,
+      ifDirective?: string,
+    },
+  ): Function {
+    return function (store: StoreKeeper): VirtualDom {
+      const analysed = tmpAnalyse(init.render, init.components);
+      const _props = props.props ? store.getMultiValue(...props.props.split(' ')) : {};
+      delete props.props;
+      delete props.children;
+      // delete props.valueBind;
+      // delete props.forDirective;
+      // delete props.onDirective;
+      // delete props.ifDirective;
+      const _init = {
+        ...init,
+        ...analysed,
+        ...props,
+        storeKeeper: new StoreKeeper(dataFactory({}), {}, _props),
+      };
+      console.log(props, analysed);
+      return new VirtualDom(_init);
     }
   }
 }
@@ -49,11 +106,16 @@ export function vdFactory(init) {
   return new VirtualDom(init);
 }
 
+function basicTagConstruct(init) { return init }
+
 declare global {
   interface Window {
-    vdom?: any
+    vdom?: any,
+    basicTagConstruct: Function,
   }
 }
+window.basicTagConstruct = basicTagConstruct;
+
 /**
  * 初始化
  * @param {*} selector 选择器
@@ -69,6 +131,45 @@ export function init(selector, vdom, productEnv = false) {
     }
   }
   setTimeout(() => {
-    append(selector, vdom.giveDom());
+    document.querySelector(selector).appendChild(vdom.giveDom());
   }, 0);
+}
+
+// export default function Vph(init: {
+//   render: string,
+//   attr: string,
+//   state: object,
+//   actions: object,
+//   components: object,
+//   whenInit: Function,
+// }) {
+//   const analysed = tmpAnalyse(init.render).replace(/^basicTagConstruct\(|\)$/g, '');
+//   const construction = new Function('return ' + analysed);
+//   const _init = {
+//     ...init,
+//     ...construction.call(init.components),
+//   }
+//   // delete _init.render;
+//   console.log(_init);
+//   return new VirtualDom(_init);
+// }
+/**
+ * Vph
+ * @param init 
+ */
+export default function Vph(init: {
+  render: string,
+  attr?: string,
+  state?: object,
+  actions?: object,
+  components?: object,
+  whenInit?: Function,
+}) {
+  const analysed = tmpAnalyse(init.render, init.components);
+  const _init = {
+    ...init,
+    ...analysed,
+  }
+  // delete _init.render;
+  return new VirtualDom(_init);
 }

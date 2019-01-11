@@ -16,13 +16,6 @@ const selectorFilter = value => {
   }
 }
 
-
-
-
-
-
-
-
 const prepend = (bro, target) => {
   const fatherDom = getFatherDom(selectorFilter(bro));
   fatherDom.insertBefore(target, fatherDom.childNodes[0]);

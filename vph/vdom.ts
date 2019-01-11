@@ -21,6 +21,7 @@ export default class VirtualDom {
   index: number;
   father: VirtualDom;
   actions: Array<Function>;
+  components: Array<VirtualDom>;
   childrenPt: Array<VirtualDom | BaseObj>;
 
   private init;
@@ -53,6 +54,7 @@ export default class VirtualDom {
       ? init.storeKeeper
       : new StoreKeeper(dataFactory({}));//StoreKeeper
     this.actions = init.actions;
+    this.components = init.components;
 
     init.forDirective ? this.initForDom() : this.initDom();
     this.bindActions();
@@ -163,7 +165,7 @@ export default class VirtualDom {
   bindActions() {
     const actions = this.actions;
     if (actions !== undefined) {
-      for (var i in actions) {
+      for (let i in actions) {
         this[i] = actions[i].bind(this);
       }
     }
