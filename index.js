@@ -140,47 +140,36 @@ import tmpAnalyse from './vph/templateCompiler';
 //     }
 //   })
 // );
-console.log(Time);
 
 window.vD1 = Vph({
-  render: `
-<div>
-  <span>
-    输入的内容：
-  </span>
-  <input 
-    :on="input.inputCallBack"
-    :bind="value.state@text"
-    id='yo'
-  >
-  <button :on='click.onClickYo'>
-    添加到列表
-  </button>
-  <table>
-    <tbody>
-      <tr>
-        <th>
-          ID
-        </th>
-        <th>
-          事件
-        </th>
-      </tr>
-      <tr :for='x in state@array1'>
-        <td :for='y in x'>
-        {{y}}
-      </td>
-      </tr>
-    </tbody>
-  </table>
-  <Time 
-    :props='state@time'
-    :if='props@time'
-  />
-  <Table/>
-  <Component1/>
-  <TestIf/>
-</div>
+  render: /*html*/`
+    <div>
+      <span>输入的内容：</span>
+      <input 
+        :on="input.inputCallBack"
+        :bind="value.state@text"
+        id='yo'
+      >
+      <button :on='click.onClickYo'>添加到列表</button>
+      <table>
+        <tbody>
+          <tr>
+            <th>ID</th>
+            <th>事件</th>
+          </tr>
+          <tr :for='x in state@array1'>
+            <td :for='y in x'>{{y}}</td>
+          </tr>
+        </tbody>
+      </table>
+      <Time 
+        :props='state@time'
+        :if='props@time'
+      />
+      <Table/>
+      <Component1/>
+      <TestIf/>
+    </div>
   `,
   attr: [],
   state: {
@@ -208,7 +197,7 @@ window.vD1 = Vph({
       const { second, first, third, time } = this.getDatas('second', 'first', 'third', 'time');
       interval(1000).subscribe({
         next: item => {
-          time.setData((item % 2));
+          time.setData(!!(item % 100));
         }
       });
     }

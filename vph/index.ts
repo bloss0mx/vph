@@ -49,7 +49,7 @@ export function Component(
         ...props,
         storeKeeper: new StoreKeeper(dataFactory({}), {}, _props),
       };
-      console.log(_init, { ..._init, ...props });
+      // console.log(_init, { ..._init, ...props });
       return new VirtualDom(_init);
     }
   }
@@ -95,7 +95,6 @@ export function _Component(
         ...props,
         storeKeeper: new StoreKeeper(dataFactory({}), {}, _props),
       };
-      console.log(props, analysed);
       return new VirtualDom(_init);
     }
   }

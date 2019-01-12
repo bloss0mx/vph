@@ -1,8 +1,9 @@
-import { Component,_Component } from '../vph';
+import { Component, _Component } from '../vph';
 import { div, span, input, button, table, th, td, tr, tbody } from '../vph/Tags';
 import Vph from '../vph';
 import { interval } from 'rxjs';
 import moment from 'moment';
+import template from './time.html';
 
 // const time = Component(
 //   div({
@@ -31,11 +32,7 @@ import moment from 'moment';
 // );
 
 const time = _Component({
-  render: `
-  <div>
-    现在时间：{{time}}
-  </div>
-  `,
+  render: template,
   state: {
     time: moment().format('YYYY-MM-DD HH:mm:ss'),
   },
