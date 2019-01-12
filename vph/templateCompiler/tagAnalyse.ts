@@ -16,23 +16,27 @@ import {
   singleComponent,
 } from "./tools";
 import attrM from './attrAnalyse';
+import tagSlicer from './tagSlicer';
 // const { attrM } = require('./attrAnalyse');
 
 const matchTagsNValue = (origin) => origin.match(/<[\/!-]{0,1}[^<]*[^-]>|{{[^\s]+}}/g);
 const splitTagsNValue = (origin) => origin.split(/<[\/!-]{0,1}[^<]*[^-]>|{{[^\s]+}}/g).map(item => item.replace(/\n|\t/g, ''));
+const rmComment = origin => origin.replace(/<!--[\w\W\r\n]*?-->/gmi, '');
 
 /**
  * 分割模板
  * @param tmp 模板
  */
 function splitTagNChildren(tmp) {
-  const tags = matchTagsNValue(tmp);
-  const text = splitTagsNValue(tmp);
+  const _tmp = rmComment(tmp);
+  const tags = matchTagsNValue(_tmp);
+  const text = splitTagsNValue(_tmp);
   const fragments = [];
   for (var i = 0; i < text.length - 1; i++) {
     !text[i].match(/^\s{0,}$/) && fragments.push(text[i]);
     fragments.push(tags[i]);
   }
+  console.log(fragments);
   return fragments.map(item => item.replace(/^ *| *$/g, ''));
 }
 
@@ -92,6 +96,9 @@ class Container {
   }
 }
 
+const matchHead = origin => origin.match(/^<[\s\S]+>$/);
+const matchTail = origin => origin.match(/^<[\s\S]+>$/);
+
 function tagMaker(splitedTmp) {
   if (splitedTmp.length === 0) {
     return;
@@ -127,4 +134,4 @@ function tagMaker(splitedTmp) {
 }
 
 // exports.tagAnalyse = origin => tagMaker(splitTagNChildren(origin));
-export default origin => tagMaker(splitTagNChildren(origin));
+export default origin => tagMaker(tagSlicer(rmComment(origin)));

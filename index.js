@@ -7,7 +7,7 @@ import TestIf from './src/testIf';
 import Component1 from './src/component1';
 import Table from './src/table';
 import tmpAnalyse from './vph/templateCompiler';
-
+import index_tmp from './index_tmp.html';
 
 
 // window.vD1 = vdFactory(

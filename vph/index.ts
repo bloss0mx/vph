@@ -71,7 +71,7 @@ export function _Component(
 ): Function {
   return function (
     props: {
-      attr?: string,
+      attr?: Array<string>,
       props?: string,
       children?: Array<any>;
       valueBind?: string,
@@ -83,6 +83,7 @@ export function _Component(
     return function (store: StoreKeeper): VirtualDom {
       const analysed = tmpAnalyse(init.render, init.components);
       const _props = props.props ? store.getMultiValue(...props.props.split(' ')) : {};
+      delete props.attr;
       delete props.props;
       delete props.children;
       // delete props.valueBind;

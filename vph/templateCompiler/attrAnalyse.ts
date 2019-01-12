@@ -1,4 +1,4 @@
-const getAttrs = origin => origin.replace(/<[^\s]+|>/g, '').replace(/^ | $/g, '');
+const getAttrs = origin => origin.replace(/^<[^\s]+|>$/g, '').replace(/^ | $/g, '');
 const SYMBOL = /,|'|"|`| /g;
 const matchSymbol = origin => origin.match(SYMBOL);
 const splitSymbol = origin => origin.split(SYMBOL);
@@ -30,7 +30,7 @@ function attrMaker(splitSymbol) {
   do {
     const currentSymbol = splitSymbol[index]
     if (currentSymbol === ' ' && symbolStack.length === 0) {
-    } else if (currentSymbol.match(/,|'|"|`/g)) {//是符号
+    } else if (currentSymbol.match(/^['"`]$/g)) {//是符号
       if (currentSymbol !== symbolStack[symbolStack.length - 1]) {//新嵌套
         symbolStack.push(currentSymbol);
         currentContainer += currentSymbol;
@@ -50,6 +50,9 @@ function attrMaker(splitSymbol) {
     }
     index++;
   } while (splitSymbol.length > index);
+  if (symbolStack.length > 0) {
+    console.error(`symbolStack length is ${symbolStack.length}`, splitSymbol);
+  }
   return attrs;
 }
 
