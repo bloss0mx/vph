@@ -117,10 +117,21 @@ class AttrObj extends BaseObj {
     this.storeKeeper = init.storeKeeper;
     this.template = attrData[1] ? attrData[1] : undefined;
     this.value = attrData[1] ? attrData[1] : undefined;
-    this.findOrigin(this.value, this.dom);
+    // this.findOrigin(this.value);
+    this.defaultAttr(this.value);
   }
 
-  findOrigin(tmp, node) {
+  defaultAttr(tmp) {
+    const valueName = tmp.match(TEMPLATE_REGEXP);
+    if (!valueName) {
+      const value = tmp.replace(/['\\"]/g, '');
+      this.dom.setAttribute && attr(this.dom, this.name, value);
+    } else {
+      this.findOrigin(tmp);
+    }
+  }
+
+  findOrigin(tmp) {
     const valueName = tmp.match(TEMPLATE_REGEXP);
     if (valueName) {
       const value = valueName[0] && valueName[0].replace(/\{|\}/g, '');
