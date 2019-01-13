@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import { DataUnit, Arrayy, Objecty, dataFactory } from './DataUnit';
 import { TextDom, PlainText, AttrObj, BaseObj } from './domObj';
-import { vdFactory, Component } from './index';
+import { vdFactory } from './index';
 import { IfDirective, forDirective, onDirective, ValueBind } from './directive';
 import { ARRAYY_OPERATE } from './constant';
 import StoreKeeper from './store';

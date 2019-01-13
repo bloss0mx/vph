@@ -1,9 +1,9 @@
-import { _Component, init } from '../vph';
+import { Component, init } from '../vph';
 import { interval } from 'rxjs';
 import $ from 'jquery';
 import moment from 'moment';
 
-const testIf = _Component({
+const testIf = Component({
   render:/*html*/`
   <div>
     hey yo

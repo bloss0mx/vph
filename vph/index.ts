@@ -16,49 +16,11 @@ import tmpAnalyse from './templateCompiler/index';
 
 import Time from '../src/time';
 
-
 /**
  * 组件初始化
  * @param init 
  */
 export function Component(
-  init: {
-    tag: string,
-    children?: [],
-    attr?: [],
-  }
-): Function {
-  return function (
-    props: {
-      attr?: string,
-      props?: string,
-      children?: Array<any>;
-      valueBind?: string,
-      forDirective?: string,
-      onDirective?: string,
-      ifDirective?: string
-    }
-  ): Function {
-    return function (store: StoreKeeper): VirtualDom {
-      const _props = props.props ? store.getMultiValue(...props.props.split(' ')) : {};
-      delete props.props;
-      delete props.children;
-      const _init = {
-        ...init,
-        ...props,
-        storeKeeper: new StoreKeeper(dataFactory({}), {}, _props),
-      };
-      // console.log(_init, { ..._init, ...props });
-      return new VirtualDom(_init);
-    }
-  }
-}
-
-/**
- * 组件初始化
- * @param init 
- */
-export function _Component(
   init: {
     render: string,
     attr?: string,
