@@ -29,12 +29,6 @@ const testIf = Component({
           index2.setData(item % 4);
         }
       });
-      // interval(200).subscribe({
-      //   next: item => {
-      //     index2.setData(item % 2);
-      //   }
-      // });
-
     }
   },
   whenInit() {
