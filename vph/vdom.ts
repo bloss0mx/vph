@@ -213,7 +213,7 @@ export default class VirtualDom {
             return textNode;
           } else {
             const textNode = new PlainText(item);
-            this.dom.appendChild(textNode.giveDom());
+            (<HTMLElement>this.dom).innerHTML += (textNode.giveDom());
             return textNode;
           }
         } else if (typeof item === 'object') {
