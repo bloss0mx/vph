@@ -1,8 +1,8 @@
-import { _Component } from '../vph';
+import { Component } from '../vph';
 import { interval } from 'rxjs';
 
 
-const component1 = _Component({
+const component1 = Component({
   render:/*html*/`
   <div>
     这是个组件：{{value.index}}

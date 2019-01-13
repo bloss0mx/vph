@@ -50,31 +50,30 @@ maybe todo:I will consider to use diff method, to operate state with functional 
 
 ``` javascript
 // 此处使用了rxjs、moment
-const time = Component(
-  div({
-    children: [
-      '现在时间：',
-      '{{state@time}}'
-    ],
-    state: {
-      time: moment().format('YYYY-MM-DD HH:mm:ss'),
-    },
-    actions: {
-      interval() {
-        const { time } = this.getDatas('time');
-        interval(1000).subscribe({
-          next: () => {
-            const value = moment().format('YYYY-MM-DD HH:mm:ss');
-            time.setData(value);
-          }
-        });
-      }
-    },
-    whenInit() {
-      this.interval();
+const time = Component({
+  render: /*html*/`
+    <div>
+      现在时间：{{state@time}}
+    </div>
+  `,
+  state: {
+    time: moment().format('YYYY-MM-DD HH:mm:ss'),
+  },
+  actions: {
+    interval() {
+      const { time } = this.getDatas('time');
+      interval(1000).subscribe({
+        next: () => {
+          const value = moment().format('YYYY-MM-DD HH:mm:ss');
+          time.setData(value);
+        }
+      });
     }
-  })
-);
+  },
+  whenInit() {
+    this.interval();
+  }
+});
 ```
 ## 实现方法--Implement method
 执行组件，输出vdom，使用`giveDom`函数输出dom，并渲染到页面上。

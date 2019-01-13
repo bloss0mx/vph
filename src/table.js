@@ -1,11 +1,11 @@
-import { _Component } from '../vph';
+import { Component } from '../vph';
 import { interval } from 'rxjs';
 import moment from 'moment-timezone';
 import template from './table.html';
 
 const timer = area => moment().tz(area).format('YYYY-MM-DD HH:mm:ss');
 
-export default _Component({
+export default Component({
   render: template,
   state: {
     array2: [
