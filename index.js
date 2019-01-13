@@ -155,7 +155,7 @@ window.vD1 = Vph({
         <tbody>
           <tr>
             <th>ID</th>
-            <th>事件</th>
+            <th>事&nbsp;件</th>
           </tr>
           <tr :for='x in state@array1'>
             <td :for='y in x'>{{y}}</td>

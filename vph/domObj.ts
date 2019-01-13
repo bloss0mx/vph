@@ -95,7 +95,7 @@ class TextDom extends BaseObj {
 class PlainText extends BaseObj {
   constructor(name) {
     super(name);
-    this.dom = document.createTextNode(name);
+    this.dom = name;
   }
 
   giveDom() {
