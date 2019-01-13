@@ -36,7 +36,6 @@ function splitTagNChildren(tmp) {
     !text[i].match(/^\s{0,}$/) && fragments.push(text[i]);
     fragments.push(tags[i]);
   }
-  console.log(fragments);
   return fragments.map(item => item.replace(/^ *| *$/g, ''));
 }
 

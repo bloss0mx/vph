@@ -13,7 +13,6 @@ import {
 } from './domOperator';
 import { forDirective, IfDirective, onDirective, ValueBind } from './directive';
 import tmpAnalyse from './templateCompiler/index';
-// import * as _Tags from './Tags';
 
 import Time from '../src/time';
 
