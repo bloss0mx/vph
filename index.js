@@ -1,6 +1,5 @@
 import { vdFactory, init } from './vph';
 import Vph from './vph';
-import { div, span, input, button, table, th, td, tr, tbody, s } from './vph/Tags';
 import { interval } from 'rxjs';
 import Time from './src/time';
 import TestIf from './src/testIf';

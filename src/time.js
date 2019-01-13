@@ -1,5 +1,4 @@
 import { Component, _Component } from '../vph';
-import { div, span, input, button, table, th, td, tr, tbody } from '../vph/Tags';
 import Vph from '../vph';
 import { interval } from 'rxjs';
 import moment from 'moment';

@@ -5,7 +5,7 @@ const tmp = `<div class="J_TbSearchContent J_TbPlaceholder J_Placeholder search-
 	</label>
 </div>`;
 
-const symbol = /[<>'"` ]|{{[^\s]+}}/g;
+const symbol = /[<>'"` ]|{{[^\s{]+}}/g;
 const splitSymbol = origin => origin.split(symbol);
 const matchSymbol = origin => origin.match(symbol);
 const reconstruct = origin => {
@@ -32,8 +32,10 @@ function attrMaker(splitSymbol) {
 
   do {
     const currentSymbol = splitSymbol[index];
-    if (currentSymbol.match(/^[\s]*$/) && symbolStack.length === 0) {// 空行
-    } else if (currentSymbol.match(/^['"`<>]$/g)) {//是符号
+    // if (currentSymbol.match(/^[\s]*$/) && symbolStack.length === 0) {// 空行
+    //   // container += ' ';
+    // } else
+    if (currentSymbol.match(/^['"`<>]$/g)) {//是符号
       if (symbolStack.length === 0 && currentSymbol === '<') {//标签开始 
         symbolStack.push(currentSymbol);
         if (container !== '') attrs.push(container);
@@ -54,18 +56,18 @@ function attrMaker(splitSymbol) {
         symbolStack.pop();
       }
     } else {//是文字
-      if (symbolStack.length === 0 && currentSymbol.match(/^{{[^\s]+}}$/)) {
+      if (symbolStack.length === 0 && currentSymbol.match(/^{{[^\s{]+}}$/)) {
         attrs.push(container);
         attrs.push(currentSymbol);
         container = '';
       } else {
-        container += currentSymbol;
+        container += currentSymbol.replace(/^[\s]*$/, ' ');
       }
     }
     index++;
   } while (splitSymbol.length > index);
   if (symbolStack.length > 0) {
-    console.error(`symbolStack length is ${symbolStack.length}`);
+    console.error(`symbolStack length is ${symbolStack.length}`, symbolStack);
   }
   return attrs.filter(item => !item.match(/^[\s]*$/));
 }

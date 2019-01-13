@@ -95,7 +95,10 @@ class TextDom extends BaseObj {
 class PlainText extends BaseObj {
   constructor(name) {
     super(name);
-    this.dom = name;
+    this.dom = document.createTextNode(name.replace(/&nbsp;/g, '\u00A0'));
+    // console.log(this.dom.);
+    // this.dom = document.createDocumentFragment();
+    // this.dom.innerHTML = name;
   }
 
   giveDom() {
@@ -115,7 +118,7 @@ class AttrObj extends BaseObj {
     const attrData = init.attr.split('=');
     this.name = attrData[0] ? attrData[0] : '';
     this.storeKeeper = init.storeKeeper;
-    this.template = attrData[1] ? attrData[1] : undefined;
+    this.template = attrData[1] ? attrData[1].replace(/^['"]|['"]$/g, '') : undefined;
     this.value = attrData[1] ? attrData[1] : undefined;
     // this.findOrigin(this.value);
     this.defaultAttr(this.value);
