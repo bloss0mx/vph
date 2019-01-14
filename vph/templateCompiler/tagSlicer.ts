@@ -6,6 +6,7 @@ const tmp = `<div class="J_TbSearchContent J_TbPlaceholder J_Placeholder search-
 </div>`;
 
 const symbol = /[<>'"` ]|{{[^\s{]+}}/g;
+// const symbol = /<\/?pre>|[<>'"` ]|{{[^\s{]+}}/g;
 const splitSymbol = origin => origin.split(symbol);
 const matchSymbol = origin => origin.match(symbol);
 const reconstruct = origin => {
@@ -35,7 +36,20 @@ function attrMaker(splitSymbol) {
     // if (currentSymbol.match(/^[\s]*$/) && symbolStack.length === 0) {// 空行
     //   // container += ' ';
     // } else
-    if (currentSymbol.match(/^['"`<>]$/g)) {//是符号
+    // if (currentSymbol.match(/<\/?pre>|^['"`<>>]$/g)) {//是符号
+    if (currentSymbol.match(/^['"`<>>]$/g)) {//是符号
+      // if (symbolStack.length === 0 && currentSymbol === '<pre>') {
+      //   attrs.push(container);
+      //   attrs.push(currentSymbol);
+      //   symbolStack.push(currentSymbol);
+      // } else if (symbolStack.length === 1 && currentSymbol === '</pre>' && symbolStack[symbolStack.length - 1] === '<pre>') {
+      //   symbolStack.pop();
+      //   attrs.push(container);
+      //   attrs.push(currentSymbol);
+      //   container = '';
+      // } else if (symbolStack.length === 1 && symbolStack[symbolStack.length - 1] === '<pre>') {
+      //   container += currentSymbol.replace(/</g, '\<').replace(/>/g, '\>');
+      // } else 
       if (symbolStack.length === 0 && currentSymbol === '<') {//标签开始 
         symbolStack.push(currentSymbol);
         if (container !== '') attrs.push(container);

@@ -144,7 +144,7 @@ class AttrObj extends BaseObj {
 
   rmSelf() {
     const valueName = this.template.match(TEMPLATE_REGEXP);
-    if (valueName[0]) {
+    if (valueName && valueName[0]) {
       const value = valueName[0] && valueName[0].replace(/\{|\}/g, '');
       this.storeKeeper.unregister(value, this);
     }

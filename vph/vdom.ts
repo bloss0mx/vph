@@ -38,6 +38,7 @@ export default class VirtualDom {
   private forDirective: forDirective;
   private dom: DocumentFragment | HTMLElement;
   private children: Array<BaseObj | Object | string>;
+  private whenUninit: Function | null;
   constructor(init) {
     // 复制
     this.init = init;
@@ -64,6 +65,7 @@ export default class VirtualDom {
     // render
     !init.forDirective && this.makeChildren();
     this.fireWhenInit(init.whenInit);
+    this.whenUninit = init.whenUninit;
     this.attrPt = this.initAttr();
 
     // 初始化指令
@@ -160,6 +162,18 @@ export default class VirtualDom {
   }
 
   /**
+   * 触发whenUninit钩子
+   * @param whenUninit 
+   */
+  fireWhenUninit() {
+    if (typeof this.whenUninit === 'function') {
+      // setTimeout(() => {
+      this.whenUninit.apply(this);
+      // }, 0);
+    }
+  }
+
+  /**
    * 绑定action
    */
   bindActions() {
@@ -201,7 +215,7 @@ export default class VirtualDom {
           this.dom.appendChild(_item.giveDom());
           return _item;
         } else if (typeof item === 'string') {
-          if (item.match(/\{\{[^\s]*\}\}/)) {
+          if (item.match(/^\{\{[^\s]*\}\}$/)) {
             const textNode = new TextDom(
               item,
               index,
@@ -294,6 +308,7 @@ export default class VirtualDom {
    * @param {*}  
    */
   rmSelf() {
+    this.fireWhenUninit();
     this.childrenPt.map(item => {
       item.rmSelf && item.rmSelf();
     });

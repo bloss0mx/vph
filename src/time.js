@@ -1,5 +1,4 @@
 import { Component } from '../vph';
-import Vph from '../vph';
 import { interval } from 'rxjs';
 import moment from 'moment';
 import template from './time.html';
