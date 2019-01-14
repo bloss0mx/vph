@@ -33,15 +33,15 @@ const compose = function (..._args): Function {//后者的结果为前者的参�
 //基础函数
 const checkSingleTag = (tag) => tag && tag.match('area|base|col|command|embed|keygen|param|source|track|wbr|br|hr|img|input|link|meta|video') !== null;
 const getTagFromHead = (tag) => {
-  const match = tag.match(/<[^ <\/]* |<[^ <\/]*>/)
+  const match = tag.match(/^<[^ <\/]* |^<[^ <\/]*>/)
   return match && match[0].replace(/<|>| /g, '');
 }
 const getTagFromTail = (tag) => {
-  const match = tag.match(/<\/[^<]*>/)
-  return match && match[0].replace(/<\/|>/g, '');
+  const match = tag.match(/^<\/[^<]*>/)
+  return match && match[0].replace(/^<\/|>/g, '');
 }
-const matchTags = (origin) => origin.match(/<[\/!-]{0,1}[^<]*[^-]>/g);
-const splitText = (origin) => origin.split(/<[\/!-]{0,1}[^<]*[^-]>/g).map(item => item.replace(/\n|\t/g, ''));
+const matchTags = (origin) => origin.match(/^<[\/!-]{0,1}[^<]*[^-]>/g);
+const splitText = (origin) => origin.split(/^<[\/!-]{0,1}[^<]*[^-]>/g).map(item => item.replace(/\n|\t/g, ''));
 const equel = curry((a, b) => a === b);
 // const attr = (tag) => tag.replace(/<[^\s<>]*|>/g, '').replace(/^ | $/g, '').split(' ').map(item => ({ attr: item.split('=')[0], value: item.split('=')[1] }));
 

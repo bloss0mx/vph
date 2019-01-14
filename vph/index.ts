@@ -14,8 +14,6 @@ import {
 import { forDirective, IfDirective, onDirective, ValueBind } from './directive';
 import tmpAnalyse from './templateCompiler/index';
 
-import Time from '../src/time';
-
 /**
  * 组件初始化
  * @param init 
@@ -28,6 +26,7 @@ export function Component(
     actions?: object,
     components?: object,
     whenInit?: Function,
+    whenUninit?: Function,
   }
 ): Function {
   return function (
@@ -125,6 +124,7 @@ export default function Vph(init: {
   actions?: object,
   components?: object,
   whenInit?: Function,
+  whenUninit?: Function,
 }) {
   const analysed = tmpAnalyse(init.render, init.components);
   const _init = {

@@ -1,0 +1,7 @@
+<header style='background-color: #333;'>
+  <a href="/" class='head-btn'>{{title}}</a>
+  <span class='head-btn fr' style='font-size: 13px;' :on='click.showMenuToggle'>三</span>
+  <span class='menu' :if='showMenu'>
+    <div class='option' :for='x in state@menu'>{{x}}</div>
+  </span>
+</header>
