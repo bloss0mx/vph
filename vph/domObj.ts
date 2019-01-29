@@ -11,6 +11,7 @@ import {
   removeAttr,
   append,
 } from './domOperator';
+import { Fragment, Element, TextNode } from './domKeeper';
 
 const TEMPLATE_REGEXP = /\{\{[^\s]+\}\}/;
 

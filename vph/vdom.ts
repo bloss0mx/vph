@@ -13,6 +13,7 @@ import {
   removeAttr,
   append,
 } from './domOperator';
+import { Fragment, Element, TextNode } from './domKeeper';
 
 /**
  * 初始化时，dom操作必须同步
@@ -340,6 +341,7 @@ export default class VirtualDom {
    * @param {*} dom 
    */
   insertAfter(pt, dom) {
+    console.log(dom);
     $(dom).insertAfter($(pt));
   }
 

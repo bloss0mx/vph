@@ -56,8 +56,9 @@ const SINGLE_TAGS = 'br,hr,img,input,param,meta,link'.split(',');
 
 const testTag = origin => !!origin.match(/^<[^>]+>$/);
 const testSingleTag = origin => {
-  const tag = origin.match(/^<[^\s>]+/)[0].replace(/</, '');
-  return !!SINGLE_TAGS.find(i => i === tag);
+	const tag = origin.match(/^<[^\s>]+/)[0].replace(/</, '');
+	const forceSingle = origin.match(/^<[^>]\/>$/);
+	return !!SINGLE_TAGS.find(i => i === tag) || forceSingle;
 }
 const testSingle = origin => testTag(origin) && testSingleTag(origin);
 const singleComponent = origin => !!origin.match(/^<[A-Z][^>]+\/>$/);
