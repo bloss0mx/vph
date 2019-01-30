@@ -5,7 +5,6 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 module.exports = {
   entry: './index.js',
-  // mode: 'development',
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'main.bundle.js'
@@ -28,17 +27,17 @@ module.exports = {
         test: /\.(js|jsx)$/, use: 'babel-loader'
       },
       {
-        test: /\.less$/, use: 'less-loader'
+        test: /\.less$/,
+        loaders: 'style-loader!css-loader?modules&localIdentName=[name]_[hash:base64:5]!less-loader',
       },
       {
         test: /\.css$/, use: ['style-loader', 'css-loader'],
-        // exclude: path.resolve(__dirname, './style.css'),
       }
     ]
   },
   plugins: [
     // new webpack.optimize.UglifyJsPlugin(),
     new CleanWebpackPlugin(['dist']),
-    new HtmlWebpackPlugin({ template: './index.html' })
+    new HtmlWebpackPlugin({ template: './index.html' }),
   ]
 };
