@@ -20,15 +20,7 @@ const prepend = (bro, target) => {
   const fatherDom = getFatherDom(selectorFilter(bro));
   fatherDom.insertBefore(target, fatherDom.childNodes[0]);
 };
-//TODO target不同类型暂时无法解决
-const insertAfter = (bro, target) => {
-  const fatherDom = getFatherDom(selectorFilter(bro));
-  if (fatherDom.lastChild == bro) {
-    fatherDom.appendChild(target);
-  } else {
-    fatherDom.insertBefore(target, bro.nextSibling);
-  }
-};
+const insertAfter = (referenceNode, newNode) => referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
 const remove = (target) => {
   const fatherDom = getFatherDom(target);
   fatherDom && fatherDom.removeChild(target);

@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import { ARRAYY_OPERATE } from './constant';
 import { DataUnit } from './DataUnit';
 import VirtualDom from './vdom';
@@ -14,7 +13,6 @@ import {
 
 
 // TODO 不要让指令直接操作vdom
-
 
 class Directive {
   constructor(init) { }
@@ -156,20 +154,13 @@ class forDirective extends Directive {
       if (this.pt.father.childrenPt.length === 0) {
         prepend(this.pt.father.giveDom(), tmpDom);
       } else {
-        $(tmpDom).insertAfter($(this.pt.father.childrenPt[this.pt.index - 1].giveDom()));
+        insertAfter(this.pt.father.childrenPt[this.pt.index - 1].giveDom(), tmpDom);
       }
     } else if (this.pt.childrenPt.length === 0 && this.pt.index === 0) {
       prepend(this.pt.father.giveDom(), tmpDom);
     } else if (this.childrenDom[targetIndex - 1]) {
-      $(tmpDom).insertAfter(this.childrenDom[targetIndex - 1]);
+      insertAfter(this.pt.father.childrenPt[this.pt.index - 1].giveDom(), tmpDom);
     }
-    //  else if (targetIndex === -1) {
-    //   if (this.pt.father.childrenPt.length === 0) {
-    //     prepend(this.pt.father.giveDom(), tmpDom);
-    //   } else {
-    //     $(tmpDom).insertAfter($(this.pt.father.childrenPt[this.pt.index - 1].giveDom()));
-    //   }
-    // }
 
     this.pt.childrenPt.splice(index, 0, tmpChildrenPt);
     childrenStore.addPush(tmpChildrenPt);

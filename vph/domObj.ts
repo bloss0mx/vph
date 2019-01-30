@@ -1,5 +1,4 @@
 import { testType, log } from './utils';
-import $ from 'jquery';
 import { exposeToWindow } from './Lady_tool';
 import { DataUnit } from './DataUnit';
 import StoreKeeper from './store';
@@ -22,9 +21,8 @@ class BaseObj {
    * @param {*} name 
    * @param {*} store 
    * @param {*} index 
-   * @param {*} baseDataName 
    */
-  constructor(name, store?, index?, baseDataName?) { }
+  constructor(name, store?, index?) { }
   /**
    * 数据更新
    * @param {*} data 
@@ -55,15 +53,11 @@ class BaseObj {
 class TextDom extends BaseObj {
   private name: string;
   private template: string;
-  private baseDataName: string;
-  private varibleName: string;
   private storeKeeper: StoreKeeper;
-  constructor(name, index, baseDataName, varibleName, storeKeeper) {
-    super(name, index, baseDataName);
+  constructor(name, index, storeKeeper) {
+    super(name, index);
     this.name = name;
     this.template = name;
-    this.baseDataName = baseDataName;
-    this.varibleName = varibleName;
     this.dom = document.createTextNode(name);
     this.storeKeeper = storeKeeper;
     this.storeKeeper.register(name.replace(/\{|\}/g, ''), this);
