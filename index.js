@@ -7,6 +7,7 @@ import Topic from './src/topic';
 import Example from './src/example';
 import Component1 from './src/component1';
 import Footer from './src/footer';
+import './style.css';
 
 window.vD1 = Vph({
   render: index_tmp,
