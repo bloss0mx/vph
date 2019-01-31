@@ -1,5 +1,7 @@
 import { testType } from './utils';
-import { difference, uniq } from 'lodash';
+// import { difference, uniq } from 'lodash';
+import difference from 'lodash/difference';
+import uniq from 'lodash/uniq';
 import {
   ARRAYY_OPERATE,
 } from './constant';

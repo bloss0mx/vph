@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import { ARRAYY_OPERATE } from './constant';
 import { DataUnit } from './DataUnit';
 import VirtualDom from './vdom';
@@ -14,7 +13,6 @@ import {
 
 
 // TODO 不要让指令直接操作vdom
-
 
 class Directive {
   constructor(init) { }
@@ -130,6 +128,7 @@ class forDirective extends Directive {
     });
   }
 
+  //FIX => index不统一
   /**
    * 添加dom到dom列表
    * @param {*} data 
@@ -143,25 +142,26 @@ class forDirective extends Directive {
       return pt.findDataByType(this.baseDataName);
     });
     const baseData = this.storeKeeper.findDataByType(this.baseDataName);
-    const childrenStore = baseData.showData(targetIndex);
+    const childrenStore = baseData.showData(targetIndex === -1 ? 0 : targetIndex);
     const { tmpDom, tmpChildrenPt } = this.pt.makeForChildren({
       varibleName: this.varibleName,
-      index: targetIndex,
+      index: targetIndex === -1 ? 0 : targetIndex,
       storeKeeper: this.storeKeeper,
       baseData: baseData,
       baseDataName: this.baseDataName,
     });
-    if (this.pt.childrenPt.length === 0 && this.pt.index > 0) {
+    if (this.pt.childrenPt.length === 0 && this.pt.index > 0 || targetIndex === -1) {
       if (this.pt.father.childrenPt.length === 0) {
         prepend(this.pt.father.giveDom(), tmpDom);
       } else {
-        $(tmpDom).insertAfter($(this.pt.father.childrenPt[this.pt.index - 1].giveDom()));
+        insertAfter(this.pt.father.childrenPt[this.pt.index - 1].giveDom(), tmpDom);
       }
     } else if (this.pt.childrenPt.length === 0 && this.pt.index === 0) {
       prepend(this.pt.father.giveDom(), tmpDom);
     } else if (this.childrenDom[targetIndex - 1]) {
-      $(tmpDom).insertAfter(this.childrenDom[targetIndex - 1]);
+      insertAfter(this.pt.father.childrenPt[this.pt.index - 1].giveDom(), tmpDom);
     }
+
     this.pt.childrenPt.splice(index, 0, tmpChildrenPt);
     childrenStore.addPush(tmpChildrenPt);
     this.childrenDom.splice(index, 0, tmpDom);

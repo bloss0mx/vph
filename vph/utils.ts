@@ -76,16 +76,6 @@ const attr = (tag) => tag.replace(/<[^\s<>]*|>/g, '').replace(/^ | $/g, '').leng
   attr: item.split('=')[0],
   value: item.split('=')[1] && item.split('=')[1].replace(/'|"/g, ''),
 })) || [];
-/**
- * 向后插入
- * @param father 
- * @param target 
- * @param newDom 
- */
-const insertAfter = (father, target, newDom) => {
-  if (father.lastChild === target) father.appendChild(newDom);
-  else father.insertBefore(newDom, target.nextSibling);
-};
 
 //复合函数
 /**
@@ -135,6 +125,12 @@ const testType = (value) => {
 };
 
 /**
+ * 返回类型名
+ * @param origin 
+ */
+const typeName = origin => origin.__proto__.constructor.name;
+
+/**
  * 代替console.log
  */
 function log() {
@@ -152,10 +148,10 @@ export {
   splitText,
   equel,
   attr,
-  insertAfter,
   log,
   singleTags,
   duoTag_Count0,
   closeTag,
   testType,
+  typeName,
 };

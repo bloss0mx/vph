@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import { DataUnit, Arrayy, Objecty, dataFactory } from './DataUnit';
 import { TextDom, PlainText, AttrObj, BaseObj } from './domObj';
 import { vdFactory } from './index';
@@ -13,6 +12,7 @@ import {
   removeAttr,
   append,
 } from './domOperator';
+import { Fragment, Element, TextNode } from './domKeeper';
 
 /**
  * 初始化时，dom操作必须同步
@@ -219,8 +219,6 @@ export default class VirtualDom {
             const textNode = new TextDom(
               item,
               index,
-              this.baseDataName,
-              this.varibleName,
               this.storeKeeper,
             );
             this.dom.appendChild(textNode.giveDom());
@@ -277,6 +275,7 @@ export default class VirtualDom {
     return this.dom;
   }
 
+  // FIX 是不是和rmSelf重复？或者没有去掉指令
   /**
    * 隐藏（删除）dom
    */
@@ -340,7 +339,7 @@ export default class VirtualDom {
    * @param {*} dom 
    */
   insertAfter(pt, dom) {
-    $(dom).insertAfter($(pt));
+    insertAfter(pt, dom);
   }
 
   /**

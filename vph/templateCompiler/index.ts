@@ -94,9 +94,10 @@ function _ComponentAnalyse(code, components) {
   if (isBasic) {//基本
     return code;
   } else {//组件
-    const found = components[code.tag];
+    const tag = code.tag.replace(/^[a-z]/, i => i.toUpperCase());
+    const found = components[tag];
     if (!found) {
-      throw (`Component ${code.tag} is NOT found! `);
+      throw (`Component ${tag} is NOT found! `);
     }
     const _code = { ...code };
     delete _code.tag;

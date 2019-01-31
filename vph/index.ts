@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import VirtualDom from './vdom';
 import { TAGS } from './constant';
 import StoreKeeper from './store';
