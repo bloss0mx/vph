@@ -12,10 +12,13 @@ const extractCSS = new ExtractTextPlugin('[name].css');
 const extractLESS = new ExtractTextPlugin('[name]_less.css');
 
 module.exports = {
-  entry: './index.js',
+  entry: {
+    index: './index.js',
+    vph: './vph/index.ts',
+  },
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'main.bundle.js'
+    filename: '[name].js'
   },
   devServer: {
     contentBase: './dist'
@@ -61,6 +64,10 @@ module.exports = {
       name: 'manifest',
       filename: 'manifest.js',
       minChunks: Infinity
+    }),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vph',
+      chunks: ['vph', 'index']
     }),
     ...(() => {
       const plugins = [];
