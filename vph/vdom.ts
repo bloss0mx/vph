@@ -23,6 +23,7 @@ export default class VirtualDom {
   actions: Array<Function>;
   components: Array<VirtualDom>;
   childrenPt: Array<VirtualDom | BaseObj>;
+  isComponent: boolean;
 
   private init;
   private tag: string;
@@ -41,6 +42,7 @@ export default class VirtualDom {
   private whenUninit: Function | null;
   constructor(init) {
     // 复制
+    this.isComponent = init.isComponent || false;
     this.init = init;
     this.attrPt = [];
     this.tag = init.tag;
@@ -315,6 +317,7 @@ export default class VirtualDom {
       item.rmSelf && item.rmSelf();
     });
     this.ifDirective && this.ifDirective.rmSelf();
+    this.onDirective && this.onDirective.rmSelf();
     remove(this.dom);
     this.dom = null;
   }

@@ -50,6 +50,7 @@ export function Component(
       // delete props.onDirective;
       // delete props.ifDirective;
       const _init = {
+        isComponent: true,
         ...init,
         ...analysed,
         ...props,
@@ -127,6 +128,7 @@ export default function Vph(init: {
 }) {
   const analysed = tmpAnalyse(init.render, init.components);
   const _init = {
+    isComponent: true,
     ...init,
     ...analysed,
   }
