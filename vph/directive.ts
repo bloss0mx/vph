@@ -11,7 +11,6 @@ import {
   append,
 } from './domOperator';
 
-
 // TODO 不要让指令直接操作vdom
 
 class Directive {
@@ -138,28 +137,36 @@ class forDirective extends Directive {
     const targetIndex = index - 1;
     const _storeKeeper = new StoreKeeper(...this.storeKeeper.outputAll());
     _storeKeeper.setForStore((store, forStore, props, pt) => {
-      // return store.showData(this.baseDataName);
       return pt.findDataByType(this.baseDataName);
     });
     const baseData = this.storeKeeper.findDataByType(this.baseDataName);
     const childrenStore = baseData.showData(targetIndex === -1 ? 0 : targetIndex);
     const { tmpDom, tmpChildrenPt } = this.pt.makeForChildren({
       varibleName: this.varibleName,
-      index: targetIndex === -1 ? 0 : targetIndex,
+      index: targetIndex + 1,
       storeKeeper: this.storeKeeper,
       baseData: baseData,
       baseDataName: this.baseDataName,
     });
-    if (this.pt.childrenPt.length === 0 && this.pt.index > 0 || targetIndex === -1) {
-      if (this.pt.father.childrenPt.length === 0) {
-        prepend(this.pt.father.giveDom(), tmpDom);
-      } else {
-        insertAfter(this.pt.father.childrenPt[this.pt.index - 1].giveDom(), tmpDom);
+
+    if (this.pt.childrenPt.length === 0) {// 无子
+      if (targetIndex !== -1) {// 头插入
+        console.error('Unknow problem, or say, maybe a problem');
       }
-    } else if (this.pt.childrenPt.length === 0 && this.pt.index === 0) {
-      prepend(this.pt.father.giveDom(), tmpDom);
-    } else if (this.childrenDom[targetIndex - 1]) {
-      insertAfter(this.pt.father.childrenPt[this.pt.index - 1].giveDom(), tmpDom);
+      const preBro = this.pt.previousBrother();
+      if (preBro !== undefined) {
+        insertAfter(preBro, tmpDom);
+      } else {
+        this.pt.father.giveDom().parentNode.insertBefore(tmpDom, this.pt.father.giveDom());
+      }
+    } else {// 有子
+      if (targetIndex === -1) {// 头插入
+        this.pt.childrenPt[0].giveDom().parentNode.insertBefore(tmpDom, this.pt.childrenPt[0].giveDom());
+      } else if (targetIndex === this.pt.childrenPt.length) {// 末插入
+        insertAfter(this.pt.childrenPt[targetIndex - 1].giveDom(), tmpDom);
+      } else {// 中间插入
+        insertAfter(this.pt.childrenPt[targetIndex].giveDom(), tmpDom);
+      }
     }
 
     this.pt.childrenPt.splice(index, 0, tmpChildrenPt);

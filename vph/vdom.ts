@@ -354,10 +354,22 @@ export default class VirtualDom {
    * 查找前一个兄弟节点
    */
   previousBrother() {
+    function fetchChildrenPt(pt, index) {
+      if (
+        pt.childrenPt
+        && pt.childrenPt[pt.childrenPt.length - 1]
+        && index
+        && Object.getPrototypeOf(pt.giveDom()) === Object.getPrototypeOf(document.createDocumentFragment())
+      ) {
+        return fetchChildrenPt(pt.childrenPt[pt.childrenPt.length - 1], index - 1);
+      } else {
+        return pt.giveDom && pt.giveDom() || pt;
+      }
+    }
     if (this.father) {
       for (var i = this.index - 1; i >= 0; i--) {
         if (this.father.childrenPt[i] && this.father.childrenPt[i].giveDom()) {
-          return this.father.childrenPt[i].giveDom();
+          return fetchChildrenPt(this.father.childrenPt[i], 1);
         }
       }
     }

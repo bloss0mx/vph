@@ -204,7 +204,7 @@ class Arrayy extends DataUnit {
 
   push(tmp): Arrayy {
     const newData = this.splice(this.data.length, 0, tmp);
-    this.addCallback(newData, this.data.length);
+    this.addCallback(newData, this.data.length - 1);
     return this;
   }
 
