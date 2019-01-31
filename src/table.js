@@ -4,7 +4,7 @@ import moment from 'moment';
 import template from './table.html';
 
 // const timer = area => moment().tz(area).format('YYYY-MM-DD HH:mm:ss');
-const time = area => moment().utc().zone(area).format('YYYY-MM-DD HH:mm:ss');
+const time = area => moment().utc().utcOffset(area).format('YYYY-MM-DD HH:mm:ss');
 
 export default Component({
   render: template,
