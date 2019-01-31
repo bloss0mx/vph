@@ -1,12 +1,13 @@
 import html from './example.html';
 import { Component } from '../vph';
-import $ from 'jquery';
 import Time from './time';
 import Table from './table';
+import STYLE from './testLess.less';
 
 export default Component({
   render: html,
   state: {
+    style: STYLE,
     htmlcode: `<!-- time.html -->
 <table style='width: 100%'>
   <tbody>
@@ -57,9 +58,10 @@ export default Component({
   },
   whenInit() {
     setTimeout(() => {
-      $('pre code').each(function (i, block) {
-        hljs.highlightBlock(block);
-      });
+      [...document.querySelectorAll('pre code')]
+        .map(item => {
+          hljs.highlightBlock(item);
+        });
     }, 10);
   }
 });
