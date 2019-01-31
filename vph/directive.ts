@@ -230,7 +230,6 @@ class onDirective extends Directive {
   findCallback() {
     let pt = this.pt;
     for (; ;) {
-      console.warn(pt);
       if (!pt.isComponent) {
         pt = pt.father;
       } else {
