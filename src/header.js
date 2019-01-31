@@ -6,16 +6,20 @@ export default Component({
   state: {
     title: 'Vph',
     menu: [
-      'Menu',
-      'Title',
-      'Name'
+      { name: 'Menu' },
+      { name: 'Title' },
+      { name: 'Name' }
     ],
     showMenu: false,
   },
   actions: {
-    showMenuToggle() {
+    showMenuToggle(e) {
+      console.log(e);
       const { showMenu } = this.getDatas('showMenu');
       showMenu.setData(!showMenu.showData());
+    },
+    clickMenu(e) {
+      console.log(e);
     }
   }
 });

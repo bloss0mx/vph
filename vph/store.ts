@@ -127,6 +127,15 @@ class StoreKeeper {
    */
   findBaseData(name) {
     let found;
+    if (name.match(/\./g)) {
+      const [first, ...other] = name.split('.');
+      if (this.forStore[first] !== undefined) {
+        return this.forStore[first].showData(other);
+      }
+      if (this.props[first] !== undefined) {
+        return this.props[first].showData(other);
+      }
+    }
     if (this.forStore[name] !== undefined) {
       found = this.forStore[name];
     } else if (this.props[name] !== undefined) {
