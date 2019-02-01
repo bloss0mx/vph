@@ -1,4 +1,4 @@
-import html from './example.html';
+import html from './example.vph';
 import { Component } from '../vph';
 import Time from './time';
 import Table from './table';

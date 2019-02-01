@@ -1,7 +1,7 @@
 import { Component } from '../vph';
 import { interval } from 'rxjs';
 import moment from 'moment';
-import template from './time.html';
+import template from './time.vph';
 
 const time = Component({
   render: template,

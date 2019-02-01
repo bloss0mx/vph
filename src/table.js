@@ -1,7 +1,7 @@
 import { Component } from '../vph';
 import { interval } from 'rxjs';
 import moment from 'moment';
-import template from './table.html';
+import template from './table.vph';
 
 // const timer = area => moment().tz(area).format('YYYY-MM-DD HH:mm:ss');
 const time = area => moment().utc().utcOffset(area).format('YYYY-MM-DD HH:mm:ss');
