@@ -1,4 +1,4 @@
-import { Component } from '../vph';
+import { Component } from 'vph';
 import { interval } from 'rxjs';
 import moment from 'moment';
 import template from './table.vph';

@@ -1,4 +1,4 @@
-import { Component } from '../vph';
+import { Component } from 'vph';
 import { interval } from 'rxjs';
 
 
