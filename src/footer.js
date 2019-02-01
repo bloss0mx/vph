@@ -1,4 +1,4 @@
-import html from './footer.html';
+import html from './footer.vph';
 import { Component } from '../vph';
 
 export default Component({

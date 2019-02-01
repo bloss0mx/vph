@@ -102,6 +102,7 @@ a {
 }
 
 header {
+  user-select: none;
   position: fixed;
   width: 100%;
   background-color: #333;

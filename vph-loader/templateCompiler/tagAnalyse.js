@@ -1,4 +1,4 @@
-import {
+const {
   checkSingleTag,
   getTagFromHead,
   getTagFromTail,
@@ -14,9 +14,9 @@ import {
   testSingleTag,
   testSingle,
   singleComponent,
-} from "./tools";
-import attrM from './attrAnalyse';
-import tagSlicer from './tagSlicer';
+} = require("./tools");
+const attrM = require('./attrAnalyse');
+const tagSlicer = require('./tagSlicer');
 // const { attrM } = require('./attrAnalyse');
 
 const matchTagsNValue = (origin) => origin.match(/<[\/!-]{0,1}[^<]*[^-]>|{{[^\s]+}}/g);
@@ -44,14 +44,14 @@ const getTag = (tag) => {
   return match && match[0].replace(/<|>| |\//g, '');
 }
 
-const cleanDirective = (origin, type) => origin && origin.replace(type, '').replace(/^['"]|['"]$/g, '');
+const cleanDirective = (origin, type) => origin && origin.replace(type, '').replace(/^['"]|['"]$/g, '"');
 
 class Container {
-  private tag: string;
-  private tagName: string;
-  private children: Array<any>;
-  private attr: Array<any>;
-  private directive: Array<any>;
+  // private tag: string;
+  // private tagName: string;
+  // private children: Array<any>;
+  // private attr: Array<any>;
+  // private directive: Array<any>;
   constructor(tag) {
     this.tag = tag;
     this.children = [];
@@ -137,5 +137,5 @@ function tagMaker(splitedTmp) {
 /**
  * 此处的true是有webpack插件去掉注释
  */
-export default origin => tagMaker(tagSlicer(true ? origin : rmComment(origin)));
+module.exports = origin => tagMaker(tagSlicer(rmComment(origin)));
 // export default origin => tagMaker(tagSlicer(origin));

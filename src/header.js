@@ -1,6 +1,8 @@
-import html from './header.html';
+import html from './header.vph';
 import { Component } from '../vph';
 import MoveTo from 'MoveTo';
+
+// console.log(html);
 
 const moveTo = new MoveTo();
 const menu = [

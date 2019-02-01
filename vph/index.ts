@@ -19,7 +19,7 @@ import tmpAnalyse from './templateCompiler/index';
  */
 export function Component(
   init: {
-    render: string,
+    render: Function | string,
     attr?: string,
     state?: object,
     actions?: object,
@@ -40,7 +40,12 @@ export function Component(
     },
   ): Function {
     return function (store: StoreKeeper): VirtualDom {
-      const analysed = tmpAnalyse(init.render, init.components);
+      let analysed;
+      if (typeof init.render === 'string') {
+        analysed = tmpAnalyse(init.render, init.components);
+      } else if (typeof init.render === 'function') {
+        analysed = init.render(init.components);
+      }
       const _props = props.props ? store.getMultiValue(...props.props.split(' ')) : {};
       delete props.attr;
       delete props.props;
@@ -55,7 +60,8 @@ export function Component(
         ...analysed,
         ...props,
         storeKeeper: new StoreKeeper(dataFactory({}), {}, _props),
-      };
+      }
+      delete _init.render;
       return new VirtualDom(_init);
     }
   }
@@ -71,9 +77,11 @@ function basicTagConstruct(init) { return init }
 declare global {
   interface Window {
     vdom?: any,
+    vdFactory: Function,
     basicTagConstruct: Function,
   }
 }
+window.vdFactory = vdFactory;
 window.basicTagConstruct = basicTagConstruct;
 
 /**
