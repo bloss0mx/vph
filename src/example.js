@@ -1,5 +1,5 @@
 import html from './example.vph';
-import { Component } from '../vph';
+import { Component } from 'vph';
 import Time from './time';
 import Table from './table';
 import STYLE from './testLess.less';
@@ -17,7 +17,7 @@ export default Component({
   </tbody>
 </table>`,
     jscode: `/* time.js */
-import { Component } from '../vph';
+import { Component } from 'vph';
 import { interval } from 'rxjs';
 import moment from 'moment-timezone';
 import template from './time.html';

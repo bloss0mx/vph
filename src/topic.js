@@ -1,5 +1,5 @@
 import html from './topic.vph';
-import { Component } from '../vph';
+import { Component } from 'vph';
 import moment from 'moment';
 
 

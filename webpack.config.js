@@ -13,7 +13,7 @@ const extractLESS = new ExtractTextPlugin('[name]_less.css');
 
 module.exports = {
   entry: {
-    index: './index.js',
+    index: './src/index.js',
     vph: './vph/index.ts',
   },
   output: {
@@ -24,7 +24,10 @@ module.exports = {
     contentBase: './dist'
   },
   resolve: {
-    extensions: ['.ts', '.js', '.css', '.less']
+    extensions: ['.ts', '.js', '.css', '.less'],
+    alias: {
+      'vph': path.resolve(__dirname, 'vph')
+    }
   },
   module: {
     rules: [
