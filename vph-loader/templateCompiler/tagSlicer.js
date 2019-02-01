@@ -10,7 +10,7 @@ const symbol = /[<>'"` ]|{{[^\s{]+}}/g;
 const splitSymbol = origin => origin.split(symbol);
 const matchSymbol = origin => origin.match(symbol);
 const reconstruct = origin => {
-  console.log('=>', origin);
+  // console.log('=>', origin);
   const symbols = splitSymbol(origin);
   const text = matchSymbol(origin);
   const fragments = [];
