@@ -29,7 +29,24 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.html$/, use: 'html-loader'
+        test: /\.vph$/,
+        use: [
+          'babel-loader',
+          path.resolve(__dirname, 'vph-loader'),
+        ],
+      },
+      {
+        test: /\.html$/,
+        use: [
+          {
+            loader: 'html-loader',
+            options: {
+              minimize: true,
+              caseSensitive: true,
+              removeAttributeQuotes: false,
+            }
+          },
+        ],
       },
       {
         test: /\.(ts|tsx)$/, use: 'ts-loader'
