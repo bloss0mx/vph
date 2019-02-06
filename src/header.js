@@ -1,6 +1,6 @@
 import html from './header.vph';
 import { Component } from 'vph';
-import MoveTo from 'MoveTo';
+import MoveTo from 'moveto';
 
 // console.log(html);
 

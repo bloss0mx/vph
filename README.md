@@ -106,13 +106,13 @@ When the value in ths DataUnit changes, the DataUnit will traverses the vdoms an
 ### 补充--Supplement
 - [x] 增加模板解析
 - [ ] state：增加diff方法，使用函数式写法来操作数据
-- [ ] state：增加状态管理器
+- [x] state：增加状态管理器
 - [ ] 增加路由功能
-- [ ] 增加webpack-loader，提供更友好的书写方式
+- [x] 增加webpack-loader，提供更友好的书写方式
 
 ---
 - [x] Add template anaylse function
 - [ ] state: increase the diff method, use functional programming to manipulate states
-- [ ] state: increase the state manager
+- [x] state: increase the state manager
 - [ ] Add router function
-- [ ] Add webpack-loader to provide a more friendly way to write
+- [x] Add webpack-loader to provide a more friendly way to write
