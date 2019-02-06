@@ -6,5 +6,6 @@
   </a>
   <div :for='v in preArr'>{{v}}</div>
   <div :for='v in arr'>{{v}}</div>
+  <div :if='ifyo'>hey</div>
   <div :for='v in subArr'>{{v}}</div>
 </div>

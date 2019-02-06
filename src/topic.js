@@ -8,10 +8,11 @@ export default Component({
   state: {
     preArr: [],
     arr: ['a', 'c'],
+    ifyo: false,
     subArr: [],
   },
   whenInit() {
-    const { preArr, subArr, arr } = this.getDatas('arr', 'preArr', 'subArr');
+    const { preArr, subArr, arr, ifyo } = this.getDatas('arr', 'preArr', 'subArr', 'ifyo');
     setTimeout(() => {
       arr.insertTo('b', 1);
     }, 1000);
@@ -25,7 +26,10 @@ export default Component({
       preArr.push('-2');
     }, 4000);
     setTimeout(() => {
-      subArr.push('e');
+      ifyo.setData(true);
     }, 5000);
+    setTimeout(() => {
+      subArr.push('e');
+    }, 6000);
   }
 });

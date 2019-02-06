@@ -61,6 +61,7 @@ export function Component(
         ...props,
         storeKeeper: new StoreKeeper(dataFactory({}), {}, _props),
       }
+      init = null;
       delete _init.render;
       return new VirtualDom(_init);
     }
