@@ -13,6 +13,30 @@ import {
 import { forDirective, IfDirective, onDirective, ValueBind } from './directive';
 import tmpAnalyse from './templateCompiler/index';
 
+import State from '../diff/index';
+
+/** test */
+const test = new State({
+  obj: {
+    arr: [
+      { key: 'name', val: 'name' },
+      { key: 'type', val: 'type' }
+    ],
+  },
+  text: 'aye'
+});
+test.setState((state) => {
+  state.obj = {
+    arr: [
+      { key: 'name', val: 'name2' },
+      { key: 'type', val: 'type' }
+    ],
+  };
+  return state;
+});
+/** test */
+
+
 /**
  * 组件初始化
  * @param init 
