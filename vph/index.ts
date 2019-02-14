@@ -13,10 +13,10 @@ import {
 import { forDirective, IfDirective, onDirective, ValueBind } from './directive';
 import tmpAnalyse from './templateCompiler/index';
 
-import State from '../diff/index';
+import State from './diff/index';
 
 /** test */
-const test = new State({
+const initStore = {
   obj: {
     arr: [
       { key: 'name', val: 'name' },
@@ -24,16 +24,21 @@ const test = new State({
     ],
   },
   text: 'aye'
-});
+}
+const test = new State(initStore, new StoreKeeper(dataFactory(initStore), {}, {}));
+
+console.time('diff');
 test.setState((state) => {
   state.obj = {
     arr: [
       { key: 'name', val: 'name2' },
-      { key: 'type', val: 'type' }
+      { key: 'aye', val: 'aye' },
+      { key: 'type', val: 'type' },
     ],
   };
   return state;
 });
+console.timeEnd('diff');
 /** test */
 
 
