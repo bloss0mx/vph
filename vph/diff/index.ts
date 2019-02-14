@@ -26,8 +26,7 @@ export default class State {
 
 
   diff(oldStore, newStore, oldPath, newPath) {
-    // console.warn(objectDiff(oldStore, newStore));
-    console.log(oldStore, newStore, oldPath, newPath);
+    // console.log(oldStore, newStore, oldPath, newPath);
     const oldProto = Object.getPrototypeOf(oldStore);
     const newProto = Object.getPrototypeOf(newStore);
     if (oldProto !== newProto) { } else {
@@ -58,7 +57,6 @@ export default class State {
     for (let i in rm) {
       target.delete(rm[i]);
     }
-    console.error(target);
 
     update.map(item => {
       this.diff(oldStore[item], newStore[item], ...this.path(oldPath, newPath, item, item));
@@ -83,7 +81,6 @@ export default class State {
       const tmp = target.splice(mv[i].beforeIdx, 1);
       target.splice(parseInt(<string>(mv[i].afterIdx)) + 1, 0, tmp[0]);
     }
-    console.warn(target);
 
     exist.map(item => {
       this.diff(item.beforeItem, item.afterItem, ...this.path(oldPath, newPath, item.beforeIdx, item.afterIdx));

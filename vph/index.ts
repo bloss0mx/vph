@@ -28,7 +28,6 @@ const initStore = {
 }
 const test = new State(initStore, new StoreKeeper(dataFactory(initStore), {}, {}));
 
-console.time('diff');
 test.setState((state) => {
   state.obj = {
     arr: [
@@ -42,7 +41,6 @@ test.setState((state) => {
   };
   return state;
 });
-console.timeEnd('diff');
 /** test */
 
 
