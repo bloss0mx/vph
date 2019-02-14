@@ -51,6 +51,14 @@ export default class State {
       rm,
       update
     } = objectDiff(oldStore, newStore);
+    const target = this.storeKeeper.getValues(oldPath)[oldPath];
+    for (let i in add) {
+      target.add(add[i].name, add[i].item);
+    }
+    for (let i in rm) {
+      target.delete(rm[i]);
+    }
+    console.error(target);
 
     update.map(item => {
       this.diff(oldStore[item], newStore[item], ...this.path(oldPath, newPath, item, item));

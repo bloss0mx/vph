@@ -274,6 +274,18 @@ class Objecty extends DataUnit {
   }
 
   /**
+   * 删除值
+   * @param key
+   */
+  delete(key) {
+    delete this.data[key];
+  }
+
+  add(name, data) {
+    this.data[name] = dataFactory(data);
+  }
+
+  /**
    * 批量获取store
    * @param params 
    */

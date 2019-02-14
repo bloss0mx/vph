@@ -19,7 +19,7 @@ export default function rkeys(oldObj, newObj) {
   const update = [];
   for (let i of keys) {
     if (!oldObj.hasOwnProperty(i)) {
-      add.push(i);
+      add.push({ name: i, item: newObj[i] });
     } else if (!newObj.hasOwnProperty(i)) {
       rm.push(i);
     } else if (oldObj[i] !== newObj[i]) {

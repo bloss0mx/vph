@@ -22,6 +22,7 @@ const initStore = {
       { key: 'name', val: 'name' },
       { key: 'type', val: 'type' }
     ],
+    la: {}
   },
   text: 'aye'
 }
@@ -35,6 +36,9 @@ test.setState((state) => {
       { key: 'aye', val: 'aye' },
       { key: 'type', val: 'type' },
     ],
+    hey: {
+      name: 'my name'
+    }
   };
   return state;
 });
