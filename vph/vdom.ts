@@ -37,7 +37,8 @@ export default class VirtualDom {
   private ifDirective: IfDirective;
   private onDirective: onDirective;
   private forDirective: forDirective;
-  private dom: DocumentFragment | HTMLElement;
+  private dom: Fragment | Element;
+  // private dom: DocumentFragment | HTMLElement;
   private children: Array<BaseObj | Object | string>;
   private whenUninit: Function | null;
   constructor(init) {
@@ -81,11 +82,18 @@ export default class VirtualDom {
    * 初始化dom
    */
   initForDom() {
-    this.dom = document.createDocumentFragment();
+    // this.dom = document.createDocumentFragment();
+    this.dom = new Fragment({
+      master: this,
+    });
   }
 
   initDom() {
-    this.dom = document.createElement(this.tag);
+    // this.dom = document.createElement(this.tag);
+    this.dom = new Element({
+      master: this,
+      tag: this.tag,
+    });
   }
 
   /**
@@ -274,7 +282,7 @@ export default class VirtualDom {
    * 输出dom
    */
   giveDom() {
-    return this.dom;
+    return this.dom.outputDom();
   }
 
   // FIX 是不是和rmSelf重复？或者没有去掉指令
@@ -330,27 +338,10 @@ export default class VirtualDom {
   insertToAvilableBefore(dom) {
     const previousBrother = this.previousBrother();
     if (previousBrother) {
-      this.insertAfter(previousBrother, dom);
+      insertAfter(previousBrother, dom);
     } else {
-      this.insertPre(dom);
+      prepend(this.dom, dom);
     }
-  }
-
-  /**
-   * 向后插入
-   * @param {*} pt 
-   * @param {*} dom 
-   */
-  insertAfter(pt, dom) {
-    insertAfter(pt, dom);
-  }
-
-  /**
-   * 向前插入
-   * @param {*} dom 
-   */
-  insertPre(dom) {
-    prepend(this.dom, dom);
   }
 
   /**

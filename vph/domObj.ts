@@ -15,7 +15,8 @@ import { Fragment, Element, TextNode } from './domKeeper';
 const TEMPLATE_REGEXP = /\{\{[^\s]+\}\}/;
 
 class BaseObj {
-  protected dom;
+  // protected dom: TextNode | HTMLElement;
+  protected dom: any;
   /**
    * 初始化
    * @param {*} name 
@@ -51,6 +52,7 @@ class BaseObj {
 }
 
 class TextDom extends BaseObj {
+  protected dom: TextNode;
   private name: string;
   private template: string;
   private storeKeeper: StoreKeeper;
@@ -58,22 +60,25 @@ class TextDom extends BaseObj {
     super(name, index);
     this.name = name;
     this.template = name;
-    this.dom = document.createTextNode(name);
+    // this.dom = document.createTextNode(' ');
+    this.dom = new TextNode({
+      master: this,
+      text: ' '
+    });
     this.storeKeeper = storeKeeper;
     this.storeKeeper.register(name.replace(/\{|\}/g, ''), this);
   }
-
 
   run(data, type, index) {
     if (this.name.match(TEMPLATE_REGEXP)) {
     }
     if (this.dom && this.dom.textContent) {
-      this.dom.textContent = data;
+      this.dom.outputDom().textContent = data;
     }
   }
 
   giveDom() {
-    return this.dom;
+    return this.dom.outputDom();
   }
 
   rmSelf() {
@@ -90,14 +95,18 @@ class TextDom extends BaseObj {
 class PlainText extends BaseObj {
   constructor(name) {
     super(name);
-    this.dom = document.createTextNode(name.replace(/&nbsp;/g, '\u00A0'));
+    // this.dom = document.createTextNode(name.replace(/&nbsp;/g, '\u00A0'));
+    this.dom = new TextNode({
+      master: this,
+      text: name.replace(/&nbsp;/g, '\u00A0'),
+    });
     // console.log(this.dom.);
     // this.dom = document.createDocumentFragment();
     // this.dom.innerHTML = name;
   }
 
   giveDom() {
-    return this.dom;
+    return this.dom.outputDom();
   }
 
 }
@@ -107,6 +116,7 @@ class AttrObj extends BaseObj {
   private storeKeeper: StoreKeeper;
   private template: string;
   private value: string;
+  protected dom: Element;
   constructor(init) {
     super(init);
     this.dom = init.dom;

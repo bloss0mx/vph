@@ -22,11 +22,14 @@ const prepend = (bro, target) => {
 };
 const insertAfter = (referenceNode, newNode) => referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
 const remove = (target) => {
-  const fatherDom = getFatherDom(target);
-  fatherDom && fatherDom.removeChild(target);
+  const fatherDom = getFatherDom(target.outputDom());
+  fatherDom && fatherDom.removeChild(target.outputDom());
+  // const fatherDom = getFatherDom(target);
+  // fatherDom && fatherDom.removeChild(target);
 };
 const attr = (target, name, value) => {
-  target.setAttribute(name, value);
+  target.outputDom().setAttribute(name, value);
+  // target.setAttribute(name, value);
 };
 const removeAttr = (target, name) => {
   target.setAttribute(name, '');
