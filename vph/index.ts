@@ -13,6 +13,37 @@ import {
 import { forDirective, IfDirective, onDirective, ValueBind } from './directive';
 import tmpAnalyse from './templateCompiler/index';
 
+import State from './diff/index';
+
+/** test */
+const initStore = {
+  obj: {
+    arr: [
+      { key: 'name', val: 'name' },
+      { key: 'type', val: 'type' }
+    ],
+    la: {}
+  },
+  text: 'aye'
+}
+const test = new State(initStore, new StoreKeeper(dataFactory(initStore), {}, {}));
+
+test.setState((state) => {
+  state.obj = {
+    arr: [
+      { key: 'name', val: 'name2' },
+      { key: 'aye', val: 'aye' },
+      { key: 'type', val: 'type' },
+    ],
+    hey: {
+      name: 'my name'
+    }
+  };
+  return state;
+});
+/** test */
+
+
 /**
  * 组件初始化
  * @param init 

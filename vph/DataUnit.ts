@@ -274,6 +274,18 @@ class Objecty extends DataUnit {
   }
 
   /**
+   * 删除值
+   * @param key
+   */
+  delete(key) {
+    delete this.data[key];
+  }
+
+  add(name, data) {
+    this.data[name] = dataFactory(data);
+  }
+
+  /**
    * 批量获取store
    * @param params 
    */
@@ -307,4 +319,43 @@ function dataFactory(data) {
   }
 }
 
-export { DataUnit, Arrayy, Objecty, dataFactory };
+/**
+ * 转换为js对象
+ * @param pt 
+ */
+function toJS(pt) {
+  if (pt.__proto__.constructor.name === 'Objecty') {
+    const _pt = pt.showData();
+    const data = {};
+    for (let i in _pt) {
+      data[i] = toJS(_pt[i]);
+    }
+    return data;
+  } else if (pt.__proto__.constructor.name === 'Arrayy') {
+    const _pt = pt.showData();
+    const data = [];
+    _pt.map(item => {
+      data.push(toJS(item));
+    });
+    return data;
+  } else if (pt.__proto__.constructor.name === 'DataUnit') {
+    const _pt = pt.showData();
+    return _pt;
+  } else if (pt.__proto__.constructor.name === 'Object') {
+    const data = {};
+    for (let i in pt) {
+      data[i] = toJS(pt[i]);
+    }
+    return data;
+  } else if (pt.__proto__.constructor.name === 'Array') {
+    const data = [];
+    pt.map(item => {
+      data.push(item);
+    });
+    return data;
+  } else {
+    console.warn(pt);
+  }
+}
+
+export { DataUnit, Arrayy, Objecty, dataFactory, toJS };
