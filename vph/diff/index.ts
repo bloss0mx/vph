@@ -1,7 +1,7 @@
 import arrayDiff from './arrayDiff';
 import objectDiff from './objectDiff';
 
-import { Objecty, Arrayy, DataUnit, dataFactory } from '../DataUnit';
+import { Objecty, Arrayy, DataUnit, dataFactory, toJS } from '../DataUnit';
 import StoreKeeper from '../store';
 
 export default class State {
@@ -22,6 +22,7 @@ export default class State {
     const newPath = '';
 
     this.diff(oldStore, newStore, oldPath, newPath);
+    console.dir(toJS(this.storeKeeper.store.showData()));
   }
 
 
