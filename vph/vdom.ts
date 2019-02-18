@@ -54,6 +54,7 @@ export default class VirtualDom {
     this.setFather(init.father, init.index);
 
     // store和dom初始化
+    // console.log(init.storeKeeper);
     this.storeKeeper = init.storeKeeper instanceof StoreKeeper
       ? init.storeKeeper
       : new StoreKeeper(dataFactory({}));//StoreKeeper
@@ -390,6 +391,10 @@ export default class VirtualDom {
     if (store instanceof Objecty) {
       return store.getValues(...params);
     }
+  }
+
+  setState(callback) {
+    this.storeKeeper.setState(callback);
   }
 
 }

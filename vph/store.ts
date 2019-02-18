@@ -1,4 +1,5 @@
-import { DataUnit, Arrayy, Objecty } from './DataUnit';
+import { DataUnit, Arrayy, Objecty, dataFactory, toJS } from './DataUnit';
+import Diff from './diff/index';
 
 interface forStore { }
 
@@ -8,13 +9,17 @@ interface props { }
  * 数据托管器
  */
 class StoreKeeper {
+  private diff: Diff;
   private store: DataUnit | Objecty | Arrayy;
   private forStore: forStore;
   private props: props;
   constructor(_store: DataUnit | Objecty | Arrayy, _forStore?: object, _props?: object) {
+    console.log('storekeeper init');
     this.store = _store;
     this.forStore = _forStore || {};
     this.props = _props || {};
+
+    this.diff = new Diff(toJS(_store), this);
   }
 
   /**
@@ -173,6 +178,10 @@ class StoreKeeper {
     } else {
       return this.findBaseData(_name);
     }
+  }
+
+  setState(callback) {
+    this.diff.setState(callback);
   }
 }
 

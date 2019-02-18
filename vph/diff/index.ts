@@ -4,7 +4,7 @@ import objectDiff from './objectDiff';
 import { Objecty, Arrayy, DataUnit, dataFactory, toJS } from '../DataUnit';
 import StoreKeeper from '../store';
 
-export default class State {
+export default class Diff {
   private store;
   private storeKeeper;
   constructor(store, storeKeeper?: StoreKeeper) {
@@ -15,25 +15,28 @@ export default class State {
   setState(callback) {
     const oldStore = this.store;
     const newStore = callback(Object.assign({}, this.store));
+    if (newStore === undefined) {
+      console.error(`setState must return a value, got ${newStore}`);
+    }
     this.store = newStore;
     // const oldPath = 'store@';
     // const newPath = 'store@';
     const oldPath = '';
     const newPath = '';
-
+    console.time('diff');
+    console.log(oldStore, newStore);
     this.diff(oldStore, newStore, oldPath, newPath);
-    console.dir(toJS(this.storeKeeper.store.showData()));
+    console.timeEnd('diff');
   }
 
 
   diff(oldStore, newStore, oldPath, newPath) {
-    // console.log(oldStore, newStore, oldPath, newPath);
     const oldProto = Object.getPrototypeOf(oldStore);
     const newProto = Object.getPrototypeOf(newStore);
     if (oldProto !== newProto) { } else {
       switch (oldProto) {
         case Object.getPrototypeOf({}):
-          this.objectOpt(oldStore, newStore, oldPath, newPath)
+          this.objectOpt(oldStore, newStore, oldPath, newPath);
           break;
         case Object.getPrototypeOf([]):
           this.arrayOpt(oldStore, newStore, oldPath, newPath);
@@ -73,7 +76,9 @@ export default class State {
     } = arrayDiff(oldStore, newStore);
     const target = this.storeKeeper.getValues(oldPath)[oldPath];
     for (let i in add) {
-      target.splice(add[i].index, 0, add[i].item);
+      // target.splice(add[i].index, 0, add[i].item);
+      console.log('insert', target, oldPath);
+      target.splice(add[i].item, add[i].index);
     }
     for (let i in rm) {
       target.splice(rm[i].index, 1);
@@ -82,6 +87,8 @@ export default class State {
       const tmp = target.splice(mv[i].beforeIdx, 1);
       target.splice(parseInt(<string>(mv[i].afterIdx)) + 1, 0, tmp[0]);
     }
+    console.error(add, rm, mv, exist, target, this.storeKeeper);
+    console.warn(oldStore, newStore);
 
     exist.map(item => {
       this.diff(item.beforeItem, item.afterItem, ...this.path(oldPath, newPath, item.beforeIdx, item.afterIdx));
@@ -89,7 +96,8 @@ export default class State {
   }
 
   baseOpt(oldStore, newStore, oldPath, newPath) {
-
+    const target = this.storeKeeper.getValues(oldPath)[oldPath];
+    target.setData(newStore);
   }
 
   path(oldPath, newPath, beforeIdx, afterIdx): [string, string] {

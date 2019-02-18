@@ -74,13 +74,13 @@ class DataUnit {
       });
     }
     //数组，无参数 => 取全部
-    if (index === undefined && this.type === 'array') {
+    if ((index === undefined || index === '') && this.type === 'array') {
       return this.data.map(item => {
         return item;
       });
     }
     //对象，无参数 => 取全部
-    if (index === undefined && this.type === 'object') {
+    if ((index === undefined || index === '') && this.type === 'object') {
       let _data = {};
       for (let i in this.data) {
         _data[i] = this.data[i];
@@ -90,6 +90,7 @@ class DataUnit {
     //有参数，数组或对象 => 取全部
     if (
       index !== undefined
+      && index !== ''
       && (this.type === 'array' || this.type === 'object')
     ) {
       return this.data[index];
