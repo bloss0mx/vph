@@ -62,7 +62,7 @@ class DataUnit {
    * 输出值
    * @param index 
    */
-  showData(index?: string): any {
+  showData(index?: string): DataUnit | any {
     //深度取值
     if (
       index
@@ -329,30 +329,30 @@ function dataFactory(data) {
  * @param pt 
  */
 function toJS(pt) {
-  if (pt.__proto__.constructor.name === 'Objecty') {
+  if (pt.__proto__.constructor === Objecty) {
     const _pt = pt.showData();
     const data = {};
     for (let i in _pt) {
       data[i] = toJS(_pt[i]);
     }
     return data;
-  } else if (pt.__proto__.constructor.name === 'Arrayy') {
+  } else if (pt.__proto__.constructor === Arrayy) {
     const _pt = pt.showData();
     const data = [];
     _pt.map(item => {
       data.push(toJS(item));
     });
     return data;
-  } else if (pt.__proto__.constructor.name === 'DataUnit') {
+  } else if (pt.__proto__.constructor === DataUnit) {
     const _pt = pt.showData();
     return _pt;
-  } else if (pt.__proto__.constructor.name === 'Object') {
+  } else if (pt.__proto__.constructor === Object) {
     const data = {};
     for (let i in pt) {
       data[i] = toJS(pt[i]);
     }
     return data;
-  } else if (pt.__proto__.constructor.name === 'Array') {
+  } else if (pt.__proto__.constructor === Array) {
     const data = [];
     pt.map(item => {
       data.push(item);
