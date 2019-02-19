@@ -134,24 +134,6 @@ export function init(selector, vdom, productEnv = false) {
   }, 0);
 }
 
-// export default function Vph(init: {
-//   render: string,
-//   attr: string,
-//   state: object,
-//   actions: object,
-//   components: object,
-//   whenInit: Function,
-// }) {
-//   const analysed = tmpAnalyse(init.render).replace(/^basicTagConstruct\(|\)$/g, '');
-//   const construction = new Function('return ' + analysed);
-//   const _init = {
-//     ...init,
-//     ...construction.call(init.components),
-//   }
-//   // delete _init.render;
-//   console.log(_init);
-//   return new VirtualDom(_init);
-// }
 /**
  * Vph
  * @param init 
