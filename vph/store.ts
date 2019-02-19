@@ -14,7 +14,6 @@ class StoreKeeper {
   private forStore: forStore;
   private props: props;
   constructor(_store: DataUnit | Objecty | Arrayy, _forStore?: object, _props?: object) {
-    console.log('storekeeper init');
     this.store = _store;
     this.forStore = _forStore || {};
     this.props = _props || {};
@@ -43,7 +42,7 @@ class StoreKeeper {
    */
   unregister(name: string, pt, callback?: Function) {
     let found = this.findDataByType(name);
-    if (found !== undefined) {
+    if (found !== undefined && found !== null) {
       found.rmPush && found.rmPush(pt);
       callback && callback();
     }

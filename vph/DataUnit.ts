@@ -299,6 +299,10 @@ class Objecty extends DataUnit {
     return _data;
   }
 
+  toJS() {
+    return toJS(this);
+  }
+
 }
 
 

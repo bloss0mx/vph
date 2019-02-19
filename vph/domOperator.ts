@@ -22,8 +22,13 @@ const prepend = (bro, target) => {
 };
 const insertAfter = (referenceNode, newNode) => referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
 const remove = (target) => {
-  const fatherDom = getFatherDom(target.outputDom());
-  fatherDom && fatherDom.removeChild(target.outputDom());
+  if (target.outputDom) {
+    const fatherDom = getFatherDom(target.outputDom());
+    fatherDom && fatherDom.removeChild(target.outputDom());
+  } else {
+    const fatherDom = getFatherDom(target);
+    fatherDom && fatherDom.removeChild(target);
+  }
   // const fatherDom = getFatherDom(target);
   // fatherDom && fatherDom.removeChild(target);
 };

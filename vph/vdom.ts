@@ -54,7 +54,7 @@ export default class VirtualDom {
     this.setFather(init.father, init.index);
 
     // store和dom初始化
-    // console.log(init.storeKeeper);
+    console.assert(init.storeKeeper, init.storeKeeper);
     this.storeKeeper = init.storeKeeper instanceof StoreKeeper
       ? init.storeKeeper
       : new StoreKeeper(dataFactory({}));//StoreKeeper
@@ -265,7 +265,8 @@ export default class VirtualDom {
     init.varibleName = childInitMsg.varibleName;
     init.baseDataName = childInitMsg.baseDataName;
 
-    init.storeKeeper = new StoreKeeper(...this.storeKeeper.outputAll());
+    // init.storeKeeper = new StoreKeeper(...this.storeKeeper.outputAll());
+    init.storeKeeper = this.storeKeeper;
     init.storeKeeper.setForStore((store, forStore, props) => {
       const _forStore = { ...forStore };
       _forStore[init.varibleName] = childInitMsg.baseData.showData(childInitMsg.index);

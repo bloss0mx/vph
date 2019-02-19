@@ -58,7 +58,6 @@ export function Component(
     whenUninit?: Function,
   }
 ): Function {
-  console.warn('component');
   return function (
     props: {
       attr?: Array<string>,
