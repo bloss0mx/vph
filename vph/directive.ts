@@ -156,6 +156,7 @@ class forDirective extends Directive {
       }
       const preBro = this.pt.previousBrother();
       if (preBro !== undefined) {
+        console.log(preBro, tmpDom);
         insertAfter(preBro, tmpDom);
       } else {
         this.pt.father.giveDom().parentNode.insertBefore(tmpDom, this.pt.father.giveDom());

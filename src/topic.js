@@ -13,6 +13,15 @@ export default Component({
     diff: '',
   },
   whenInit() {
+    // this.setState(state => {
+    //   return {
+    //     preArr: [],
+    //     arr: [],
+    //     ifyo: false,
+    //     subArr: [],
+    //     diff: '',
+    //   };
+    // })
     setTimeout(() => {
       this.setState(state => {
         state.diff = 'haha';
@@ -40,13 +49,22 @@ export default Component({
       });
     }, 3000);
     setTimeout(() => {
-      preArr.push('-2');
+      this.setState(state => {
+        state.preArr = [...state.preArr, { key: '-2', name: '-2' }];
+        return state;
+      });
     }, 4000);
     setTimeout(() => {
-      ifyo.setData(true);
+      this.setState(state => {
+        state.ifyo = true;
+        return state;
+      });
     }, 5000);
     setTimeout(() => {
-      subArr.push('e');
+      this.setState(state => {
+        state.subArr = [...state.subArr, { key: 'e', name: 'e' }];
+        return state;
+      });
     }, 6000);
     setTimeout(() => {
       this.setState(state => {
