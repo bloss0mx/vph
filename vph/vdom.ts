@@ -2,7 +2,7 @@ import { DataUnit, Arrayy, Objecty, dataFactory } from './DataUnit';
 import { TextDom, PlainText, AttrObj, BaseObj } from './domObj';
 import { vdFactory } from './index';
 import { IfDirective, forDirective, onDirective, ValueBind } from './directive';
-import { ARRAYY_OPERATE } from './constant';
+import { ARRAYY_OPERATE, FRAGMENT_PROTO } from './constant';
 import StoreKeeper from './store';
 import {
   prepend,
@@ -54,7 +54,6 @@ export default class VirtualDom {
     this.setFather(init.father, init.index);
 
     // store和dom初始化
-    console.assert(init.storeKeeper, init.storeKeeper);
     this.storeKeeper = init.storeKeeper instanceof StoreKeeper
       ? init.storeKeeper
       : new StoreKeeper(dataFactory({}));//StoreKeeper
@@ -350,26 +349,34 @@ export default class VirtualDom {
    * 查找前一个兄弟节点
    */
   previousBrother() {
+    /**
+     * 向前查找可作为参考的节点。
+     * 因为for指令的vdom的子节点不可能为for指令的vdom，所以只查找两层。
+     * 如果两层内没有可用的节点就继续向前查找。
+     * @param pt 
+     * @param index 
+     */
     function fetchChildrenPt(pt, index) {
-      console.log(pt.father, pt.index);
       if (checkChild(pt, index)) {
         return fetchChildrenPt(pt.childrenPt[pt.childrenPt.length - 1], index - 1);
       } else {
-        // return pt.giveDom && pt.giveDom() || pt;
-        if (Object.getPrototypeOf(pt.giveDom && pt.giveDom()) === Object.getPrototypeOf(document.createDocumentFragment())) {
-          console.error('fragment');
+        if (Object.getPrototypeOf(pt.giveDom && pt.giveDom()) === FRAGMENT_PROTO) {
           return undefined;
         } else {
-          console.warn('>>>', pt.giveDom && pt.giveDom());
           return pt.giveDom && pt.giveDom() || pt;
         }
       }
     }
+    /**
+     * index用来限制层级，只能检查两级
+     * @param pt 
+     * @param index 
+     */
     function checkChild(pt, index) {
       return (pt.childrenPt
         && pt.childrenPt[pt.childrenPt.length - 1]
         && index
-        && Object.getPrototypeOf(pt.giveDom()) === Object.getPrototypeOf(document.createDocumentFragment()));
+        && Object.getPrototypeOf(pt.giveDom()) === FRAGMENT_PROTO);
     }
     if (this.father) {
       for (var i = this.index - 1; i >= 0; i--) {
@@ -381,18 +388,6 @@ export default class VirtualDom {
         }
       }
     }
-    // if (this.father) {
-    //   for (var i = this.index - 1; i >= 0; i--) {
-    //     if (
-    //       this.father.childrenPt[i]
-    //       && this.father.childrenPt[i].giveDom()
-    //       && Object.getPrototypeOf(this.father.childrenPt[i].giveDom()) !== Object.getPrototypeOf(document.createDocumentFragment())
-    //     ) {
-    //       console.warn(this.father.childrenPt[i].giveDom(), this.father.childrenPt[i]);
-    //       return this.father.childrenPt[i].giveDom();
-    //     }
-    //   }
-    // }
   }
 
   /**
