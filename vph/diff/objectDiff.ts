@@ -12,7 +12,6 @@ const newObj = {
 }
 
 export default function rkeys(oldObj, newObj) {
-  // console.log(oldObj, newObj);
   const keys = new Set([...Object.keys(oldObj), ...Object.keys(newObj)]);
   const add = [];
   const rm = [];

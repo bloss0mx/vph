@@ -4,8 +4,9 @@
   <a class='textCenter' href='https://github.com/bloss0mx/vph.ts'>
     Github -- bloss0mx/vph.ts
   </a>
+  <div>这里测试diff: {{diff}}</div>
   <div :for='v in preArr'>{{v}}</div>
-  <div :for='v in arr'>{{v}}</div>
+  <div :for='v in arr'>{{v.name}}</div>
   <div :if='ifyo'>hey</div>
   <div :for='v in subArr'>{{v}}</div>
 </div>

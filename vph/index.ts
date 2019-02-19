@@ -1,7 +1,7 @@
 import VirtualDom from './vdom';
 import { TAGS } from './constant';
 import StoreKeeper from './store';
-import { dataFactory } from './DataUnit';
+import { dataFactory, toJS } from './DataUnit';
 import {
   prepend,
   insertAfter,
@@ -16,31 +16,30 @@ import tmpAnalyse from './templateCompiler/index';
 import State from './diff/index';
 
 /** test */
-const initStore = {
-  obj: {
-    arr: [
-      { key: 'name', val: 'name' },
-      { key: 'type', val: 'type' }
-    ],
-    la: {}
-  },
-  text: 'aye'
-}
-const test = new State(initStore, new StoreKeeper(dataFactory(initStore), {}, {}));
+// const initStore = {
+//   obj: {
+//     arr: [
+//       { key: 'name', val: 'name' },
+//       { key: 'type', val: 'type' }
+//     ],
+//   },
+//   text: 'aye'
+// }
+// const test = new State(initStore, new StoreKeeper(dataFactory(initStore), {}, {}));
 
-test.setState((state) => {
-  state.obj = {
-    arr: [
-      { key: 'name', val: 'name2' },
-      { key: 'aye', val: 'aye' },
-      { key: 'type', val: 'type' },
-    ],
-    hey: {
-      name: 'my name'
-    }
-  };
-  return state;
-});
+// console.time('diff');
+// test.setState((state) => {
+//   state.obj = {
+//     arr: [
+//       { key: 'name', val: 'name2' },
+//       { key: 'aye', val: 'aye' },
+//       { key: 'type', val: 'type' },
+//     ],
+//     text: 'nye',
+//   };
+//   return state;
+// });
+// console.timeEnd('diff');
 /** test */
 
 
@@ -90,7 +89,7 @@ export function Component(
         ...init,
         ...analysed,
         ...props,
-        storeKeeper: new StoreKeeper(dataFactory({}), {}, _props),
+        storeKeeper: new StoreKeeper(dataFactory(init.state), {}, _props),
       }
       init = null;
       delete _init.render;
