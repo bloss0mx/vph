@@ -351,24 +351,48 @@ export default class VirtualDom {
    */
   previousBrother() {
     function fetchChildrenPt(pt, index) {
-      if (
-        pt.childrenPt
-        && pt.childrenPt[pt.childrenPt.length - 1]
-        && index
-        && Object.getPrototypeOf(pt.giveDom()) === Object.getPrototypeOf(document.createDocumentFragment())
-      ) {
+      console.log(pt.father, pt.index);
+      if (checkChild(pt, index)) {
         return fetchChildrenPt(pt.childrenPt[pt.childrenPt.length - 1], index - 1);
       } else {
-        return pt.giveDom && pt.giveDom() || pt;
+        // return pt.giveDom && pt.giveDom() || pt;
+        if (Object.getPrototypeOf(pt.giveDom && pt.giveDom()) === Object.getPrototypeOf(document.createDocumentFragment())) {
+          console.error('fragment');
+          return undefined;
+        } else {
+          console.warn('>>>', pt.giveDom && pt.giveDom());
+          return pt.giveDom && pt.giveDom() || pt;
+        }
       }
+    }
+    function checkChild(pt, index) {
+      return (pt.childrenPt
+        && pt.childrenPt[pt.childrenPt.length - 1]
+        && index
+        && Object.getPrototypeOf(pt.giveDom()) === Object.getPrototypeOf(document.createDocumentFragment()));
     }
     if (this.father) {
       for (var i = this.index - 1; i >= 0; i--) {
         if (this.father.childrenPt[i] && this.father.childrenPt[i].giveDom()) {
-          return fetchChildrenPt(this.father.childrenPt[i], 1);
+          const fetched = fetchChildrenPt(this.father.childrenPt[i], 1);
+          if (fetched !== undefined) {
+            return fetched;
+          }
         }
       }
     }
+    // if (this.father) {
+    //   for (var i = this.index - 1; i >= 0; i--) {
+    //     if (
+    //       this.father.childrenPt[i]
+    //       && this.father.childrenPt[i].giveDom()
+    //       && Object.getPrototypeOf(this.father.childrenPt[i].giveDom()) !== Object.getPrototypeOf(document.createDocumentFragment())
+    //     ) {
+    //       console.warn(this.father.childrenPt[i].giveDom(), this.father.childrenPt[i]);
+    //       return this.father.childrenPt[i].giveDom();
+    //     }
+    //   }
+    // }
   }
 
   /**
