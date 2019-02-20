@@ -1,12 +1,17 @@
-function arrSplice(index, len, data) {
 
+
+export interface ARR_CONTENT {
+  key: number | string;
+  item?: any;
 }
 
-function setData(data, name) {
-
+export interface CHGED {
+  index: number | string;
+  item: any;
 }
-
-export {
-  arrSplice,
-  setData
-};
+export interface NO_CHG {
+  beforeIdx: number | string;
+  afterIdx: number | string;
+  beforeItem: any;
+  afterItem: any;
+}

@@ -1,9 +1,10 @@
+import { ARR_CONTENT, CHGED, NO_CHG } from './interface';
 
-interface ArrContent {
-  key: number | string;
-  item?: any;
-}
-
+/**
+ * 新建key map
+ * @param oldArr 
+ * @param newArr 
+ */
 function makeKeyMap(oldArr, newArr) {
   const keyedBase = {};
   const keyedNew = {};
@@ -26,17 +27,12 @@ function makeKeyMap(oldArr, newArr) {
   };
 }
 
-interface chged {
-  index: number | string;
-  item: any;
-}
-interface noChg {
-  beforeIdx: number | string;
-  afterIdx: number | string;
-  beforeItem: any;
-  afterItem: any;
-}
-export default function diffArr(oldArr: Array<ArrContent>, newArr: Array<ArrContent>) {
+/**
+ * array diff
+ * @param oldArr 
+ * @param newArr 
+ */
+export default function (oldArr: Array<ARR_CONTENT>, newArr: Array<ARR_CONTENT>) {
   const baseKey = oldArr.map(item => item.key);
   const newKey = newArr.map(item => item.key);
   const keySet = new Set([...baseKey, ...newKey]);
@@ -46,7 +42,7 @@ export default function diffArr(oldArr: Array<ArrContent>, newArr: Array<ArrCont
     keyedBase,
     keyedNew
   } = makeKeyMap(oldArr, newArr);
-  const add: Array<chged> = [];
+  const add: Array<CHGED> = [];
   for (let i of keySet) {
     if (!keyedBase.hasOwnProperty(i)) {
       add.push(keyedNew[i]);
@@ -61,7 +57,7 @@ export default function diffArr(oldArr: Array<ArrContent>, newArr: Array<ArrCont
     keyedBase,
     keyedNew
   } = makeKeyMap(nextLevel, newArr);
-  const rm: Array<chged> = [];
+  const rm: Array<CHGED> = [];
   for (let i of keySet) {
     if (!keyedNew.hasOwnProperty(i)) {
       rm.push(keyedBase[i]);
@@ -73,7 +69,7 @@ export default function diffArr(oldArr: Array<ArrContent>, newArr: Array<ArrCont
     keyedBase,
     keyedNew
   } = makeKeyMap(nextLevel, newArr);
-  const mv: Array<noChg> = [];
+  const mv: Array<NO_CHG> = [];
   for (let i in keySet) {
     if (keyedBase[i].index != keyedNew[i].index) {
       mv.push({
@@ -89,7 +85,7 @@ export default function diffArr(oldArr: Array<ArrContent>, newArr: Array<ArrCont
     keyedBase,
     keyedNew
   } = makeKeyMap(oldArr, newArr);
-  const exist: Array<noChg> = [];
+  const exist: Array<NO_CHG> = [];
   for (let i of keySet) {
     if (keyedBase.hasOwnProperty(i) &&
       keyedNew.hasOwnProperty(i)) {

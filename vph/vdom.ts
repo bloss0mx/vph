@@ -413,7 +413,7 @@ export default class VirtualDom {
     }
   }
 
-  setState(callback) {
+  setState(callback: (state) => object) {
     this.storeKeeper.setState(callback);
   }
 
