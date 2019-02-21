@@ -17,7 +17,7 @@ export default class Diff {
    * 设置state
    * @param callback 
    */
-  setState(callback: Function) {
+  setState(callback: (state: object) => object) {
     const oldStore = this.store;
     const newStore = callback(Object.assign({}, this.store));
     if (newStore === undefined) {
