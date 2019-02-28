@@ -1,20 +1,21 @@
+import { ARR_CONTENT, CHGED, NO_CHG } from './interface';
 
-interface ArrContent {
-  key: number | string;
-  item?: any;
-}
-
+/**
+ * 新建key map
+ * @param oldArr 
+ * @param newArr 
+ */
 function makeKeyMap(oldArr, newArr) {
   const keyedBase = {};
   const keyedNew = {};
   oldArr.map((item, index) => {
-    keyedBase[item.key] = {
+    keyedBase[item.__ARRAY_KEY__] = {
       item,
       index
     };
   });
   newArr.map((item, index) => {
-    keyedNew[item.key] = {
+    keyedNew[item.__ARRAY_KEY__] = {
       item,
       index
     };
@@ -26,19 +27,27 @@ function makeKeyMap(oldArr, newArr) {
   };
 }
 
-interface chged {
-  index: number | string;
-  item: any;
-}
-interface noChg {
-  beforeIdx: number | string;
-  afterIdx: number | string;
-  beforeItem: any;
-  afterItem: any;
-}
-export default function diffArr(oldArr: Array<ArrContent>, newArr: Array<ArrContent>) {
-  const baseKey = oldArr.map(item => item.key);
-  const newKey = newArr.map(item => item.key);
+/**
+ * array diff
+ * @param oldArr 
+ * @param newArr 
+ */
+export default function (oldArr: Array<ARR_CONTENT>, _newArr: Array<ARR_CONTENT>) {
+  const baseKey = oldArr.map(item => item.__ARRAY_KEY__).filter(item => item !== undefined);
+  const newArr = [..._newArr];
+  const newKey = [];
+  for (let i of newArr) {
+    if (!i.hasOwnProperty('__ARRAY_KEY__')) {
+      Object.defineProperty(i, "__ARRAY_KEY__", {
+        enumerable: false,
+        writable: false,
+        configurable: false,
+        value: (new Date).getTime().toString(36) + (Math.floor(Math.random() * 10000000000000000)).toString(36)
+      });
+    }
+    newKey.push(i.__ARRAY_KEY__);
+  }
+  // const newKey = newArr.map(item => item.__ARRAY_KEY__);
   const keySet = new Set([...baseKey, ...newKey]);
 
   let nextLevel = [...oldArr];
@@ -46,12 +55,12 @@ export default function diffArr(oldArr: Array<ArrContent>, newArr: Array<ArrCont
     keyedBase,
     keyedNew
   } = makeKeyMap(oldArr, newArr);
-  const add: Array<chged> = [];
+  const add: Array<CHGED> = [];
   for (let i of keySet) {
     if (!keyedBase.hasOwnProperty(i)) {
       add.push(keyedNew[i]);
       nextLevel.splice(keyedNew[i].index, 0, {
-        key: i,
+        __ARRAY_KEY__: i,
         item: keyedNew[i].item
       });
     }
@@ -61,7 +70,7 @@ export default function diffArr(oldArr: Array<ArrContent>, newArr: Array<ArrCont
     keyedBase,
     keyedNew
   } = makeKeyMap(nextLevel, newArr);
-  const rm: Array<chged> = [];
+  const rm: Array<CHGED> = [];
   for (let i of keySet) {
     if (!keyedNew.hasOwnProperty(i)) {
       rm.push(keyedBase[i]);
@@ -73,7 +82,7 @@ export default function diffArr(oldArr: Array<ArrContent>, newArr: Array<ArrCont
     keyedBase,
     keyedNew
   } = makeKeyMap(nextLevel, newArr);
-  const mv: Array<noChg> = [];
+  const mv: Array<NO_CHG> = [];
   for (let i in keySet) {
     if (keyedBase[i].index != keyedNew[i].index) {
       mv.push({
@@ -89,7 +98,7 @@ export default function diffArr(oldArr: Array<ArrContent>, newArr: Array<ArrCont
     keyedBase,
     keyedNew
   } = makeKeyMap(oldArr, newArr);
-  const exist: Array<noChg> = [];
+  const exist: Array<NO_CHG> = [];
   for (let i of keySet) {
     if (keyedBase.hasOwnProperty(i) &&
       keyedNew.hasOwnProperty(i)) {

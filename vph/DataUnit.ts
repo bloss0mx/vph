@@ -164,7 +164,7 @@ class Arrayy extends DataUnit {
    * @param len 长度
    * @param data 新内容
    */
-  splice(index: number, len: number, data) {
+  private splice(index: number, len: number, data) {
     const newData = dataFactory(data);
     this.data.splice(index, len, newData);
     return newData;

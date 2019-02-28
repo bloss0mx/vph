@@ -3,6 +3,7 @@ import objectDiff from './objectDiff';
 
 import { Objecty, Arrayy, DataUnit, dataFactory, toJS } from '../DataUnit';
 import StoreKeeper from '../store';
+import { ARR_CONTENT } from './interface';
 
 export default class Diff {
   private store;
@@ -12,7 +13,11 @@ export default class Diff {
     this.storeKeeper = storeKeeper;
   }
 
-  setState(callback) {
+  /**
+   * 设置state
+   * @param callback 
+   */
+  setState(callback: (state: object) => object) {
     const oldStore = this.store;
     const newStore = callback(Object.assign({}, this.store));
     if (newStore === undefined) {
@@ -26,8 +31,19 @@ export default class Diff {
     console.timeEnd('diff');
   }
 
-
-  diff(oldStore, newStore, oldPath, newPath) {
+  /**
+   * diff
+   * @param oldStore 
+   * @param newStore 
+   * @param oldPath 
+   * @param newPath 
+   */
+  diff(
+    oldStore,
+    newStore,
+    oldPath: string,
+    newPath: string
+  ) {
     const oldProto = Object.getPrototypeOf(oldStore);
     const newProto = Object.getPrototypeOf(newStore);
     if (oldProto !== newProto) { } else {
@@ -45,7 +61,11 @@ export default class Diff {
     }
   }
 
-  objectFetcher(path) {
+  /**
+   * 取上一层store
+   * @param path 
+   */
+  objectFetcher(path: string) {
     if (path === undefined || path.length === 0) {
       return this.storeKeeper.store;
     } else if (path.match(/./g).length === 0) {
@@ -58,7 +78,19 @@ export default class Diff {
     }
   }
 
-  objectOpt(oldStore, newStore, oldPath, newPath) {
+  /**
+   * object处理
+   * @param oldStore 
+   * @param newStore 
+   * @param oldPath 
+   * @param newPath 
+   */
+  objectOpt(
+    oldStore: object,
+    newStore: object,
+    oldPath: string,
+    newPath: string
+  ) {
     const {
       add,
       rm,
@@ -79,7 +111,19 @@ export default class Diff {
     });
   }
 
-  arrayOpt(oldStore, newStore, oldPath, newPath) {
+  /**
+   * 数组处理
+   * @param oldStore 
+   * @param newStore 
+   * @param oldPath 
+   * @param newPath 
+   */
+  arrayOpt(
+    oldStore: Array<ARR_CONTENT>,
+    newStore: Array<ARR_CONTENT>,
+    oldPath: string,
+    newPath: string
+  ) {
     const {
       add,
       rm,
@@ -103,12 +147,36 @@ export default class Diff {
     });
   }
 
-  baseOpt(oldStore, newStore, oldPath, newPath) {
+  /**
+   * 基本类型处理
+   * @param oldStore 
+   * @param newStore 
+   * @param oldPath 
+   * @param newPath 
+   */
+  baseOpt(
+    oldStore: DataUnit,
+    newStore: DataUnit,
+    oldPath: string,
+    newPath: string
+  ) {
     const target = this.storeKeeper.getValues(oldPath)[oldPath];
     target.setData(newStore);
   }
 
-  path(oldPath, newPath, beforeIdx, afterIdx): [string, string] {
+  /**
+   * 获取路径
+   * @param oldPath 
+   * @param newPath 
+   * @param beforeIdx 
+   * @param afterIdx 
+   */
+  path(
+    oldPath: string | number,
+    newPath: string | number,
+    beforeIdx: string | number,
+    afterIdx: string | number
+  ): [string, string] {
     let _oldPath = '',
       _newPath = '';
     if (oldPath === '') {

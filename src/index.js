@@ -1,5 +1,5 @@
 import { init } from 'vph';
-import Vph from 'vph';
+import Vph from '../vph';
 import { interval } from 'rxjs';
 import index_tmp from './index.html';
 import Header from './header';
@@ -24,6 +24,7 @@ window.vD1 = Vph({
   actions: {
   },
   whenInit() {
+    // this.setState()
   }
 });
 

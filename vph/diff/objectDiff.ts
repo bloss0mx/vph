@@ -5,7 +5,19 @@ interface chged {
   item: any;
 }
 
-export default function rkeys(oldObj, newObj) {
+/**
+ * object diff
+ * @param oldObj 
+ * @param newObj 
+ */
+export default function (
+  oldObj: object,
+  newObj: object
+): {
+  add: Array<chged>,
+  rm: Array<string | number>,
+  update: Array<string | number>
+} {
   const keys = new Set([...Object.keys(oldObj), ...Object.keys(newObj)]);
   const add: Array<chged> = [];
   const rm: Array<string | number> = [];

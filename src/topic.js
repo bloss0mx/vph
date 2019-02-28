@@ -1,5 +1,5 @@
 import html from './topic.vph';
-import { Component } from 'vph';
+import { Component } from '../vph';
 import moment from 'moment';
 
 
@@ -13,6 +13,7 @@ export default Component({
     diff: '',
   },
   whenInit() {
+    // this.setState();
     // this.setState(state => {
     //   return {
     //     preArr: [],
