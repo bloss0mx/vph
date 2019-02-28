@@ -9,13 +9,13 @@ function makeKeyMap(oldArr, newArr) {
   const keyedBase = {};
   const keyedNew = {};
   oldArr.map((item, index) => {
-    keyedBase[item.key] = {
+    keyedBase[item.__ARRAY_KEY__] = {
       item,
       index
     };
   });
   newArr.map((item, index) => {
-    keyedNew[item.key] = {
+    keyedNew[item.__ARRAY_KEY__] = {
       item,
       index
     };
@@ -32,9 +32,22 @@ function makeKeyMap(oldArr, newArr) {
  * @param oldArr 
  * @param newArr 
  */
-export default function (oldArr: Array<ARR_CONTENT>, newArr: Array<ARR_CONTENT>) {
-  const baseKey = oldArr.map(item => item.key);
-  const newKey = newArr.map(item => item.key);
+export default function (oldArr: Array<ARR_CONTENT>, _newArr: Array<ARR_CONTENT>) {
+  const baseKey = oldArr.map(item => item.__ARRAY_KEY__).filter(item => item !== undefined);
+  const newArr = [..._newArr];
+  const newKey = [];
+  for (let i of newArr) {
+    if (!i.hasOwnProperty('__ARRAY_KEY__')) {
+      Object.defineProperty(i, "__ARRAY_KEY__", {
+        enumerable: false,
+        writable: false,
+        configurable: false,
+        value: (new Date).getTime().toString(36) + (Math.floor(Math.random() * 10000000000000000)).toString(36)
+      });
+    }
+    newKey.push(i.__ARRAY_KEY__);
+  }
+  // const newKey = newArr.map(item => item.__ARRAY_KEY__);
   const keySet = new Set([...baseKey, ...newKey]);
 
   let nextLevel = [...oldArr];
@@ -47,7 +60,7 @@ export default function (oldArr: Array<ARR_CONTENT>, newArr: Array<ARR_CONTENT>)
     if (!keyedBase.hasOwnProperty(i)) {
       add.push(keyedNew[i]);
       nextLevel.splice(keyedNew[i].index, 0, {
-        key: i,
+        __ARRAY_KEY__: i,
         item: keyedNew[i].item
       });
     }
