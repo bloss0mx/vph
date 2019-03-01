@@ -1,7 +1,7 @@
 
 
 export interface ARR_CONTENT {
-  key: number | string;
+  __ARRAY_KEY__: number | string;
   item?: any;
 }
 

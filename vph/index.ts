@@ -12,6 +12,7 @@ import {
 } from './domOperator';
 import { forDirective, IfDirective, onDirective, ValueBind } from './directive';
 import tmpAnalyse from './templateCompiler/index';
+import Diff from './diff/index';
 
 import State from './diff/index';
 
@@ -42,6 +43,9 @@ import State from './diff/index';
 // console.timeEnd('diff');
 /** test */
 
+interface setState {
+  (state: object): object;
+}
 
 /**
  * 组件初始化
@@ -49,13 +53,35 @@ import State from './diff/index';
  */
 export function Component(
   init: {
+    /**
+     * 渲染模板
+     */
     render: Function | string,
     attr?: string,
+    /**
+     * 初始化state
+     */
     state?: object,
+    /**
+     * 方法
+     */
     actions?: object,
+    /**
+     * 注册组件
+     */
     components?: object,
+    /**
+     * 挂载时触发
+     */
     whenInit?: Function,
+    /**
+     * 卸载时触发
+     */
     whenUninit?: Function,
+    /**
+     * 设置state
+     */
+    setState: setState,
   }
 ): Function {
   return function (
