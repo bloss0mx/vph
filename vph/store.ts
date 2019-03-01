@@ -129,8 +129,8 @@ class StoreKeeper {
    * 使用name查找store，props，forStore
    * @param name 
    */
-  findBaseData(name) {
-    let found;
+  findBaseData(name: string): DataUnit {
+    let found: DataUnit;
     if (name.match(/\./g)) {
       const [first, ...other] = name.split('.');
       if (this.forStore[first] !== undefined) {
@@ -160,15 +160,15 @@ class StoreKeeper {
    * name = store@name | props@name | for@name | name
    * @param name 
    */
-  findDataByType(name) {
-    let type = name.match(/^for@|^props@|^state@/);
-    type = type && type[0].replace(/@/, '');
+  findDataByType(name: string): DataUnit | any {
+    const _type = name.match(/^for@|^props@|^state@/);
+    const type = _type && _type[0].replace(/@/, '');
     const _name = name.replace(/^for@|^props@|^state@/, '');
     if (type) {
       if (type === 'for') {
-        return this.forStore[_name];
+        return <DataUnit>this.forStore[_name];
       } else if (type === 'props') {
-        return this.props[_name];
+        return <DataUnit>this.props[_name];
       } else if (type === 'state') {
         return this.store.showData(_name);
       } else {

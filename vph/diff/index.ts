@@ -8,8 +8,8 @@ import { ARR_CONTENT } from './interface';
 export default class Diff {
   private store;
   private storeKeeper;
-  constructor(store, storeKeeper?: StoreKeeper) {
-    this.store = store || {};
+  constructor(store = {}, storeKeeper?: StoreKeeper) {
+    this.store = store;
     this.storeKeeper = storeKeeper;
   }
 

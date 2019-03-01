@@ -56,7 +56,7 @@ class TextDom extends BaseObj {
   private name: string;
   private template: string;
   private storeKeeper: StoreKeeper;
-  constructor(name, index, storeKeeper) {
+  constructor(name: string, index: number, storeKeeper: StoreKeeper) {
     super(name, index);
     this.name = name;
     this.template = name;
@@ -93,7 +93,7 @@ class TextDom extends BaseObj {
 }
 
 class PlainText extends BaseObj {
-  constructor(name) {
+  constructor(name: string) {
     super(name);
     // this.dom = document.createTextNode(name.replace(/&nbsp;/g, '\u00A0'));
     this.dom = new TextNode({

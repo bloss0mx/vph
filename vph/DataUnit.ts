@@ -184,7 +184,7 @@ class Arrayy extends DataUnit {
    * @param newData 
    * @param index 
    */
-  addCallback(newData, index) {
+  addCallback(newData: DataUnit, index: number) {
     this.pushList.map((item) => {
       item.addToList && item.addToList(newData, index);
     });
@@ -194,7 +194,7 @@ class Arrayy extends DataUnit {
    * @param _data 
    * @param index 
    */
-  rmCallback(_data, index) {
+  rmCallback(_data: Array<any>, index: number) {
     _data.map(item => {
       item.rmSelf();
     });
@@ -282,7 +282,7 @@ class Objecty extends DataUnit {
     delete this.data[key];
   }
 
-  add(name, data) {
+  add(name: string, data) {
     this.data[name] = dataFactory(data);
   }
 
@@ -328,33 +328,33 @@ function dataFactory(data) {
  * 转换为js对象
  * @param pt 
  */
-function toJS(pt) {
-  if (pt.__proto__.constructor === Objecty) {
-    const _pt = pt.showData();
+function toJS(pt: DataUnit | Array<DataUnit>): object {
+  if (Object.getPrototypeOf(pt).constructor === Objecty) {
+    const _pt = (<DataUnit>pt).showData();
     const data = {};
     for (let i in _pt) {
       data[i] = toJS(_pt[i]);
     }
     return data;
-  } else if (pt.__proto__.constructor === Arrayy) {
-    const _pt = pt.showData();
+  } else if (Object.getPrototypeOf(pt).constructor === Arrayy) {
+    const _pt = (<DataUnit>pt).showData();
     const data = [];
     _pt.map(item => {
       data.push(toJS(item));
     });
     return data;
-  } else if (pt.__proto__.constructor === DataUnit) {
-    const _pt = pt.showData();
+  } else if (Object.getPrototypeOf(pt).constructor === DataUnit) {
+    const _pt = (<DataUnit>pt).showData();
     return _pt;
-  } else if (pt.__proto__.constructor === Object) {
+  } else if (Object.getPrototypeOf(pt).constructor === Object) {
     const data = {};
     for (let i in pt) {
       data[i] = toJS(pt[i]);
     }
     return data;
-  } else if (pt.__proto__.constructor === Array) {
+  } else if (Object.getPrototypeOf(pt).constructor === Array) {
     const data = [];
-    pt.map(item => {
+    (<Array<DataUnit>>pt).map(item => {
       data.push(item);
     });
     return data;

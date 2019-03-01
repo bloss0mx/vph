@@ -22,11 +22,11 @@ class Directive {
   /**
    * 查找DataUnit源
    */
-  findOrigin(directive) { }
+  findOrigin(directive: string) { }
   /**
    * 数据更新
    */
-  run(ata, type?, index?, operate?) { }
+  run(data, type?, index?, operate?) { }
   /**
    * 删除自己，去掉所有引用
    */
@@ -42,7 +42,12 @@ class IfDirective extends Directive {
   private pt: VirtualDom;
   private key: String;
   private storeKeeper: StoreKeeper;
-  constructor(init) {
+  constructor(init: {
+    flagName: string,
+    storeKeeper: StoreKeeper,
+    pt: VirtualDom,
+    key?: any,
+  }) {
     super(init);
     this.flagName = init.flagName;
 
@@ -61,7 +66,7 @@ class IfDirective extends Directive {
    * 显示隐藏操作
    * @param {*} flag 
    */
-  ifDirectiveOperate(flag) {
+  ifDirectiveOperate(flag: boolean) {
     if (flag) {
       this.pt.show();
     } else {
@@ -81,7 +86,11 @@ class forDirective extends Directive {
   private childrenDom: Array<any>;
   private varibleName;
   private baseDataName: string;
-  constructor(init) {
+  constructor(init: {
+    storeKeeper: StoreKeeper,
+    pt: VirtualDom,
+    directive: string,
+  }) {
     super(init);
     this.storeKeeper = init.storeKeeper;
     this.pt = init.pt;
@@ -90,7 +99,7 @@ class forDirective extends Directive {
     this.findOrigin(init.directive);
   }
 
-  findOrigin(directive) {
+  findOrigin(directive: string) {
     const splited = directive.split('in');
     const handled = splited.map(item => {
       return item.replace(/[\s]*/, '');
@@ -133,18 +142,18 @@ class forDirective extends Directive {
    * @param {*} data 
    * @param {*} index 
    */
-  addToList(data, index) {
+  addToList(data, index: number) {
     const targetIndex = index - 1;
     // const _storeKeeper = new StoreKeeper(...this.storeKeeper.outputAll());
     const _storeKeeper = this.storeKeeper;
-    _storeKeeper.setForStore((store, forStore, props, pt) => {
+    _storeKeeper.setForStore((store, forStore, props, pt: StoreKeeper) => {
       return pt.findDataByType(this.baseDataName);
     });
     const baseData = this.storeKeeper.findDataByType(this.baseDataName);
     const childrenStore = baseData.showData(targetIndex === -1 ? 0 : targetIndex);
     const { tmpDom, tmpChildrenPt } = this.pt.makeForChildren({
       varibleName: this.varibleName,
-      index: targetIndex + 1,
+      index: (targetIndex + 1).toString(),
       storeKeeper: this.storeKeeper,
       baseData: baseData,
       baseDataName: this.baseDataName,
@@ -171,7 +180,7 @@ class forDirective extends Directive {
     }
 
     this.pt.childrenPt.splice(index, 0, tmpChildrenPt);
-    childrenStore.addPush(tmpChildrenPt);
+    (<DataUnit>childrenStore).addPush(tmpChildrenPt);
     this.childrenDom.splice(index, 0, tmpDom);
     this.childrenPt.splice(index, 0, tmpChildrenPt);
   }
@@ -181,7 +190,7 @@ class forDirective extends Directive {
    * @param {*} data 
    * @param {*} index 
    */
-  rmFromList(data, index) {
+  rmFromList(data, index: number) {
     this.pt.childrenPt.splice(index, 1);
     this.childrenPt[index].rmSelf();
     this.childrenPt.splice(index, 1);
@@ -254,7 +263,11 @@ class ValueBind extends Directive {
   private directive: string;
   private valueType: string;
   private valueName: string;
-  constructor(init) {
+  constructor(init: {
+    storeKeeper: StoreKeeper,
+    pt: VirtualDom,
+    directive: string,
+  }) {
     super(init);
     this.storeKeeper = init.storeKeeper;
     this.pt = init.pt;
