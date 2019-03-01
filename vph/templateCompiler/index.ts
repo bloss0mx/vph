@@ -62,6 +62,7 @@ function _basicIterator(container, components) {
   const forDirective = container.getFor();
   const onDirective = container.getOn();
   const bindDirective = container.getBind();
+  const slotDirective = container.getSlot();
   const props = container.getProps();
   const children = container.getChildren();
 
@@ -83,6 +84,7 @@ function _basicIterator(container, components) {
     forDirective: forDirective,
     onDirective: onDirective,
     valueBind: bindDirective,
+    slotDirective,
     children: childrenPt,
   }, components);
   return code;

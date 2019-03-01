@@ -10,6 +10,7 @@ function basicIterator(container) {
   const forDirective = container.getFor();
   const onDirective = container.getOn();
   const bindDirective = container.getBind();
+  const slotDirective = container.getSlot();
   const props = container.getProps();
   const children = container.getChildren();
   // code += 'basicTagConstruct({';
@@ -21,6 +22,7 @@ function basicIterator(container) {
   code += forDirective ? `forDirective:${forDirective},` : '';
   code += onDirective ? `onDirective:${onDirective},` : '';
   code += bindDirective ? `valueBind:${bindDirective},` : '';
+  code += slotDirective ? `slotDirective:${slotDirective},` : '';
   if (children && children.length > 0) {
     const childrenCode = children.map(item => {
       if (typeof item === 'string') {

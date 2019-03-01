@@ -33,7 +33,10 @@ interface init {
   state: object;
   props: object;
   whenInit: Function;
+  whenMount: Function;
   whenUninit: Function;
+  slotDirective: string;
+  slot: Array<any>;
 }
 
 /**
@@ -46,7 +49,9 @@ export default class VirtualDom {
   components: Array<VirtualDom>;
   childrenPt: Array<VirtualDom | BaseObj>;
   isComponent: boolean;
+  slotDirective: string;
 
+  private slot: Array<any>;
   private init: init;
   private tag: string;
   // private props: DataUnit;
@@ -62,7 +67,9 @@ export default class VirtualDom {
   private dom: Fragment | Element;
   // private dom: DocumentFragment | HTMLElement;
   private children: Array<VirtualDom | Object | string>;
-  private whenUninit: Function | null;
+  private whenInit: Function;
+  private whenMount: Function;
+  private whenUninit: Function;
   constructor(init: {
     attr: Array<string>,
     isComponent: boolean;
@@ -82,7 +89,10 @@ export default class VirtualDom {
     state: object;
     props: object;
     whenInit: Function;
+    whenMount: Function;
     whenUninit: Function;
+    slotDirective: string;
+    slot: Array<any>;
   }) {
     // 复制
     this.isComponent = init.isComponent || false;
@@ -110,6 +120,7 @@ export default class VirtualDom {
     // render
     !init.forDirective && this.makeChildren();
     this.fireWhenInit(init.whenInit);
+    this.whenMount = init.whenMount;
     this.whenUninit = init.whenUninit;
     this.attrPt = this.initAttr();
 
@@ -118,6 +129,8 @@ export default class VirtualDom {
     this.ifDirective = this.initIf(init.ifDirective);
     this.forDirective = this.initFor(init.forDirective);
     this.valueBind = this.initValueBind(init.valueBind);
+    this.slotDirective = init.slotDirective;
+    this.slot = init.slot;
   }
 
   /**
@@ -333,6 +346,9 @@ export default class VirtualDom {
    * 输出dom
    */
   giveDom(): DocumentFragment | HTMLElement | Text {
+    if (this.isComponent && typeof this.whenMount === 'function') {
+      this.whenMount.apply(this);
+    }
     return this.dom.outputDom();
   }
 
@@ -467,8 +483,11 @@ export default class VirtualDom {
    * 设置新的state
    * @param callback 
    */
-  setState(callback: (state: object) => object) {
+  setState(callback: (state: object) => object, afterUpdate: (state: object) => object) {
     this.storeKeeper.setState(callback);
+    if (typeof afterUpdate === 'function') {
+      afterUpdate.apply(this);
+    }
   }
 
 }

@@ -93,16 +93,30 @@ export function Component(
       forDirective?: string,
       onDirective?: string,
       ifDirective?: string,
+      slotDirective?: string,
     },
   ): Function {
+
+    const slot = (props.children || []).map(item => {
+      if (typeof item === 'function') {
+        return item();
+      } else {
+        return new VirtualDom(item);
+      }
+    });
+    console.log(slot);
+
     return function (store: StoreKeeper): VirtualDom {
       let analysed;
-      if (typeof init.render === 'string') {
-        analysed = tmpAnalyse(init.render, init.components);
-      } else if (typeof init.render === 'function') {
-        analysed = init.render(init.components);
+      if (init) {
+        if (typeof init.render === 'string') {
+          analysed = tmpAnalyse(init.render, init.components);
+        } else if (typeof init.render === 'function') {
+          analysed = init.render(init.components);
+        }
       }
       const _props = props.props ? store.getMultiValue(...props.props.split(' ')) : {};
+      // const slot = props.children ? [...props.children] : [];
       delete props.attr;
       delete props.props;
       delete props.children;
@@ -112,12 +126,13 @@ export function Component(
       // delete props.ifDirective;
       const _init = {
         isComponent: true,
+        slot,
         ...init,
         ...analysed,
         ...props,
         storeKeeper: new StoreKeeper(dataFactory(init.state), {}, _props),
       }
-      init = null;
+      // init = null;//slot需要这个，不能清除
       delete _init.render;
       return new VirtualDom(_init);
     }

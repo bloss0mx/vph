@@ -87,6 +87,10 @@ class Container {
     const directive = this.directive.find(item => item.match(/:props/));
     return cleanDirective(directive, /:props=/);
   }
+  getSlot() {
+    const directive = this.directive.find(item => item.match(/:slot/));
+    return cleanDirective(directive, /:slot=/);
+  }
   getChildren() {
     return this.children;
   }

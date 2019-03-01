@@ -16,7 +16,7 @@ export default Component({
     subArr: [],
     diff: '',
   },
-  whenInit() {
+  whenMount() {
     setTimeout(() => {
       this.setState(state => {
         state.diff = 'haha';
