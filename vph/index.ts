@@ -1,7 +1,7 @@
 import VirtualDom from './vdom';
 import { TAGS } from './constant';
 import StoreKeeper from './store';
-import { dataFactory, toJS } from './DataUnit';
+import { dataFactory, toJS } from './DataUnit/index';
 import {
   prepend,
   insertAfter,
@@ -10,7 +10,7 @@ import {
   removeAttr,
   append,
 } from './domOperator';
-import { forDirective, IfDirective, onDirective, ValueBind } from './directive';
+import { forDirective, IfDirective, onDirective, ValueBind } from './directive/index';
 import tmpAnalyse from './templateCompiler/index';
 import Diff from './diff/index';
 

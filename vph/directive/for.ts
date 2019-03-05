@@ -1,7 +1,7 @@
-import { ARRAYY_OPERATE } from './constant';
-import { DataUnit } from './DataUnit';
-import VirtualDom from './vdom';
-import StoreKeeper from './store';
+import { ARRAYY_OPERATE } from '../constant';
+import { DataUnit } from '../DataUnit/index';
+import VirtualDom from '../vdom';
+import StoreKeeper from '../store';
 import {
   prepend,
   insertAfter,
@@ -9,77 +9,10 @@ import {
   attr,
   removeAttr,
   append,
-} from './domOperator';
+} from '../domOperator';
+import Directive from './directive';
 
-// TODO 不要让指令直接操作vdom
-
-class Directive {
-  constructor(init) { }
-  /**
-   * 初始化
-   */
-  init() { }
-  /**
-   * 查找DataUnit源
-   */
-  findOrigin(directive: string) { }
-  /**
-   * 数据更新
-   */
-  run(data, type?, index?, operate?) { }
-  /**
-   * 删除自己，去掉所有引用
-   */
-  mySelf() {
-    for (let i in this) {
-      this[i] = null;
-    }
-  }
-}
-
-class IfDirective extends Directive {
-  private flagName: string;
-  private pt: VirtualDom;
-  private key: String;
-  private storeKeeper: StoreKeeper;
-  constructor(init: {
-    flagName: string,
-    storeKeeper: StoreKeeper,
-    pt: VirtualDom,
-    key?: any,
-  }) {
-    super(init);
-    this.flagName = init.flagName;
-
-    this.storeKeeper = init.storeKeeper;
-    this.pt = init.pt;
-
-    this.key = init.key ? init.key : true;//
-    this.storeKeeper.register(this.flagName, this);
-  }
-
-  run(data) {
-    this.ifDirectiveOperate(data == this.key);
-  }
-
-  /**
-   * 显示隐藏操作
-   * @param {*} flag 
-   */
-  ifDirectiveOperate(flag: boolean) {
-    if (flag) {
-      this.pt.show();
-    } else {
-      this.pt.hide();
-    }
-  }
-
-  rmSelf() {
-    this.storeKeeper.unregister(this.flagName, this);
-  }
-
-}
-class forDirective extends Directive {
+export default class forDirective extends Directive {
   private storeKeeper: StoreKeeper;
   private pt: VirtualDom;
   private childrenPt: Array<any>;
@@ -107,7 +40,7 @@ class forDirective extends Directive {
     this.varibleName = handled[0].replace(/ /g, '');
     this.baseDataName = handled[1];
 
-
+    console.log(this.varibleName, this.baseDataName);
     this.storeKeeper.register(this.baseDataName, this, this.init);
   }
 
@@ -199,100 +132,3 @@ class forDirective extends Directive {
   }
 
 }
-
-class onDirective extends Directive {
-  private storeKeeper: StoreKeeper;
-  private pt: VirtualDom;
-  private callback: any;// FIX ME
-  private directive: string;
-  private eventType: string;
-  private callbackName: string;
-  constructor(init) {
-    super(init);
-    this.storeKeeper = init.storeKeeper;
-    this.pt = init.pt;
-    this.callback = init.callback;
-    this.directive = init.directive;//'input.'
-
-    this.init();
-    this.findCallback();
-    this.findOrigin();
-  }
-
-  init() {
-    const splited = this.directive.split('.');
-    const handled = splited.map(item => {
-      return item.replace(/[\s]*/, '');
-    });
-    this.eventType = handled[0];
-    this.callbackName = handled[1];
-  }
-
-  findOrigin() {
-    if (this.eventType && this.callback) {
-      this.pt.giveDom().addEventListener(this.eventType, this.callback);
-    }
-  }
-
-  /**
-   * 组件根节点查找action
-   */
-  findCallback() {
-    let pt = this.pt;
-    for (; ;) {
-      if (!pt.isComponent) {
-        pt = pt.father;
-      } else {
-        break;
-      }
-    }
-    if (pt.actions && pt.actions[this.callbackName]) {
-      this.callback = pt.actions[this.callbackName].bind(pt);
-    }
-  }
-
-  rmSelf() {
-    this.pt.giveDom().removeEventListener(this.eventType, this.callback);
-  }
-
-}
-
-class ValueBind extends Directive {
-  private storeKeeper: StoreKeeper;
-  private pt: VirtualDom;
-  private directive: string;
-  private valueType: string;
-  private valueName: string;
-  constructor(init: {
-    storeKeeper: StoreKeeper,
-    pt: VirtualDom,
-    directive: string,
-  }) {
-    super(init);
-    this.storeKeeper = init.storeKeeper;
-    this.pt = init.pt;
-    this.directive = init.directive;//'input.'
-
-    this.init();
-    this.findOrigin();
-  }
-
-  init() {
-    const splited = this.directive.split('.');
-    const handled = splited.map(item => {
-      return item.replace(/[\s]*/, '');
-    });
-    this.valueType = handled[0];
-    this.valueName = handled[1];
-  }
-
-  findOrigin() {
-    this.storeKeeper.register(this.valueName, this);
-  }
-
-  run(data) {
-    this.pt.giveDom()[this.valueType] = data;
-  }
-}
-
-export { IfDirective, forDirective, onDirective, ValueBind };

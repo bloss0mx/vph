@@ -1,7 +1,7 @@
-import { DataUnit, Arrayy, Objecty, dataFactory } from './DataUnit';
+import { DataUnit, Arrayy, Objecty, dataFactory } from './DataUnit/index';
 import { TextDom, PlainText, AttrObj, BaseObj } from './domObj';
 import { vdFactory } from './index';
-import { IfDirective, forDirective, onDirective, ValueBind } from './directive';
+import { IfDirective, forDirective, onDirective, ValueBind } from './directive/index';
 import { ARRAYY_OPERATE, FRAGMENT_PROTO } from './constant';
 import StoreKeeper from './store';
 import {

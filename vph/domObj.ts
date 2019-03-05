@@ -1,6 +1,6 @@
 import { testType, log } from './utils';
 import { exposeToWindow } from './Lady_tool';
-import { DataUnit } from './DataUnit';
+import { DataUnit } from './DataUnit/index';
 import StoreKeeper from './store';
 import {
   prepend,
