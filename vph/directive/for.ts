@@ -40,7 +40,7 @@ export default class forDirective extends Directive {
     this.varibleName = handled[0].replace(/ /g, '');
     this.baseDataName = handled[1];
 
-    console.log(this.varibleName, this.baseDataName);
+    // console.log(this.varibleName, this.baseDataName);
     this.storeKeeper.register(this.baseDataName, this, this.init);
   }
 

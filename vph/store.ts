@@ -1,9 +1,9 @@
-import { DataUnit, Arrayy, Objecty, dataFactory, toJS } from './DataUnit';
-import Diff from './diff/index';
+import { DataUnit, Arrayy, Objecty, dataFactory, toJS } from "./DataUnit";
+import Diff from "./diff/index";
 
-interface forStore { }
+interface forStore {}
 
-interface props { }
+interface props {}
 
 /**
  * 数据托管器
@@ -13,7 +13,11 @@ class StoreKeeper {
   private store: DataUnit | Objecty | Arrayy;
   private forStore: forStore;
   private props: props;
-  constructor(_store: DataUnit | Objecty | Arrayy, _forStore?: object, _props?: object) {
+  constructor(
+    _store: DataUnit | Objecty | Arrayy,
+    _forStore?: object,
+    _props?: object
+  ) {
     this.store = _store;
     this.forStore = _forStore || {};
     this.props = _props || {};
@@ -36,9 +40,9 @@ class StoreKeeper {
   }
   /**
    * 清除推送
-   * @param name 
-   * @param pt 
-   * @param callback 
+   * @param name
+   * @param pt
+   * @param callback
    */
   unregister(name: string, pt, callback?: Function) {
     let found = this.findDataByType(name);
@@ -50,7 +54,7 @@ class StoreKeeper {
 
   /**
    * 设置store
-   * @param data 
+   * @param data
    */
   setStore(data) {
     this.store = data;
@@ -58,18 +62,32 @@ class StoreKeeper {
 
   /**
    * 设置props
-   * @param callback 
+   * @param callback
    */
-  setProps(callback: (store?: DataUnit, forStore?: Object, props?: Object, pt?: StoreKeeper) => {}) {
-    console.error('setProps');
+  setProps(
+    callback: (
+      store?: DataUnit,
+      forStore?: Object,
+      props?: Object,
+      pt?: StoreKeeper
+    ) => {}
+  ) {
+    console.error("setProps");
     this.props = callback(this.store, this.forStore, this.props, this);
   }
   // 只在for指令工作时使用
   /**
    * 设置forStore
-   * @param callback 
+   * @param callback
    */
-  setForStore(callback: (store?: DataUnit, forStore?: Object, props?: Object, pt?: StoreKeeper) => {}) {
+  setForStore(
+    callback: (
+      store?: DataUnit,
+      forStore?: Object,
+      props?: Object,
+      pt?: StoreKeeper
+    ) => {}
+  ) {
     this.forStore = callback(this.store, this.forStore, this.props, this);
   }
 
@@ -84,7 +102,7 @@ class StoreKeeper {
    * 输出forStore
    */
   outputForStore() {
-    console.error('outputForStore');
+    console.error("outputForStore");
     return this.forStore;
   }
 
@@ -92,7 +110,7 @@ class StoreKeeper {
    * 输出props
    */
   outputProps() {
-    console.error('outputProps');
+    console.error("outputProps");
     return this.props;
   }
 
@@ -100,16 +118,12 @@ class StoreKeeper {
    * 输出全部
    */
   outputAll(): [DataUnit, forStore, props] {
-    return [
-      this.store,
-      this.forStore,
-      this.props,
-    ]
+    return [this.store, this.forStore, this.props];
   }
 
   /**
    * 批量获取store
-   * @param params 
+   * @param params
    */
   getValues(...params): object {
     if (this.store instanceof Objecty) {
@@ -120,19 +134,21 @@ class StoreKeeper {
   getMultiValue(...names: Array<string>): object {
     const answer = {};
     names.map(item => {
-      answer[item.replace(/^for@|^props@|^state@/, '')] = this.findDataByType(item);
+      answer[item.replace(/^for@|^props@|^state@/, "")] = this.findDataByType(
+        item
+      );
     });
     return answer;
   }
 
   /**
    * 使用name查找store，props，forStore
-   * @param name 
+   * @param name
    */
   findBaseData(name: string): DataUnit {
     let found: DataUnit;
     if (name.match(/\./g)) {
-      const [first, ...other] = name.split('.');
+      const [first, ...other] = name.split(".");
       if (this.forStore[first] !== undefined) {
         return this.forStore[first].showData(other);
       }
@@ -153,26 +169,26 @@ class StoreKeeper {
   /**
    * 析构函数
    */
-  rmSelf() { }
+  rmSelf() {}
 
   /**
    * 使用带type的name查找
    * name = store@name | props@name | for@name | name
-   * @param name 
+   * @param name
    */
   findDataByType(name: string): DataUnit | any {
     const _type = name.match(/^for@|^props@|^state@/);
-    const type = _type && _type[0].replace(/@/, '');
-    const _name = name.replace(/^for@|^props@|^state@/, '');
+    const type = _type && _type[0].replace(/@/, "");
+    const _name = name.replace(/^for@|^props@|^state@/, "");
     if (type) {
-      if (type === 'for') {
+      if (type === "for") {
         return <DataUnit>this.forStore[_name];
-      } else if (type === 'props') {
+      } else if (type === "props") {
         return <DataUnit>this.props[_name];
-      } else if (type === 'state') {
+      } else if (type === "state") {
         return this.store.showData(_name);
       } else {
-        throw (`found an error from findDataByType, param is ${name}`);
+        throw `found an error from findDataByType, param is ${name}`;
       }
     } else {
       return this.findBaseData(_name);

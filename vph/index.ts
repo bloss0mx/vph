@@ -1,7 +1,7 @@
-import VirtualDom from './vdom';
-import { TAGS } from './constant';
-import StoreKeeper from './store';
-import { dataFactory, toJS } from './DataUnit/index';
+import VirtualDom from "./vdom";
+import { TAGS } from "./constant";
+import StoreKeeper from "./store";
+import { dataFactory, toJS } from "./DataUnit/index";
 import {
   prepend,
   insertAfter,
@@ -9,12 +9,17 @@ import {
   attr,
   removeAttr,
   append,
-} from './domOperator';
-import { forDirective, IfDirective, onDirective, ValueBind } from './directive/index';
-import tmpAnalyse from './templateCompiler/index';
-import Diff from './diff/index';
+} from "./domOperator";
+import {
+  forDirective,
+  IfDirective,
+  onDirective,
+  ValueBind,
+} from "./directive/index";
+import tmpAnalyse from "./templateCompiler/index";
+import Diff from "./diff/index";
 
-import State from './diff/index';
+import State from "./diff/index";
 
 /** test */
 // const initStore = {
@@ -49,56 +54,51 @@ interface setState {
 
 /**
  * 组件初始化
- * @param init 
+ * @param init
  */
-export function Component(
-  init: {
-    /**
-     * 渲染模板
-     */
-    render: Function | string,
-    attr?: string,
-    /**
-     * 初始化state
-     */
-    state?: object,
-    /**
-     * 方法
-     */
-    actions?: object,
-    /**
-     * 注册组件
-     */
-    components?: object,
-    /**
-     * 挂载时触发
-     */
-    whenInit?: Function,
-    /**
-     * 卸载时触发
-     */
-    whenUninit?: Function,
-    /**
-     * 设置state
-     */
-    setState: setState,
-  }
-): Function {
-  return function (
-    props: {
-      attr?: Array<string>,
-      props?: string,
-      children?: Array<any>;
-      valueBind?: string,
-      forDirective?: string,
-      onDirective?: string,
-      ifDirective?: string,
-      slotDirective?: string,
-    },
-  ): Function {
-
+export function Component(init: {
+  /**
+   * 渲染模板
+   */
+  render: Function | string;
+  attr?: string;
+  /**
+   * 初始化state
+   */
+  state?: object;
+  /**
+   * 方法
+   */
+  actions?: object;
+  /**
+   * 注册组件
+   */
+  components?: object;
+  /**
+   * 挂载时触发
+   */
+  whenInit?: Function;
+  /**
+   * 卸载时触发
+   */
+  whenUninit?: Function;
+  /**
+   * 设置state
+   */
+  setState: setState;
+}): Function {
+  return function(props: {
+    attr?: Array<string>;
+    props?: string;
+    children?: Array<any>;
+    valueBind?: string;
+    forDirective?: string;
+    onDirective?: string;
+    ifDirective?: string;
+    slotDirective?: string;
+  }): Function {
     const slot = (props.children || []).map(item => {
-      if (typeof item === 'function') {
+      if (typeof item === "function") {
         return item();
       } else {
         return new VirtualDom(item);
@@ -106,16 +106,18 @@ export function Component(
     });
     console.log(slot);
 
-    return function (store: StoreKeeper): VirtualDom {
+    return function(store: StoreKeeper): VirtualDom {
       let analysed;
       if (init) {
-        if (typeof init.render === 'string') {
+        if (typeof init.render === "string") {
           analysed = tmpAnalyse(init.render, init.components);
-        } else if (typeof init.render === 'function') {
+        } else if (typeof init.render === "function") {
           analysed = init.render(init.components);
         }
       }
-      const _props = props.props ? store.getMultiValue(...props.props.split(' ')) : {};
+      const _props = props.props
+        ? store.getMultiValue(...props.props.split(" "))
+        : {};
       // const slot = props.children ? [...props.children] : [];
       delete props.attr;
       delete props.props;
@@ -131,26 +133,27 @@ export function Component(
         ...analysed,
         ...props,
         storeKeeper: new StoreKeeper(dataFactory(init.state), {}, _props),
-      }
+      };
       // init = null;//slot需要这个，不能清除
       delete _init.render;
       return new VirtualDom(_init);
-    }
-  }
+    };
+  };
 }
-
 
 export function vdFactory(init) {
   return new VirtualDom(init);
 }
 
-function basicTagConstruct(init) { return init }
+function basicTagConstruct(init) {
+  return init;
+}
 
 declare global {
   interface Window {
-    vdom?: any,
-    vdFactory: Function,
-    basicTagConstruct: Function,
+    vdom?: any;
+    vdFactory: Function;
+    basicTagConstruct: Function;
   }
 }
 window.vdFactory = vdFactory;
@@ -164,10 +167,10 @@ window.basicTagConstruct = basicTagConstruct;
  */
 export function init(selector, vdom, productEnv = false) {
   if (productEnv) {
-    console.assert(window.vdom === undefined, 'window.vdom 已被占用');
+    console.assert(window.vdom === undefined, "window.vdom 已被占用");
     if (window.vdom === undefined) {
       window.vdom = vdom;
-      console.warn('在控制台打出vdom来跟踪 virtual dom 变化！');
+      console.warn("在控制台打出vdom来跟踪 virtual dom 变化！");
     }
   }
   setTimeout(() => {
@@ -177,23 +180,23 @@ export function init(selector, vdom, productEnv = false) {
 
 /**
  * Vph
- * @param init 
+ * @param init
  */
 export default function Vph(init: {
-  render: string,
-  attr?: string,
-  state?: object,
-  actions?: object,
-  components?: object,
-  whenInit?: Function,
-  whenUninit?: Function,
+  render: string;
+  attr?: string;
+  state?: object;
+  actions?: object;
+  components?: object;
+  whenInit?: Function;
+  whenUninit?: Function;
 }) {
   const analysed = tmpAnalyse(init.render, init.components);
   const _init = {
     isComponent: true,
     ...init,
     ...analysed,
-  }
+  };
   // delete _init.render;
   return new VirtualDom(_init);
 }

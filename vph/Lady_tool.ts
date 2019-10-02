@@ -12,9 +12,9 @@ const exposeToWindow = (name, pt) => {
   window.expose[name] = pt;
 };
 
-const fetchFromWindow = (name) => {
+const fetchFromWindow = name => {
   if (!window.expose) {
-    throw ('Didn\'t expose any param yet!');
+    throw 'Didn\'t expose any param yet!';
   }
   if (name === undefined) {
     return window.expose;
@@ -26,6 +26,4 @@ const fetchFromWindow = (name) => {
 
 window.fetchFromWindow = fetchFromWindow;
 
-export {
-  exposeToWindow
-};
+export { exposeToWindow };

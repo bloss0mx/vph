@@ -1,9 +1,14 @@
-import { DataUnit, Arrayy, Objecty, dataFactory } from './DataUnit/index';
-import { TextDom, PlainText, AttrObj, BaseObj } from './domObj';
-import { vdFactory } from './index';
-import { IfDirective, forDirective, onDirective, ValueBind } from './directive/index';
-import { ARRAYY_OPERATE, FRAGMENT_PROTO } from './constant';
-import StoreKeeper from './store';
+import { DataUnit, Arrayy, Objecty, dataFactory } from "./DataUnit/index";
+import { TextDom, PlainText, AttrObj, BaseObj } from "./domObj";
+import { vdFactory } from "./index";
+import {
+  IfDirective,
+  forDirective,
+  onDirective,
+  ValueBind,
+} from "./directive/index";
+import { ARRAYY_OPERATE, FRAGMENT_PROTO } from "./constant";
+import StoreKeeper from "./store";
 import {
   prepend,
   insertAfter,
@@ -11,11 +16,11 @@ import {
   attr,
   removeAttr,
   append,
-} from './domOperator';
-import { Fragment, Element, TextNode } from './domKeeper';
+} from "./domOperator";
+import { Fragment, Element, TextNode } from "./domKeeper";
 
 interface init {
-  attr: Array<string>,
+  attr: Array<string>;
   isComponent: boolean;
   tag: string;
   children: Array<VirtualDom | Object | string>;
@@ -71,7 +76,7 @@ export default class VirtualDom {
   private whenMount: Function;
   private whenUninit: Function;
   constructor(init: {
-    attr: Array<string>,
+    attr: Array<string>;
     isComponent: boolean;
     tag: string;
     children: Array<VirtualDom | Object | string>;
@@ -100,15 +105,18 @@ export default class VirtualDom {
     this.attrPt = [];
     this.tag = init.tag;
     this.children = init.children;
-    this.childrenPt = [];//
-    this.varibleName = init.varibleName !== undefined ? init.varibleName : undefined;
-    this.baseDataName = init.baseDataName !== undefined ? init.baseDataName : undefined;
+    this.childrenPt = []; //
+    this.varibleName =
+      init.varibleName !== undefined ? init.varibleName : undefined;
+    this.baseDataName =
+      init.baseDataName !== undefined ? init.baseDataName : undefined;
     this.setFather(init.father, init.index);
 
     // store和dom初始化
-    this.storeKeeper = init.storeKeeper instanceof StoreKeeper
-      ? init.storeKeeper
-      : new StoreKeeper(dataFactory({}));//StoreKeeper
+    this.storeKeeper =
+      init.storeKeeper instanceof StoreKeeper
+        ? init.storeKeeper
+        : new StoreKeeper(dataFactory({})); //StoreKeeper
     this.actions = init.actions;
     this.components = init.components;
 
@@ -155,8 +163,8 @@ export default class VirtualDom {
 
   /**
    * 设置父节点和index
-   * @param {*} father 
-   * @param {*} index 
+   * @param {*} father
+   * @param {*} index
    */
   setFather(father, index) {
     this.father = father;
@@ -165,7 +173,7 @@ export default class VirtualDom {
 
   /**
    * 初始化state
-   * @param {*} data 
+   * @param {*} data
    */
   initState(data) {
     this.storeKeeper.setStore(dataFactory(data));
@@ -173,7 +181,7 @@ export default class VirtualDom {
 
   /**
    * 初始化props
-   * @param data 
+   * @param data
    */
   initProps(data) {
     this.storeKeeper.setProps(() => this.getDatas(...data));
@@ -186,7 +194,11 @@ export default class VirtualDom {
     if (!ifDirective) {
       return;
     }
-    return new IfDirective({ flagName: ifDirective, pt: this, storeKeeper: this.storeKeeper });
+    return new IfDirective({
+      flagName: ifDirective,
+      pt: this,
+      storeKeeper: this.storeKeeper,
+    });
   }
 
   /**
@@ -196,7 +208,11 @@ export default class VirtualDom {
     if (!_directive) {
       return;
     }
-    return new forDirective({ directive: _directive, pt: this, storeKeeper: this.storeKeeper });
+    return new forDirective({
+      directive: _directive,
+      pt: this,
+      storeKeeper: this.storeKeeper,
+    });
   }
 
   /**
@@ -204,24 +220,32 @@ export default class VirtualDom {
    */
   initOn(_directive) {
     if (!_directive) return;
-    return new onDirective({ directive: _directive, pt: this, storeKeeper: this.storeKeeper });
+    return new onDirective({
+      directive: _directive,
+      pt: this,
+      storeKeeper: this.storeKeeper,
+    });
   }
 
   /**
    * store到dom
-   * @param _directive 
+   * @param _directive
    */
   initValueBind(_directive) {
     if (!_directive) return;
-    return new ValueBind({ directive: _directive, pt: this, storeKeeper: this.storeKeeper });
+    return new ValueBind({
+      directive: _directive,
+      pt: this,
+      storeKeeper: this.storeKeeper,
+    });
   }
 
   /**
    * 触发whenInit钩子
-   * @param whenInit 
+   * @param whenInit
    */
   fireWhenInit(whenInit) {
-    if (typeof whenInit === 'function') {
+    if (typeof whenInit === "function") {
       // setTimeout(() => {
       whenInit.apply(this);
       // }, 0);
@@ -230,10 +254,10 @@ export default class VirtualDom {
 
   /**
    * 触发whenUninit钩子
-   * @param whenUninit 
+   * @param whenUninit
    */
   fireWhenUninit() {
-    if (typeof this.whenUninit === 'function') {
+    if (typeof this.whenUninit === "function") {
       // setTimeout(() => {
       this.whenUninit.apply(this);
       // }, 0);
@@ -261,7 +285,11 @@ export default class VirtualDom {
       return [];
     }
     return attrArray.map((item, index) => {
-      return new AttrObj({ attr: item, dom: this.dom, storeKeeper: this.storeKeeper });
+      return new AttrObj({
+        attr: item,
+        dom: this.dom,
+        storeKeeper: this.storeKeeper,
+      });
     });
   }
 
@@ -269,57 +297,59 @@ export default class VirtualDom {
    * 初始化子节点
    */
   makeChildren() {
-    this.childrenPt = this.children === undefined
-      ? []
-      : this.children.map((item, index) => {
-        if (item instanceof VirtualDom) {
-          item.setFather(this, index);
-          this.dom.appendChild(item.giveDom());
-          return item;
-        } else if (typeof item === 'function') {//子是一个组件函数
-          const _item: VirtualDom = item(this.storeKeeper);
-          _item.setFather(this, index);
-          this.dom.appendChild(_item.giveDom());
-          return _item;
-        } else if (typeof item === 'string') {//子是string
-          if (item.match(/^\{\{[^\s]*\}\}$/)) {//绑定值
-            const textNode = new TextDom(
-              item,
-              index,
-              this.storeKeeper,
-            );
-            this.dom.appendChild(textNode.giveDom());
-            return textNode;
-          } else {//不可变string
-            const textNode = new PlainText(item);
-            this.dom.appendChild(textNode.giveDom());
-            return textNode;
-          }
-        } else if (typeof item === 'object') {//初始化对象
-          const { ...other } = item;
-          const node = vdFactory({
-            baseDataName: this.baseDataName,
-            storeKeeper: this.storeKeeper,
-            father: this,
-            index: index,
-            ...other
+    this.childrenPt =
+      this.children === undefined
+        ? []
+        : this.children.map((item, index) => {
+            if (item instanceof VirtualDom) {
+              item.setFather(this, index);
+              this.dom.appendChild(item.giveDom());
+              return item;
+            } else if (typeof item === "function") {
+              //子是一个组件函数
+              const _item: VirtualDom = item(this.storeKeeper);
+              _item.setFather(this, index);
+              this.dom.appendChild(_item.giveDom());
+              return _item;
+            } else if (typeof item === "string") {
+              //子是string
+              if (item.match(/^\{\{[^\s]*\}\}$/)) {
+                //绑定值
+                const textNode = new TextDom(item, index, this.storeKeeper);
+                this.dom.appendChild(textNode.giveDom());
+                return textNode;
+              } else {
+                //不可变string
+                const textNode = new PlainText(item);
+                this.dom.appendChild(textNode.giveDom());
+                return textNode;
+              }
+            } else if (typeof item === "object") {
+              //初始化对象
+              const { ...other } = item;
+              const node = vdFactory({
+                baseDataName: this.baseDataName,
+                storeKeeper: this.storeKeeper,
+                father: this,
+                index: index,
+                ...other,
+              });
+              this.dom.appendChild(node.giveDom());
+              return node;
+            }
           });
-          this.dom.appendChild(node.giveDom());
-          return node;
-        }
-      });
   }
 
   /**
    * for指令初始化子节点
-   * @param {*} childInitMsg 
+   * @param {*} childInitMsg
    */
   makeForChildren(childInitMsg: {
-    varibleName: string,
-    index: string,
-    storeKeeper: StoreKeeper,
-    baseData: DataUnit,
-    baseDataName: string,
+    varibleName: string;
+    index: string;
+    storeKeeper: StoreKeeper;
+    baseData: DataUnit;
+    baseDataName: string;
   }) {
     const init = this.init;
     delete init.ifDirective;
@@ -331,7 +361,9 @@ export default class VirtualDom {
     init.storeKeeper = this.storeKeeper;
     init.storeKeeper.setForStore((store, forStore, props) => {
       const _forStore = { ...forStore };
-      _forStore[init.varibleName] = childInitMsg.baseData.showData(childInitMsg.index);
+      _forStore[init.varibleName] = childInitMsg.baseData.showData(
+        childInitMsg.index
+      );
       return _forStore;
     });
 
@@ -346,7 +378,7 @@ export default class VirtualDom {
    * 输出dom
    */
   giveDom(): DocumentFragment | HTMLElement | Text {
-    if (this.isComponent && typeof this.whenMount === 'function') {
+    if (this.isComponent && typeof this.whenMount === "function") {
       this.whenMount.apply(this);
     }
     return this.dom.outputDom();
@@ -381,7 +413,7 @@ export default class VirtualDom {
 
   /**
    * 删除自己
-   * @param {*}  
+   * @param {*}
    */
   rmSelf() {
     this.fireWhenUninit();
@@ -399,8 +431,8 @@ export default class VirtualDom {
 
   /**
    * 在上一个节点以后插入dom
-   * @param {*} dom 
-   * @param {*} deviation 
+   * @param {*} dom
+   * @param {*} deviation
    */
   insertToAvilableBefore(dom) {
     const previousBrother = this.previousBrother();
@@ -419,35 +451,45 @@ export default class VirtualDom {
      * 向前查找可作为参考的节点。
      * 因为for指令的vdom的子节点不可能为for指令的vdom，所以只查找两层。
      * 如果两层内没有可用的节点就继续向前查找。
-     * @param pt 
-     * @param index 
+     * @param pt
+     * @param index
      */
     function fetchChildrenPt(pt: VirtualDom, index: number) {
       if (checkChild(pt, index)) {
-        return fetchChildrenPt(<VirtualDom>pt.childrenPt[pt.childrenPt.length - 1], index - 1);
+        return fetchChildrenPt(
+          <VirtualDom>pt.childrenPt[pt.childrenPt.length - 1],
+          index - 1
+        );
       } else {
-        if (Object.getPrototypeOf(pt.giveDom && pt.giveDom()) === FRAGMENT_PROTO) {
+        if (
+          Object.getPrototypeOf(pt.giveDom && pt.giveDom()) === FRAGMENT_PROTO
+        ) {
           return undefined;
         } else {
-          return pt.giveDom && pt.giveDom() || pt;
+          return (pt.giveDom && pt.giveDom()) || pt;
         }
       }
     }
     /**
      * index用来限制层级，只能检查两级
-     * @param pt 
-     * @param index 
+     * @param pt
+     * @param index
      */
     function checkChild(pt: VirtualDom, index: number) {
-      return (pt.childrenPt
-        && pt.childrenPt[pt.childrenPt.length - 1]
-        && index
-        && Object.getPrototypeOf(pt.giveDom()) === FRAGMENT_PROTO);
+      return (
+        pt.childrenPt &&
+        pt.childrenPt[pt.childrenPt.length - 1] &&
+        index &&
+        Object.getPrototypeOf(pt.giveDom()) === FRAGMENT_PROTO
+      );
     }
     if (this.father) {
       for (var i = this.index - 1; i >= 0; i--) {
         if (this.father.childrenPt[i] && this.father.childrenPt[i].giveDom()) {
-          const fetched = fetchChildrenPt(<VirtualDom>this.father.childrenPt[i], 1);
+          const fetched = fetchChildrenPt(
+            <VirtualDom>this.father.childrenPt[i],
+            1
+          );
           if (fetched !== undefined) {
             return fetched;
           }
@@ -470,7 +512,7 @@ export default class VirtualDom {
   }
 
   /**
-   * 
+   *
    */
   getDatas(...params): object {
     const store = this.storeKeeper.outputStore();
@@ -481,13 +523,15 @@ export default class VirtualDom {
 
   /**
    * 设置新的state
-   * @param callback 
+   * @param callback
    */
-  setState(callback: (state: object) => object, afterUpdate: (state: object) => object) {
+  setState(
+    callback: (state: object) => object,
+    afterUpdate: (state: object) => object
+  ) {
     this.storeKeeper.setState(callback);
-    if (typeof afterUpdate === 'function') {
+    if (typeof afterUpdate === "function") {
       afterUpdate.apply(this);
     }
   }
-
 }
