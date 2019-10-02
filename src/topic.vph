@@ -9,4 +9,13 @@
   <div :for='v in arr'>{{v.name}}</div>
   <div :if='ifyo'>hey</div>
   <div :for='v in subArr'>{{v.name}}</div>
+  <table style='width: 100%'>
+    <p>
+      <span :for='x in table' style='display: inline-block;line-height: 20px;'>
+        <span :for='y in x' style='display: inline-block;line-height: 20px;'>
+          <span :for='z in y' style='display: inline-block;line-height: 20px;'>{{z}}</span>
+        </span>
+      </span>
+    </p>
+  </table>
 </div>
