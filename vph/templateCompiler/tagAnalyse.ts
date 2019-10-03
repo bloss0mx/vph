@@ -15,13 +15,17 @@ import {
   testSingle,
   singleComponent,
 } from "./tools";
-import attrM from './attrAnalyse';
-import tagSlicer from './tagSlicer';
+import attrM from "./attrAnalyse";
+import tagSlicer from "./tagSlicer";
 // const { attrM } = require('./attrAnalyse');
 
-const matchTagsNValue = (origin) => origin.match(/<[\/!-]{0,1}[^<]*[^-]>|{{[^\s]+}}/g);
-const splitTagsNValue = (origin) => origin.split(/<[\/!-]{0,1}[^<]*[^-]>|{{[^\s]+}}/g).map(item => item.replace(/\n|\t/g, ''));
-const rmComment = origin => origin.replace(/<!--[\w\W\r\n]*?-->/gmi, '');
+const matchTagsNValue = origin =>
+  origin.match(/<[\/!-]{0,1}[^<]*[^-]>|{{[^\s]+}}/g);
+const splitTagsNValue = origin =>
+  origin
+    .split(/<[\/!-]{0,1}[^<]*[^-]>|{{[^\s]+}}/g)
+    .map(item => item.replace(/\n|\t/g, ""));
+const rmComment = origin => origin.replace(/<!--[\w\W\r\n]*?-->/gim, "");
 
 /**
  * 分割模板
@@ -36,15 +40,16 @@ function splitTagNChildren(tmp) {
     !text[i].match(/^\s{0,}$/) && fragments.push(text[i]);
     fragments.push(tags[i]);
   }
-  return fragments.map(item => item.replace(/^ *| *$/g, ''));
+  return fragments.map(item => item.replace(/^ *| *$/g, ""));
 }
 
-const getTag = (tag) => {
-  const match = tag.match(/<[^ <\/]* |<[^ <\/]*\/?>/)
-  return match && match[0].replace(/<|>| |\//g, '');
-}
+const getTag = tag => {
+  const match = tag.match(/<[^ <\/]* |<[^ <\/]*\/?>/);
+  return match && match[0].replace(/<|>| |\//g, "");
+};
 
-const cleanDirective = (origin, type) => origin && origin.replace(type, '').replace(/^['"]|['"]$/g, '');
+const cleanDirective = (origin, type) =>
+  origin && origin.replace(type, "").replace(/^['"]|['"]$/g, "");
 
 class Container {
   private tag: string;
@@ -63,8 +68,13 @@ class Container {
   }
   getAttr() {
     const attr = attrM(this.tag);
-    this.attr = attr && attr.filter(item => !item.match(/^:/)).map(item => '' + item.replace(/"/g, '\\"') + '') || [];
-    this.directive = attr && attr.filter(item => item.match(/^:/)) || [];
+    this.attr =
+      (attr &&
+        attr
+          .filter(item => !item.match(/^:/))
+          .map(item => "" + item.replace(/"/g, '\\"') + "")) ||
+      [];
+    this.directive = (attr && attr.filter(item => item.match(/^:/))) || [];
     return this.attr;
   }
   getIf() {
@@ -119,16 +129,20 @@ function tagMaker(splitedTmp) {
     const headTag = getTagFromHead(currentTag);
     const tailTag = getTagFromTail(currentTag);
 
-    if (testSingle(currentTag) || singleComponent(currentTag)) {//单标签
+    if (testSingle(currentTag) || singleComponent(currentTag)) {
+      //单标签
       const newContainer = new Container(currentTag);
       tagStack[tagStack.length - 1].pushChildren(newContainer);
-    } else if (headTag) {//头
+    } else if (headTag) {
+      //头
       const newContainer = new Container(currentTag);
       tagStack[tagStack.length - 1].pushChildren(newContainer);
       tagStack.push(newContainer);
-    } else if (tailTag) {//尾
+    } else if (tailTag) {
+      //尾
       tagStack.pop();
-    } else {//纯文本
+    } else {
+      //纯文本
       tagStack[tagStack.length - 1].pushChildren(currentTag);
     }
     index++;

@@ -1,7 +1,7 @@
-import { ARRAYY_OPERATE } from '../constant';
-import { DataUnit } from '../DataUnit/index';
-import VirtualDom from '../vdom';
-import StoreKeeper from '../store';
+import { ARRAYY_OPERATE } from "../constant";
+import { DataUnit } from "../DataUnit/index";
+import VirtualDom from "../vdom";
+import StoreKeeper from "../store";
 import {
   prepend,
   insertAfter,
@@ -9,19 +9,19 @@ import {
   attr,
   removeAttr,
   append,
-} from '../domOperator';
-import Directive from './directive';
+} from "../domOperator";
+import Directive from "./directive";
 
-export default class IfDirective extends Directive {
+export default class IfDirective<T> extends Directive {
   private flagName: string;
-  private pt: VirtualDom;
+  private pt: VirtualDom<T>;
   private key: String;
-  private storeKeeper: StoreKeeper;
+  private storeKeeper: StoreKeeper<T>;
   constructor(init: {
-    flagName: string,
-    storeKeeper: StoreKeeper,
-    pt: VirtualDom,
-    key?: any,
+    flagName: string;
+    storeKeeper: StoreKeeper<T>;
+    pt: VirtualDom<T>;
+    key?: any;
   }) {
     super(init);
     this.flagName = init.flagName;
@@ -29,7 +29,7 @@ export default class IfDirective extends Directive {
     this.storeKeeper = init.storeKeeper;
     this.pt = init.pt;
 
-    this.key = init.key ? init.key : true;//
+    this.key = init.key ? init.key : true; //
     this.storeKeeper.register(this.flagName, this);
   }
 
@@ -39,7 +39,7 @@ export default class IfDirective extends Directive {
 
   /**
    * 显示隐藏操作
-   * @param {*} flag 
+   * @param {*} flag
    */
   ifDirectiveOperate(flag: boolean) {
     if (flag) {
@@ -52,5 +52,4 @@ export default class IfDirective extends Directive {
   rmSelf() {
     this.storeKeeper.unregister(this.flagName, this);
   }
-
 }

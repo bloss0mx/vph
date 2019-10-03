@@ -4,11 +4,11 @@ tr {
 
 td {
   padding: 8px;
+  color: #333;
 }
 
 th,
-table,
-  {
+table {
   /* border: 1px solid #eee; */
   margin-top: 2px;
 }

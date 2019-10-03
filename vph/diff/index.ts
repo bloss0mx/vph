@@ -1,52 +1,57 @@
-import arrayDiff from './arrayDiff';
-import objectDiff from './objectDiff';
+import arrayDiff from "./arrayDiff";
+import objectDiff from "./objectDiff";
 
-import { Objecty, Arrayy, DataUnit, dataFactory, toJS } from '../DataUnit';
-import StoreKeeper from '../store';
-import { ARR_CONTENT } from './interface';
+import { Objecty, Arrayy, DataUnit, dataFactory, toJS } from "../DataUnit";
+import StoreKeeper from "../store";
+import { ARR_CONTENT } from "./interface";
 
-export default class Diff {
+import { Subject, pipe } from "rxjs";
+import { throttleTime } from "rxjs/operators";
+
+export default class Diff<T> {
   private store;
   private storeKeeper;
-  constructor(store = {}, storeKeeper?: StoreKeeper) {
+
+  private oldState;
+  private subject$;
+  constructor(store = {}, storeKeeper?: StoreKeeper<T>) {
     this.store = store;
     this.storeKeeper = storeKeeper;
+    this.oldState = this.store;
+    this.subject$ = new Subject();
+    this.subject$.pipe(throttleTime(30)).subscribe({
+      next: newState => {
+        this.diff(this.oldState, newState, "", "");
+        this.oldState = newState;
+      },
+    });
   }
 
   /**
    * 设置state
-   * @param callback 
+   * @param callback
    */
   setState(callback: (state: object) => object) {
-    const oldStore = this.store;
-    const newStore = callback(Object.assign({}, this.store));
+    const newStore = callback({ ...this.store });
     if (newStore === undefined) {
       console.error(`setState must return a value, got ${newStore}`);
     }
     this.store = newStore;
-    const oldPath = '';
-    const newPath = '';
-    console.time('diff');
-    this.diff(oldStore, newStore, oldPath, newPath);
-    console.timeEnd('diff');
+    this.subject$.next(newStore);
   }
 
   /**
    * diff
-   * @param oldStore 
-   * @param newStore 
-   * @param oldPath 
-   * @param newPath 
+   * @param oldStore
+   * @param newStore
+   * @param oldPath
+   * @param newPath
    */
-  diff(
-    oldStore,
-    newStore,
-    oldPath: string,
-    newPath: string
-  ) {
+  diff(oldStore, newStore, oldPath: string, newPath: string) {
     const oldProto = Object.getPrototypeOf(oldStore);
     const newProto = Object.getPrototypeOf(newStore);
-    if (oldProto !== newProto) { } else {
+    if (oldProto !== newProto) {
+    } else {
       switch (oldProto) {
         case Object.getPrototypeOf({}):
           this.objectOpt(oldStore, newStore, oldPath, newPath);
@@ -63,7 +68,7 @@ export default class Diff {
 
   /**
    * 取上一层store
-   * @param path 
+   * @param path
    */
   objectFetcher(path: string) {
     if (path === undefined || path.length === 0) {
@@ -71,7 +76,7 @@ export default class Diff {
     } else if (path.match(/./g).length === 0) {
       return this.storeKeeper.store;
     } else {
-      const _pathArr = path.split('.');
+      const _pathArr = path.split(".");
       const name = _pathArr.pop();
       const _path = _pathArr.join();
       return this.storeKeeper.getValues(_path)[_path];
@@ -80,10 +85,10 @@ export default class Diff {
 
   /**
    * object处理
-   * @param oldStore 
-   * @param newStore 
-   * @param oldPath 
-   * @param newPath 
+   * @param oldStore
+   * @param newStore
+   * @param oldPath
+   * @param newPath
    */
   objectOpt(
     oldStore: object,
@@ -91,11 +96,7 @@ export default class Diff {
     oldPath: string,
     newPath: string
   ) {
-    const {
-      add,
-      rm,
-      update
-    } = objectDiff(oldStore, newStore);
+    const { add, rm, update } = objectDiff(oldStore, newStore);
     const addTarget = this.storeKeeper.getValues(oldPath)[oldPath];
     const mvTarget = this.objectFetcher(oldPath);
     for (let i in add) {
@@ -107,16 +108,20 @@ export default class Diff {
     }
 
     update.map(item => {
-      this.diff(oldStore[item], newStore[item], ...this.path(oldPath, newPath, item, item));
+      this.diff(
+        oldStore[item],
+        newStore[item],
+        ...this.path(oldPath, newPath, item, item)
+      );
     });
   }
 
   /**
    * 数组处理
-   * @param oldStore 
-   * @param newStore 
-   * @param oldPath 
-   * @param newPath 
+   * @param oldStore
+   * @param newStore
+   * @param oldPath
+   * @param newPath
    */
   arrayOpt(
     oldStore: Array<ARR_CONTENT>,
@@ -124,35 +129,34 @@ export default class Diff {
     oldPath: string,
     newPath: string
   ) {
-    const {
-      add,
-      rm,
-      mv,
-      exist
-    } = arrayDiff(oldStore, newStore);
+    const { add, rm, mv, exist } = arrayDiff(oldStore, newStore);
     const target = this.storeKeeper.getValues(oldPath)[oldPath];
     for (let i = 0; i < add.length; i++) {
-      target.insertTo(add[i].item, parseInt(<string>(add[i].index)));
+      target.insertTo(add[i].item, parseInt(<string>add[i].index));
     }
     for (let i = 0; i < rm.length; i++) {
-      target.rmFrom(parseInt(<string>(rm[i].index)) - i);
+      target.rmFrom(parseInt(<string>rm[i].index) - i);
     }
     for (let i in mv) {
       const tmp = target.rmFrom(mv[i].beforeIdx);
-      target.insertTo(parseInt(<string>(mv[i].afterIdx)) + 1, tmp[0]);
+      target.insertTo(parseInt(<string>mv[i].afterIdx) + 1, tmp[0]);
     }
 
     exist.map(item => {
-      this.diff(item.beforeItem, item.afterItem, ...this.path(oldPath, newPath, item.beforeIdx, item.afterIdx));
+      this.diff(
+        item.beforeItem,
+        item.afterItem,
+        ...this.path(oldPath, newPath, item.beforeIdx, item.afterIdx)
+      );
     });
   }
 
   /**
    * 基本类型处理
-   * @param oldStore 
-   * @param newStore 
-   * @param oldPath 
-   * @param newPath 
+   * @param oldStore
+   * @param newStore
+   * @param oldPath
+   * @param newPath
    */
   baseOpt(
     oldStore: DataUnit,
@@ -166,10 +170,10 @@ export default class Diff {
 
   /**
    * 获取路径
-   * @param oldPath 
-   * @param newPath 
-   * @param beforeIdx 
-   * @param afterIdx 
+   * @param oldPath
+   * @param newPath
+   * @param beforeIdx
+   * @param afterIdx
    */
   path(
     oldPath: string | number,
@@ -177,21 +181,18 @@ export default class Diff {
     beforeIdx: string | number,
     afterIdx: string | number
   ): [string, string] {
-    let _oldPath = '',
-      _newPath = '';
-    if (oldPath === '') {
+    let _oldPath = "",
+      _newPath = "";
+    if (oldPath === "") {
       _oldPath = oldPath + beforeIdx;
     } else {
-      _oldPath = oldPath + '.' + beforeIdx;
+      _oldPath = oldPath + "." + beforeIdx;
     }
-    if (newPath === '') {
+    if (newPath === "") {
       _newPath = newPath + afterIdx;
     } else {
-      _newPath = newPath + '.' + afterIdx;
+      _newPath = newPath + "." + afterIdx;
     }
-    return [
-      _oldPath,
-      _newPath
-    ];
+    return [_oldPath, _newPath];
   }
 }

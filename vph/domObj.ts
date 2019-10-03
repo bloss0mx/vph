@@ -51,12 +51,12 @@ class BaseObj {
   rmSelf() {}
 }
 
-class TextDom extends BaseObj {
-  protected dom: TextNode;
+class TextDom<T> extends BaseObj {
+  protected dom: TextNode<T>;
   private name: string;
   private template: string;
-  private storeKeeper: StoreKeeper;
-  constructor(name: string, index: number, storeKeeper: StoreKeeper) {
+  private storeKeeper: StoreKeeper<T>;
+  constructor(name: string, index: number, storeKeeper: StoreKeeper<T>) {
     super(name, index);
     this.name = name;
     this.template = name;
@@ -109,12 +109,12 @@ class PlainText extends BaseObj {
   }
 }
 
-class AttrObj extends BaseObj {
+class AttrObj<T> extends BaseObj {
   private name: string;
-  private storeKeeper: StoreKeeper;
+  private storeKeeper: StoreKeeper<T>;
   private template: string;
   private value: string;
-  protected dom: Element;
+  protected dom: Element<T>;
   constructor(init) {
     super(init);
     this.dom = init.dom;

@@ -22,7 +22,9 @@ module.exports = {
     filename: '[name].js'
   },
   devServer: {
-    contentBase: './dist'
+    contentBase: './dist',
+    port: 4000,
+    host: '0.0.0.0'
   },
   resolve: {
     extensions: ['.ts', '.js', '.css', '.less'],

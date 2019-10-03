@@ -56,7 +56,7 @@ interface setState {
  * 组件初始化
  * @param init
  */
-export function Component(init: {
+export function Component<T>(init: {
   /**
    * 渲染模板
    */
@@ -106,7 +106,7 @@ export function Component(init: {
     });
     console.log(slot);
 
-    return function(store: StoreKeeper): VirtualDom {
+    return function(store: StoreKeeper<T>): VirtualDom<T> {
       let analysed;
       if (init) {
         if (typeof init.render === "string") {

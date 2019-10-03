@@ -19,23 +19,23 @@ import {
 } from "./domOperator";
 import { Fragment, Element, TextNode } from "./domKeeper";
 
-interface init {
+interface init<T> {
   attr: Array<string>;
   isComponent: boolean;
   tag: string;
-  children: Array<VirtualDom | Object | string>;
+  children: Array<VirtualDom<any> | Object | string>;
   varibleName: string;
   baseDataName: string;
-  father: VirtualDom;
+  father: VirtualDom<any>;
   index: number;
-  storeKeeper: StoreKeeper;
+  storeKeeper: StoreKeeper<T>;
   actions: Array<Function>;
-  components: Array<VirtualDom>;
+  components: Array<VirtualDom<any>>;
   onDirective: string;
   ifDirective: string;
   forDirective: string;
   valueBind: string;
-  state: object;
+  state: T;
   props: object;
   whenInit: Function;
   whenMount: Function;
@@ -47,31 +47,31 @@ interface init {
 /**
  * 初始化时，dom操作必须同步
  */
-export default class VirtualDom {
+export default class VirtualDom<T> {
   index: number;
-  father: VirtualDom;
+  father: VirtualDom<any>;
   actions: Array<Function>;
-  components: Array<VirtualDom>;
-  childrenPt: Array<VirtualDom | BaseObj>;
+  components: Array<VirtualDom<any>>;
+  childrenPt: Array<VirtualDom<any> | BaseObj>;
   isComponent: boolean;
   slotDirective: string;
 
   private slot: Array<any>;
-  private init: init;
+  private init: init<T>;
   private tag: string;
   // private props: DataUnit;
   private varibleName: string;
   private baseDataName: string;
   // private attr: Array<string>;
-  private attrPt: Array<AttrObj>;
-  private valueBind: ValueBind;
-  private storeKeeper: StoreKeeper;
-  private ifDirective: IfDirective;
-  private onDirective: onDirective;
-  private forDirective: forDirective;
-  private dom: Fragment | Element;
+  private attrPt: Array<AttrObj<T>>;
+  private valueBind: ValueBind<T>;
+  private storeKeeper: StoreKeeper<T>;
+  private ifDirective: IfDirective<T>;
+  private onDirective: onDirective<T>;
+  private forDirective: forDirective<T>;
+  private dom: Fragment<T> | Element<T>;
   // private dom: DocumentFragment | HTMLElement;
-  private children: Array<VirtualDom | Object | string>;
+  private children: Array<VirtualDom<any> | Object | string>;
   private whenInit: Function;
   private whenMount: Function;
   private whenUninit: Function;
@@ -79,14 +79,14 @@ export default class VirtualDom {
     attr: Array<string>;
     isComponent: boolean;
     tag: string;
-    children: Array<VirtualDom | Object | string>;
+    children: Array<VirtualDom<any> | Object | string>;
     varibleName: string;
     baseDataName: string;
-    father: VirtualDom;
+    father: VirtualDom<any>;
     index: number;
-    storeKeeper: StoreKeeper;
+    storeKeeper: StoreKeeper<T>;
     actions: Array<Function>;
-    components: Array<VirtualDom>;
+    components: Array<VirtualDom<any>>;
     onDirective: string;
     ifDirective: string;
     forDirective: string;
@@ -101,7 +101,7 @@ export default class VirtualDom {
   }) {
     // 复制
     this.isComponent = init.isComponent || false;
-    this.init = init;
+    this.init = init as any;
     this.attrPt = [];
     this.tag = init.tag;
     this.children = init.children;
@@ -130,10 +130,10 @@ export default class VirtualDom {
     this.fireWhenInit(init.whenInit);
     this.whenMount = init.whenMount;
     this.whenUninit = init.whenUninit;
-    this.attrPt = this.initAttr();
+    this.attrPt = this.initAttr() as any;
 
     // 初始化指令
-    this.onDirective = this.initOn(init.onDirective);
+    this.onDirective = this.initOn(init.onDirective) as any;
     this.ifDirective = this.initIf(init.ifDirective);
     this.forDirective = this.initFor(init.forDirective);
     this.valueBind = this.initValueBind(init.valueBind);
@@ -307,7 +307,7 @@ export default class VirtualDom {
               return item;
             } else if (typeof item === "function") {
               //子是一个组件函数
-              const _item: VirtualDom = item(this.storeKeeper);
+              const _item: VirtualDom<any> = item(this.storeKeeper);
               _item.setFather(this, index);
               this.dom.appendChild(_item.giveDom());
               return _item;
@@ -347,7 +347,7 @@ export default class VirtualDom {
   makeForChildren(childInitMsg: {
     varibleName: string;
     index: string;
-    storeKeeper: StoreKeeper;
+    storeKeeper: StoreKeeper<T>;
     baseData: DataUnit;
     baseDataName: string;
   }) {
@@ -407,7 +407,7 @@ export default class VirtualDom {
       this.initDom();
       this.makeChildren();
       this.insertToAvilableBefore(this.giveDom());
-      this.attrPt = this.initAttr();
+      this.attrPt = this.initAttr() as any;
     }
   }
 
@@ -454,10 +454,10 @@ export default class VirtualDom {
      * @param pt
      * @param index
      */
-    function fetchChildrenPt(pt: VirtualDom, index: number) {
+    function fetchChildrenPt(pt: VirtualDom<any>, index: number) {
       if (checkChild(pt, index)) {
         return fetchChildrenPt(
-          <VirtualDom>pt.childrenPt[pt.childrenPt.length - 1],
+          <any>pt.childrenPt[pt.childrenPt.length - 1],
           index - 1
         );
       } else {
@@ -475,7 +475,7 @@ export default class VirtualDom {
      * @param pt
      * @param index
      */
-    function checkChild(pt: VirtualDom, index: number) {
+    function checkChild(pt: VirtualDom<any>, index: number) {
       return (
         pt.childrenPt &&
         pt.childrenPt[pt.childrenPt.length - 1] &&
@@ -486,10 +486,7 @@ export default class VirtualDom {
     if (this.father) {
       for (var i = this.index - 1; i >= 0; i--) {
         if (this.father.childrenPt[i] && this.father.childrenPt[i].giveDom()) {
-          const fetched = fetchChildrenPt(
-            <VirtualDom>this.father.childrenPt[i],
-            1
-          );
+          const fetched = fetchChildrenPt(<any>this.father.childrenPt[i], 1);
           if (fetched !== undefined) {
             return fetched;
           }
@@ -525,10 +522,7 @@ export default class VirtualDom {
    * 设置新的state
    * @param callback
    */
-  setState(
-    callback: (state: object) => object,
-    afterUpdate: (state: object) => object
-  ) {
+  setState(callback: (state: T) => T, afterUpdate: (state: T) => any) {
     this.storeKeeper.setState(callback);
     if (typeof afterUpdate === "function") {
       afterUpdate.apply(this);

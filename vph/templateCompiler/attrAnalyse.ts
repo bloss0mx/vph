@@ -1,4 +1,5 @@
-const getAttrs = origin => origin.replace(/^<[^\s]+|>$/g, '').replace(/^ | $/g, '');
+const getAttrs = origin =>
+  origin.replace(/^<[^\s]+|>$/g, "").replace(/^ | $/g, "");
 const SYMBOL = /,|'|"|`| /g;
 const matchSymbol = origin => origin.match(SYMBOL);
 const splitSymbol = origin => origin.split(SYMBOL);
@@ -10,12 +11,12 @@ const splitSymbol = origin => origin.split(SYMBOL);
 function splitSymbolNText(tag) {
   const symbols = matchSymbol(tag);
   const text = splitSymbol(tag);
-  const fragments = []
+  const fragments = [];
   for (var i = 0; i < text.length - 1; i++) {
     !text[i].match(/^\s{0,}$/) && fragments.push(text[i]);
     fragments.push(symbols[i]);
   }
-  return fragments.map(item => item.replace(/ +/, ' '));
+  return fragments.map(item => item.replace(/ +/, " "));
 }
 
 function attrMaker(splitSymbol) {
@@ -24,28 +25,34 @@ function attrMaker(splitSymbol) {
   }
   const symbolStack = [];
   let index = 0;
-  let currentContainer = '';
+  let currentContainer = "";
   const attrs = [];
 
   do {
-    const currentSymbol = splitSymbol[index]
-    if (currentSymbol === ' ' && symbolStack.length === 0) {
-    } else if (currentSymbol.match(/^['"`]$/g)) {//是符号
-      if (currentSymbol !== symbolStack[symbolStack.length - 1]) {//新嵌套
+    const currentSymbol = splitSymbol[index];
+    if (currentSymbol === " " && symbolStack.length === 0) {
+    } else if (currentSymbol.match(/^['"`]$/g)) {
+      //是符号
+      if (currentSymbol !== symbolStack[symbolStack.length - 1]) {
+        //新嵌套
         symbolStack.push(currentSymbol);
         currentContainer += currentSymbol;
-      } else {//旧嵌套
-        if (symbolStack.length === 1) {//和最后一个符号配对
+      } else {
+        //旧嵌套
+        if (symbolStack.length === 1) {
+          //和最后一个符号配对
           symbolStack.pop();
           currentContainer += currentSymbol;
           attrs.push(currentContainer);
-          currentContainer = '';
-        } else {//
+          currentContainer = "";
+        } else {
+          //
           symbolStack.pop();
           currentContainer += currentSymbol;
         }
       }
-    } else {//是文字
+    } else {
+      //是文字
       currentContainer += currentSymbol;
     }
     index++;

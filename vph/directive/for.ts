@@ -1,7 +1,7 @@
-import { ARRAYY_OPERATE } from '../constant';
-import { DataUnit } from '../DataUnit/index';
-import VirtualDom from '../vdom';
-import StoreKeeper from '../store';
+import { ARRAYY_OPERATE } from "../constant";
+import { DataUnit } from "../DataUnit/index";
+import VirtualDom from "../vdom";
+import StoreKeeper from "../store";
 import {
   prepend,
   insertAfter,
@@ -9,20 +9,20 @@ import {
   attr,
   removeAttr,
   append,
-} from '../domOperator';
-import Directive from './directive';
+} from "../domOperator";
+import Directive from "./directive";
 
-export default class forDirective extends Directive {
-  private storeKeeper: StoreKeeper;
-  private pt: VirtualDom;
+export default class forDirective<T> extends Directive {
+  private storeKeeper: StoreKeeper<T>;
+  private pt: VirtualDom<T>;
   private childrenPt: Array<any>;
   private childrenDom: Array<any>;
   private varibleName;
   private baseDataName: string;
   constructor(init: {
-    storeKeeper: StoreKeeper,
-    pt: VirtualDom,
-    directive: string,
+    storeKeeper: StoreKeeper<T>;
+    pt: VirtualDom<T>;
+    directive: string;
   }) {
     super(init);
     this.storeKeeper = init.storeKeeper;
@@ -33,11 +33,11 @@ export default class forDirective extends Directive {
   }
 
   findOrigin(directive: string) {
-    const splited = directive.split('in');
+    const splited = directive.split("in");
     const handled = splited.map(item => {
-      return item.replace(/[\s]*/, '');
+      return item.replace(/[\s]*/, "");
     });
-    this.varibleName = handled[0].replace(/ /g, '');
+    this.varibleName = handled[0].replace(/ /g, "");
     this.baseDataName = handled[1];
 
     // console.log(this.varibleName, this.baseDataName);
@@ -54,7 +54,7 @@ export default class forDirective extends Directive {
       const { tmpDom, tmpChildrenPt } = this.pt.makeForChildren({
         varibleName: this.varibleName,
         storeKeeper: this.storeKeeper,
-        baseData: baseData,// TODO 查清这个的用法
+        baseData: baseData, // TODO 查清这个的用法
         baseDataName: this.baseDataName,
         index,
         // ...item
@@ -72,18 +72,20 @@ export default class forDirective extends Directive {
   //FIX => index不统一
   /**
    * 添加dom到dom列表
-   * @param {*} data 
-   * @param {*} index 
+   * @param {*} data
+   * @param {*} index
    */
   addToList(data, index: number) {
     const targetIndex = index - 1;
     // const _storeKeeper = new StoreKeeper(...this.storeKeeper.outputAll());
     const _storeKeeper = this.storeKeeper;
-    _storeKeeper.setForStore((store, forStore, props, pt: StoreKeeper) => {
+    _storeKeeper.setForStore((store, forStore, props, pt: StoreKeeper<T>) => {
       return pt.findDataByType(this.baseDataName);
     });
     const baseData = this.storeKeeper.findDataByType(this.baseDataName);
-    const childrenStore = baseData.showData(targetIndex === -1 ? 0 : targetIndex);
+    const childrenStore = baseData.showData(
+      targetIndex === -1 ? 0 : targetIndex
+    );
     const { tmpDom, tmpChildrenPt } = this.pt.makeForChildren({
       varibleName: this.varibleName,
       index: (targetIndex + 1).toString(),
@@ -92,22 +94,32 @@ export default class forDirective extends Directive {
       baseDataName: this.baseDataName,
     });
 
-    if (this.pt.childrenPt.length === 0) {// 无子
-      if (targetIndex !== -1) {// 头插入
-        console.error('Unknow problem, or say, maybe a problem');
+    if (this.pt.childrenPt.length === 0) {
+      // 无子
+      if (targetIndex !== -1) {
+        // 头插入
+        console.error("Unknow problem, or say, maybe a problem");
       }
       const preBro = this.pt.previousBrother();
       if (preBro !== undefined) {
         insertAfter(preBro, tmpDom);
       } else {
-        this.pt.father.giveDom().parentNode.insertBefore(tmpDom, this.pt.father.giveDom());
+        this.pt.father
+          .giveDom()
+          .parentNode.insertBefore(tmpDom, this.pt.father.giveDom());
       }
-    } else {// 有子
-      if (targetIndex === -1) {// 头插入
-        this.pt.childrenPt[0].giveDom().parentNode.insertBefore(tmpDom, this.pt.childrenPt[0].giveDom());
-      } else if (targetIndex === this.pt.childrenPt.length) {// 末插入
+    } else {
+      // 有子
+      if (targetIndex === -1) {
+        // 头插入
+        this.pt.childrenPt[0]
+          .giveDom()
+          .parentNode.insertBefore(tmpDom, this.pt.childrenPt[0].giveDom());
+      } else if (targetIndex === this.pt.childrenPt.length) {
+        // 末插入
         insertAfter(this.pt.childrenPt[targetIndex - 1].giveDom(), tmpDom);
-      } else {// 中间插入
+      } else {
+        // 中间插入
         insertAfter(this.pt.childrenPt[targetIndex].giveDom(), tmpDom);
       }
     }
@@ -120,8 +132,8 @@ export default class forDirective extends Directive {
 
   /**
    * 从dom列表删除dom
-   * @param {*} data 
-   * @param {*} index 
+   * @param {*} data
+   * @param {*} index
    */
   rmFromList(data, index: number) {
     this.pt.childrenPt.splice(index, 1);
@@ -130,5 +142,4 @@ export default class forDirective extends Directive {
     remove(this.childrenDom[index]);
     this.childrenDom.splice(index, 1);
   }
-
 }

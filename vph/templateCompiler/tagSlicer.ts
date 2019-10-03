@@ -17,8 +17,8 @@ const reconstruct = origin => {
     fragments.push(text[i]);
     fragments.push(symbols[i + 1]);
   }
-  return fragments.map(item => item.replace(/ +/, ' '));
-}
+  return fragments.map(item => item.replace(/ +/, " "));
+};
 
 // console.log(attrMaker(reconstruct(tmp)));
 
@@ -28,7 +28,7 @@ function attrMaker(splitSymbol) {
   }
   const symbolStack = [];
   let index = 0;
-  let container = '';
+  let container = "";
   const attrs = [];
 
   do {
@@ -37,7 +37,8 @@ function attrMaker(splitSymbol) {
     //   // container += ' ';
     // } else
     // if (currentSymbol.match(/<\/?pre>|^['"`<>>]$/g)) {//是符号
-    if (currentSymbol.match(/^['"`<>>]$/g)) {//是符号
+    if (currentSymbol.match(/^['"`<>>]$/g)) {
+      //是符号
       // if (symbolStack.length === 0 && currentSymbol === '<pre>') {
       //   attrs.push(container);
       //   attrs.push(currentSymbol);
@@ -49,33 +50,45 @@ function attrMaker(splitSymbol) {
       //   container = '';
       // } else if (symbolStack.length === 1 && symbolStack[symbolStack.length - 1] === '<pre>') {
       //   container += currentSymbol.replace(/</g, '\<').replace(/>/g, '\>');
-      // } else 
-      if (symbolStack.length === 0 && currentSymbol === '<') {//标签开始 
+      // } else
+      if (symbolStack.length === 0 && currentSymbol === "<") {
+        //标签开始
         symbolStack.push(currentSymbol);
-        if (container !== '') attrs.push(container);
+        if (container !== "") attrs.push(container);
         container = currentSymbol;
-      } else if (currentSymbol === '>' && symbolStack.length === 1 && symbolStack[0] === '<') {//标签结束
+      } else if (
+        currentSymbol === ">" &&
+        symbolStack.length === 1 &&
+        symbolStack[0] === "<"
+      ) {
+        //标签结束
         container += currentSymbol;
         attrs.push(container);
-        container = '';
+        container = "";
         symbolStack.pop();
-      } else if (symbolStack[symbolStack.length - 1] === '<' && currentSymbol === '>') {
+      } else if (
+        symbolStack[symbolStack.length - 1] === "<" &&
+        currentSymbol === ">"
+      ) {
         container += currentSymbol;
         symbolStack.pop();
-      } else if (currentSymbol !== symbolStack[symbolStack.length - 1]) {//新嵌套
+      } else if (currentSymbol !== symbolStack[symbolStack.length - 1]) {
+        //新嵌套
         container += currentSymbol;
         symbolStack.push(currentSymbol);
-      } else if (currentSymbol === symbolStack[symbolStack.length - 1]) {//完成匹配
+      } else if (currentSymbol === symbolStack[symbolStack.length - 1]) {
+        //完成匹配
         container += currentSymbol;
         symbolStack.pop();
       }
-    } else {//是文字
+    } else {
+      //是文字
       if (symbolStack.length === 0 && currentSymbol.match(/^{{[^\s{]+}}$/)) {
         attrs.push(container);
         attrs.push(currentSymbol);
-        container = '';
+        container = "";
       } else {
-        container += currentSymbol.replace(/^[\s]*$/, ' ');
+        container += currentSymbol.replace(/^[\s]*$/, " ");
       }
     }
     index++;
@@ -86,6 +99,6 @@ function attrMaker(splitSymbol) {
   return attrs.filter(item => !item.match(/^[\s]*$/));
 }
 
-export default function (origin) {
+export default function(origin) {
   return attrMaker(reconstruct(origin));
 }

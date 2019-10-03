@@ -8,13 +8,13 @@ interface props {}
 /**
  * 数据托管器
  */
-class StoreKeeper {
-  private diff: Diff;
-  private store: DataUnit | Objecty | Arrayy;
+class StoreKeeper<T> {
+  private diff: Diff<T>;
+  private store: DataUnit | Objecty | Arrayy<T>;
   private forStore: forStore;
   private props: props;
   constructor(
-    _store: DataUnit | Objecty | Arrayy,
+    _store: DataUnit | Objecty | Arrayy<T>,
     _forStore?: object,
     _props?: object
   ) {
@@ -69,7 +69,7 @@ class StoreKeeper {
       store?: DataUnit,
       forStore?: Object,
       props?: Object,
-      pt?: StoreKeeper
+      pt?: StoreKeeper<T>
     ) => {}
   ) {
     console.error("setProps");
@@ -85,7 +85,7 @@ class StoreKeeper {
       store?: DataUnit,
       forStore?: Object,
       props?: Object,
-      pt?: StoreKeeper
+      pt?: StoreKeeper<T>
     ) => {}
   ) {
     this.forStore = callback(this.store, this.forStore, this.props, this);
@@ -94,7 +94,7 @@ class StoreKeeper {
   /**
    * 输出store
    */
-  outputStore(): DataUnit | Objecty | Arrayy {
+  outputStore(): DataUnit | Objecty | Arrayy<T> {
     return this.store;
   }
 
@@ -195,8 +195,8 @@ class StoreKeeper {
     }
   }
 
-  setState(callback) {
-    this.diff.setState(callback);
+  setState(callback: (stat: T) => T) {
+    this.diff.setState(callback as any);
   }
 }
 

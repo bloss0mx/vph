@@ -3,6 +3,12 @@
     <h4>
       轻松实现数据绑定
     </h4>
+    <input :bind='value.inputText' :on='input.saveInput' type="text" style="color:{{color}}" >
+    <br />
+    <br />
+    {{inputText}}
+    <br />
+    <hr />
     <span>
       <Table></Table>
     </span>

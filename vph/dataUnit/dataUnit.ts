@@ -1,14 +1,12 @@
-import { testType } from '../utils';
+import { testType } from "../utils";
 // import { difference, uniq } from 'lodash';
-import difference from 'lodash/difference';
-import uniq from 'lodash/uniq';
-import {
-  ARRAYY_OPERATE,
-} from '../constant';
-import { forDirective } from '../directive/index';
-import { BaseObj } from '../domObj';
-import Objecty from './objecty';
-import Arrayy from './arrayy';
+import difference from "lodash/difference";
+import uniq from "lodash/uniq";
+import { ARRAYY_OPERATE } from "../constant";
+import { forDirective } from "../directive/index";
+import { BaseObj } from "../domObj";
+import Objecty from "./objecty";
+import Arrayy from "./arrayy";
 
 export default class DataUnit {
   protected data: any;
@@ -25,7 +23,7 @@ export default class DataUnit {
 
   // /**
   //  * 异步
-  //  * @param data 
+  //  * @param data
   //  */
   // protected dataInit(data) {
   //   // 数组和对象不进行数值初始化
@@ -42,7 +40,7 @@ export default class DataUnit {
 
   /**
    * 增加依赖
-   * @param pushOrigin 
+   * @param pushOrigin
    */
   addPush(pushOrigin) {
     this.pushList.push(pushOrigin);
@@ -54,7 +52,7 @@ export default class DataUnit {
 
   /**
    * 删除依赖
-   * @param pushOrigin 
+   * @param pushOrigin
    */
   rmPush(pushOrigin) {
     this.pushList = difference(this.pushList, [pushOrigin]);
@@ -62,27 +60,23 @@ export default class DataUnit {
 
   /**
    * 输出值
-   * @param index 
+   * @param index
    */
   showData(index?: string): DataUnit | any {
     //深度取值
-    if (
-      index
-      && testType(index) === 'string'
-      && index.split('.').length > 1
-    ) {
-      return [this.data, ...index.split('.')].reduce((t, i) => {
+    if (index && testType(index) === "string" && index.split(".").length > 1) {
+      return [this.data, ...index.split(".")].reduce((t, i) => {
         return t.showData ? t.showData(i) : t[i];
       });
     }
     //数组，无参数 => 取全部
-    if ((index === undefined || index === '') && this.type === 'array') {
+    if ((index === undefined || index === "") && this.type === "array") {
       return this.data.map(item => {
         return item;
       });
     }
     //对象，无参数 => 取全部
-    if ((index === undefined || index === '') && this.type === 'object') {
+    if ((index === undefined || index === "") && this.type === "object") {
       let _data = {};
       for (let i in this.data) {
         _data[i] = this.data[i];
@@ -91,44 +85,45 @@ export default class DataUnit {
     }
     //有参数，数组或对象 => 取全部
     if (
-      index !== undefined
-      && index !== ''
-      && (this.type === 'array' || this.type === 'object')
+      index !== undefined &&
+      index !== "" &&
+      (this.type === "array" || this.type === "object")
     ) {
       return this.data[index];
     }
-    //非数组或对象 => 取基本值 
-    if (this.type !== 'array' && this.type !== 'object') {
+    //非数组或对象 => 取基本值
+    if (this.type !== "array" && this.type !== "object") {
       return this.data;
     }
   }
 
   /**
    * 设置值
-   * @param data 
-   * @param name 
+   * @param data
+   * @param name
    */
   setData(data, name?: string): DataUnit {
-    let isChanged = '';
+    let isChanged = "";
 
-    if (this.type === 'object' && name !== undefined) {
+    if (this.type === "object" && name !== undefined) {
       this.showData(name).setData(data);
-    } else if (this.type === 'array' && name !== undefined) {
+    } else if (this.type === "array" && name !== undefined) {
       this.showData(name).setData(data);
     } else if (
-      (this.type === 'object' || this.type === 'array')
-      && name === undefined
+      (this.type === "object" || this.type === "array") &&
+      name === undefined
     ) {
     } else {
       this.type = testType(data);
       this.data = data;
-      isChanged = ARRAYY_OPERATE['set'];
+      isChanged = ARRAYY_OPERATE["set"];
     }
 
     //修改以后，推送值
-    if (isChanged !== '') {
+    if (isChanged !== "") {
       this.pushList.map((item, index) => {
-        item.run && item.run(this.data, this.type, index, ARRAYY_OPERATE['set']);
+        item.run &&
+          item.run(this.data, this.type, index, ARRAYY_OPERATE["set"]);
       });
     }
     return this;

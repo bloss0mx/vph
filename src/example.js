@@ -1,13 +1,15 @@
-import html from './example.vph';
-import { Component } from 'vph';
-import Time from './time';
-import Table from './table';
-import STYLE from './testLess.less';
+import html from "./example.vph";
+import { Component } from "vph";
+import Time from "./time";
+import Table from "./table";
+import STYLE from "./testLess.less";
 
 export default Component({
   render: html,
   state: {
     style: STYLE,
+    inputText: "这是初始值",
+    color: "black",
     htmlcode: `<!-- time.html -->
 <table style='width: 100%'>
   <tbody>
@@ -51,17 +53,37 @@ export default Component({
   whenInit() {
     this.interval();
   }
-});`
+});`,
   },
   components: {
     Table,
   },
+  actions: {
+    saveInput(e) {
+      this.setState(state => {
+        console.log(e.target.value);
+        state.inputText = e.target.value;
+        return state;
+      });
+    },
+  },
   whenInit() {
     setTimeout(() => {
-      [...document.querySelectorAll('pre code')]
-        .map(item => {
-          hljs.highlightBlock(item);
-        });
+      [...document.querySelectorAll("pre code")].map(item => {
+        hljs.highlightBlock(item);
+      });
     }, 10);
-  }
+    setTimeout(() => {
+      this.setState(state => {
+        state.inputText = "我变！";
+        return state;
+      });
+    }, 2000);
+    setTimeout(() => {
+      this.setState(state => {
+        state.color = "red";
+        return state;
+      });
+    }, 4000);
+  },
 });

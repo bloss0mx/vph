@@ -1,7 +1,7 @@
-import { ARRAYY_OPERATE } from '../constant';
-import { DataUnit } from '../DataUnit/index';
-import VirtualDom from '../vdom';
-import StoreKeeper from '../store';
+import { ARRAYY_OPERATE } from "../constant";
+import { DataUnit } from "../DataUnit/index";
+import VirtualDom from "../vdom";
+import StoreKeeper from "../store";
 import {
   prepend,
   insertAfter,
@@ -9,33 +9,33 @@ import {
   attr,
   removeAttr,
   append,
-} from '../domOperator';
-import Directive from './directive';
+} from "../domOperator";
+import Directive from "./directive";
 
-export default class ValueBind extends Directive {
-  private storeKeeper: StoreKeeper;
-  private pt: VirtualDom;
+export default class ValueBind<T> extends Directive {
+  private storeKeeper: StoreKeeper<T>;
+  private pt: VirtualDom<T>;
   private directive: string;
   private valueType: string;
   private valueName: string;
   constructor(init: {
-    storeKeeper: StoreKeeper,
-    pt: VirtualDom,
-    directive: string,
+    storeKeeper: StoreKeeper<T>;
+    pt: VirtualDom<T>;
+    directive: string;
   }) {
     super(init);
     this.storeKeeper = init.storeKeeper;
     this.pt = init.pt;
-    this.directive = init.directive;//'input.'
+    this.directive = init.directive; //'input.'
 
     this.init();
     this.findOrigin();
   }
 
   init() {
-    const splited = this.directive.split('.');
+    const splited = this.directive.split(".");
     const handled = splited.map(item => {
-      return item.replace(/[\s]*/, '');
+      return item.replace(/[\s]*/, "");
     });
     this.valueType = handled[0];
     this.valueName = handled[1];

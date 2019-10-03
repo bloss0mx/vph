@@ -2,9 +2,11 @@
   "compilerOptions": {
     "target": "es2015",
     "module": "es2015",
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "allowJs": true,
+    // "noImplicitAny": true,
+    // "strict": true
+    "moduleResolution": "node"
   },
-  "exclude": [
-    "node_modules",
-  ]
+  "exclude": ["node_modules"]
 }

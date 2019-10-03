@@ -2,9 +2,9 @@ import VirtualDom from "./vdom";
 import { domType } from "./enums";
 import { remove } from "./domOperator";
 
-class DomKeeper {
+class DomKeeper<T> {
   protected dom: DocumentFragment | HTMLElement | Text;
-  protected master: VirtualDom; // 主vdom
+  protected master: VirtualDom<T>; // 主vdom
   constructor(init) {}
   createDom(type: domType, inf?: string) {
     switch (type) {
@@ -38,7 +38,7 @@ class DomKeeper {
   }
 }
 
-class Fragment extends DomKeeper {
+class Fragment<T> extends DomKeeper<T> {
   constructor(init) {
     super(init);
     this.master = init.master;
@@ -49,7 +49,7 @@ class Fragment extends DomKeeper {
   }
 }
 
-class Element extends DomKeeper {
+class Element<T> extends DomKeeper<T> {
   protected dom: HTMLElement;
   constructor(init) {
     super(init);
@@ -64,7 +64,7 @@ class Element extends DomKeeper {
   }
 }
 
-class TextNode extends DomKeeper {
+class TextNode<T> extends DomKeeper<T> {
   constructor(init) {
     super(init);
     this.master = init.master;

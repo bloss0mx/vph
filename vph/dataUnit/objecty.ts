@@ -1,15 +1,12 @@
-import { testType } from '../utils';
+import { testType } from "../utils";
 // import { difference, uniq } from 'lodash';
-import difference from 'lodash/difference';
-import uniq from 'lodash/uniq';
-import {
-  ARRAYY_OPERATE,
-} from '../constant';
-import { forDirective } from '../directive/index';
-import { BaseObj } from '../domObj';
-import DataUnit from './dataUnit';
-import { dataFactory, toJS } from './index';
-
+import difference from "lodash/difference";
+import uniq from "lodash/uniq";
+import { ARRAYY_OPERATE } from "../constant";
+import { forDirective } from "../directive/index";
+import { BaseObj } from "../domObj";
+import DataUnit from "./dataUnit";
+import { dataFactory, toJS } from "./index";
 
 export default class Objecty extends DataUnit {
   protected data: Object;
@@ -18,11 +15,11 @@ export default class Objecty extends DataUnit {
     super(data);
     this.pushList = [];
     this.data = this.dataInit(data);
-    this.type = 'object';
+    this.type = "object";
   }
 
   protected dataInit(data: Array<any>): Object {
-    let _data = {}
+    let _data = {};
     for (let i in data) {
       _data[i] = dataFactory(data[i]);
     }
@@ -43,7 +40,7 @@ export default class Objecty extends DataUnit {
 
   /**
    * 批量获取store
-   * @param params 
+   * @param params
    */
   getValues(...params) {
     const queue = [...params];
@@ -57,5 +54,4 @@ export default class Objecty extends DataUnit {
   toJS() {
     return toJS(this);
   }
-
 }

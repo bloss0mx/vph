@@ -12,8 +12,11 @@
   },
   "author": "bloss0mx",
   "devDependencies": {
+    "@babel/core": "^7.2.2",
+    "@babel/preset-env": "^7.5.5",
     "@types/lodash": "^4.14.119",
-    "babel-preset-env": "^1.7.0",
+    "babel-loader": "^8.0.5",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "clean-webpack-plugin": "^1.0.1",
     "compression-webpack-plugin": "^1.1.12",
     "css-loader": "^0.x.x",
@@ -23,6 +26,7 @@
     "less-loader": "^4.1.0",
     "prepack": "^0.2.54",
     "prepack-webpack-plugin": "^1.1.2",
+    "prettier-cli": "^0.1.0",
     "style-loader": "^0.23.1",
     "thread-loader": "^2.1.2",
     "ts-loader": "3.5.0",
@@ -32,20 +36,17 @@
     "typescript": "^3.1.5",
     "uglifyjs-webpack-plugin": "^1.x.x",
     "webpack": "^3.x.x",
-    "webpack-bundle-analyzer": "^3.0.3"
+    "webpack-bundle-analyzer": "^3.0.3",
+    "webpack-cli": "^1.x.x",
+    "webpack-dev-server": "^2.9.5"
   },
   "dependencies": {
-    "@babel/core": "^7.2.2",
     "acorn": "^6.0.6",
-    "babel-core": "^6.26.3",
-    "babel-loader": "^8.0.5",
     "html-loader": "^0.5.5",
     "jquery": "^3.3.1",
     "moment": "^2.22.2",
     "moment-timezone": "^0.5.23",
     "moveto": "^1.8.0",
-    "rxjs": "^6.3.3",
-    "webpack-cli": "^1.x.x",
-    "webpack-dev-server": "^2.9.5"
+    "rxjs": "^6.3.3"
   }
 }

@@ -1,27 +1,25 @@
-import { testType } from '../utils';
+import { testType } from "../utils";
 // import { difference, uniq } from 'lodash';
-import difference from 'lodash/difference';
-import uniq from 'lodash/uniq';
-import {
-  ARRAYY_OPERATE,
-} from '../constant';
-import { forDirective } from '../directive/index';
-import { BaseObj } from '../domObj';
-import Objecty from './objecty';
-import Arrayy from './arrayy';
-import DataUnit from './dataUnit';
+import difference from "lodash/difference";
+import uniq from "lodash/uniq";
+import { ARRAYY_OPERATE } from "../constant";
+import { forDirective } from "../directive/index";
+import { BaseObj } from "../domObj";
+import Objecty from "./objecty";
+import Arrayy from "./arrayy";
+import DataUnit from "./dataUnit";
 
 export { Objecty, Arrayy, DataUnit };
 
 /**
  * 转换为DataUnit对象
- * @param data 
+ * @param data
  */
 export function dataFactory(data) {
   const type = testType(data);
-  if (type === 'array') {
+  if (type === "array") {
     return new Arrayy(data);
-  } else if (type === 'object') {
+  } else if (type === "object") {
     return new Objecty(data);
   } else {
     const _data = new DataUnit(data);
@@ -31,7 +29,7 @@ export function dataFactory(data) {
 
 /**
  * 转换为js对象
- * @param pt 
+ * @param pt
  */
 export function toJS(pt: DataUnit | Array<DataUnit>): object {
   if (Object.getPrototypeOf(pt).constructor === Objecty) {

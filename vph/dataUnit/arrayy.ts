@@ -1,27 +1,25 @@
-import { testType } from '../utils';
+import { testType } from "../utils";
 // import { difference, uniq } from 'lodash';
-import difference from 'lodash/difference';
-import uniq from 'lodash/uniq';
-import {
-  ARRAYY_OPERATE,
-} from '../constant';
-import { forDirective } from '../directive/index';
-import { BaseObj } from '../domObj';
-import DataUnit from './dataUnit';
-import { dataFactory } from './index';
+import difference from "lodash/difference";
+import uniq from "lodash/uniq";
+import { ARRAYY_OPERATE } from "../constant";
+import { forDirective } from "../directive/index";
+import { BaseObj } from "../domObj";
+import DataUnit from "./dataUnit";
+import { dataFactory } from "./index";
 
-export default class Arrayy extends DataUnit {
+export default class Arrayy<T> extends DataUnit {
   protected data: Array<any>;
-  protected pushList: Array<forDirective>;
+  protected pushList: Array<forDirective<T>>;
 
   constructor(data: Array<any>) {
     super(data);
     this.pushList = [];
     this.data = this.dataInit(data);
-    this.type = 'array';
+    this.type = "array";
   }
 
-  protected dataInit(data: Array<any>): Array<DataUnit | Arrayy> {
+  protected dataInit(data: Array<any>): Array<DataUnit | Arrayy<T>> {
     const _data = data.map((item, index) => dataFactory(item));
     // this.data = _data;
     return _data;
@@ -49,42 +47,42 @@ export default class Arrayy extends DataUnit {
 
   /**
    * 添加时推送（for指令专用）
-   * @param newData 
-   * @param index 
+   * @param newData
+   * @param index
    */
   addCallback(newData: DataUnit, index: number) {
-    this.pushList.map((item) => {
+    this.pushList.map(item => {
       item.addToList && item.addToList(newData, index);
     });
   }
   /**
    * 删除时推送
-   * @param _data 
-   * @param index 
+   * @param _data
+   * @param index
    */
   rmCallback(_data: Array<any>, index: number) {
     _data.map(item => {
       item.rmSelf();
     });
-    this.pushList.map((item) => {
+    this.pushList.map(item => {
       item.rmFromList && item.rmFromList(_data, index);
     });
   }
 
-  push(tmp): Arrayy {
+  push(tmp): Arrayy<T> {
     const newData = this.splice(this.data.length, 0, tmp);
     this.addCallback(newData, this.data.length - 1);
     return this;
   }
 
   pop() {
-    const _data = this.difference(this.data.length, 1)
+    const _data = this.difference(this.data.length, 1);
     this.data = difference(this.data, _data);
     this.rmCallback(_data, this.data.length);
     return _data;
   }
 
-  unshift(tmp): Arrayy {
+  unshift(tmp): Arrayy<T> {
     const newData = this.splice(0, 0, tmp);
     this.addCallback(newData, 0);
     return this;
@@ -105,10 +103,10 @@ export default class Arrayy extends DataUnit {
   }
 
   rmFrom(index) {
-    const _data = this.difference(index, 1)
+    const _data = this.difference(index, 1);
     this.data = difference(this.data, _data);
     this.rmCallback(_data, index);
-    return _data
+    return _data;
   }
 
   map(callback) {
@@ -118,5 +116,4 @@ export default class Arrayy extends DataUnit {
   getLen() {
     return this.data.length;
   }
-
 }
