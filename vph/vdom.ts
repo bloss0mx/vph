@@ -19,7 +19,7 @@ import {
 } from "./domOperator";
 import { Fragment, Element, TextNode } from "./domKeeper";
 
-interface init<T> {
+export interface init<T> {
   attr: Array<string>;
   isComponent: boolean;
   tag: string;
@@ -35,7 +35,7 @@ interface init<T> {
   ifDirective: string;
   forDirective: string;
   valueBind: string;
-  state: T;
+  state: object;
   props: object;
   whenInit: Function;
   whenMount: Function;
@@ -75,30 +75,7 @@ export default class VirtualDom<T> {
   private whenInit: Function;
   private whenMount: Function;
   private whenUninit: Function;
-  constructor(init: {
-    attr: Array<string>;
-    isComponent: boolean;
-    tag: string;
-    children: Array<VirtualDom<any> | Object | string>;
-    varibleName: string;
-    baseDataName: string;
-    father: VirtualDom<any>;
-    index: number;
-    storeKeeper: StoreKeeper<T>;
-    actions: Array<Function>;
-    components: Array<VirtualDom<any>>;
-    onDirective: string;
-    ifDirective: string;
-    forDirective: string;
-    valueBind: string;
-    state: object;
-    props: object;
-    whenInit: Function;
-    whenMount: Function;
-    whenUninit: Function;
-    slotDirective: string;
-    slot: Array<any>;
-  }) {
+  constructor(init: init<T>) {
     // 复制
     this.isComponent = init.isComponent || false;
     this.init = init as any;
@@ -333,7 +310,7 @@ export default class VirtualDom<T> {
                 father: this,
                 index: index,
                 ...other,
-              });
+              } as any);
               this.dom.appendChild(node.giveDom());
               return node;
             }

@@ -34,12 +34,24 @@ function makeKeyMap(oldArr, newArr) {
  */
 export default function(
   _oldArr: Array<ARR_CONTENT>,
-  _newArr: Array<ARR_CONTENT>
+  _newArr: Array<ARR_CONTENT>,
+  tool: {
+    diff; // 权宜之计
+    path;
+  }
 ) {
   const oldArr = [..._oldArr];
-  for (let i of oldArr) {
-    if (typeof i === "object" && !i.hasOwnProperty("__ARRAY_KEY__")) {
-      Object.defineProperty(i, "__ARRAY_KEY__", {
+  const unComparable: Array<NO_CHG> = [];
+  oldArr.forEach((item, index) => {
+    if (typeof item !== "object") {
+      unComparable.push({
+        beforeIdx: index,
+        afterIdx: index,
+        beforeItem: oldArr[index],
+        afterItem: _newArr[index],
+      });
+    } else if (!item.hasOwnProperty("__ARRAY_KEY__")) {
+      Object.defineProperty(item, "__ARRAY_KEY__", {
         enumerable: false,
         writable: false,
         configurable: false,
@@ -48,7 +60,7 @@ export default function(
           Math.floor(Math.random() * 100000000000).toString(36),
       });
     }
-  }
+  });
 
   const baseKey = oldArr
     .map(item => item.__ARRAY_KEY__)
@@ -71,8 +83,17 @@ export default function(
   }
   // const newKey = newArr.map(item => item.__ARRAY_KEY__);
   const keySet = new Set([...baseKey, ...newKey]);
-
   let nextLevel = [...oldArr];
+
+  var { keyedBase, keyedNew } = makeKeyMap(nextLevel, newArr);
+  const rm: Array<CHGED> = [];
+  for (let i of keySet) {
+    if (!keyedNew.hasOwnProperty(i)) {
+      rm.push(keyedBase[i]);
+      nextLevel.splice(keyedBase[i].index, 1);
+    }
+  }
+
   var { keyedBase, keyedNew } = makeKeyMap(oldArr, newArr);
   const add: Array<CHGED> = [];
   for (let i of keySet) {
@@ -82,15 +103,6 @@ export default function(
         __ARRAY_KEY__: i,
         item: keyedNew[i].item,
       });
-    }
-  }
-
-  var { keyedBase, keyedNew } = makeKeyMap(nextLevel, newArr);
-  const rm: Array<CHGED> = [];
-  for (let i of keySet) {
-    if (!keyedNew.hasOwnProperty(i)) {
-      rm.push(keyedBase[i]);
-      nextLevel.splice(keyedBase[i].index, 1);
     }
   }
 
@@ -120,10 +132,28 @@ export default function(
     }
   }
 
+  const chg: Array<NO_CHG> = [];
+  const _rm: Array<CHGED> = [];
+  const _add: Array<CHGED> = [];
+  add.forEach((item, i) => {
+    if (rm[i] && item.index === rm[i].index) {
+      chg.push({
+        beforeIdx: rm[i].index,
+        afterIdx: add[i].index,
+        beforeItem: rm[i].item,
+        afterItem: add[i].item,
+      });
+    } else {
+      _rm.push(rm[i]);
+      _add.push(add[i]);
+    }
+  });
+
   return {
-    add,
-    rm,
+    add: _add,
+    rm: _rm,
     mv,
     exist,
+    chg: [...chg, ...unComparable],
   };
 }

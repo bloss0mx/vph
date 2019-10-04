@@ -5,7 +5,7 @@ import { Objecty, Arrayy, DataUnit, dataFactory, toJS } from "../DataUnit";
 import StoreKeeper from "../store";
 import { ARR_CONTENT } from "./interface";
 
-import { Subject, pipe } from "rxjs";
+import { Subject } from "rxjs";
 import { throttleTime } from "rxjs/operators";
 
 export default class Diff<T> {
@@ -129,18 +129,34 @@ export default class Diff<T> {
     oldPath: string,
     newPath: string
   ) {
-    const { add, rm, mv, exist } = arrayDiff(oldStore, newStore);
+    const { add, rm, mv, exist, chg } = arrayDiff(oldStore, newStore, {
+      diff: this.diff,
+      path: this.path,
+    });
     const target = this.storeKeeper.getValues(oldPath)[oldPath];
-    for (let i = 0; i < add.length; i++) {
-      target.insertTo(add[i].item, parseInt(<string>add[i].index));
-    }
     for (let i = 0; i < rm.length; i++) {
       target.rmFrom(parseInt(<string>rm[i].index) - i);
+    }
+    for (let i = 0; i < add.length; i++) {
+      target.insertTo(add[i].item, parseInt(<string>add[i].index));
     }
     for (let i in mv) {
       const tmp = target.rmFrom(mv[i].beforeIdx);
       target.insertTo(parseInt(<string>mv[i].afterIdx) + 1, tmp[0]);
     }
+    chg.forEach((item, index) => {
+      // console.log(
+      //   ">>>",
+      //   oldPath,
+      //   newPath,
+      //   this.path(oldPath, newPath, item.beforeIdx, item.afterIdx)
+      // );
+      this.diff(
+        item.beforeItem,
+        item.afterItem,
+        ...this.path(oldPath, newPath, item.beforeIdx, item.afterIdx)
+      );
+    });
 
     exist.map(item => {
       this.diff(

@@ -1,4 +1,4 @@
-import VirtualDom from "./vdom";
+import VirtualDom, { init as VDInit } from "./vdom";
 import { TAGS } from "./constant";
 import StoreKeeper from "./store";
 import { dataFactory, toJS } from "./DataUnit/index";
@@ -48,28 +48,26 @@ import State from "./diff/index";
 // console.timeEnd('diff');
 /** test */
 
-interface setState {
-  (state: object): object;
+interface setState<T> {
+  (state: T): T;
 }
 
-/**
- * 组件初始化
- * @param init
- */
-export function Component<T>(init: {
+interface componentInit<T> {
   /**
    * 渲染模板
    */
-  render: Function | string;
-  attr?: string;
+  render: Function | string | any;
+  // attr?: string;
   /**
    * 初始化state
    */
-  state?: object;
+  state?: T;
   /**
    * 方法
    */
-  actions?: object;
+  actions?: {
+    [name: string]: (this: { setState: setState<T> }, ...p: any[]) => any;
+  };
   /**
    * 注册组件
    */
@@ -77,16 +75,22 @@ export function Component<T>(init: {
   /**
    * 挂载时触发
    */
-  whenInit?: Function;
+  whenInit?: (this: ThisType<T>) => void;
   /**
    * 卸载时触发
    */
-  whenUninit?: Function;
+  whenUninit?: (this: ThisType<T>) => void;
   /**
    * 设置state
    */
-  setState: setState;
-}): Function {
+  // setState: (state: T) => T;
+}
+
+/**
+ * 组件初始化
+ * @param init
+ */
+export function Component<T>(init: componentInit<T>): Function {
   return function(props: {
     attr?: Array<string>;
     props?: string;
@@ -141,7 +145,7 @@ export function Component<T>(init: {
   };
 }
 
-export function vdFactory(init) {
+export function vdFactory<T>(init: VDInit<T>) {
   return new VirtualDom(init);
 }
 
@@ -182,10 +186,10 @@ export function init(selector, vdom, productEnv = false) {
  * Vph
  * @param init
  */
-export default function Vph(init: {
+export default function Vph<T>(init: {
   render: string;
   attr?: string;
-  state?: object;
+  state?: T;
   actions?: object;
   components?: object;
   whenInit?: Function;

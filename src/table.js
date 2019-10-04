@@ -32,7 +32,7 @@ export default Component({
       });
     },
     timeTable() {
-      interval(1000).subscribe({
+      interval(1).subscribe({
         next: () => {
           this.setState(state => {
             // console.log(state.array2[0].__ARRAY_KEY__);
@@ -43,21 +43,43 @@ export default Component({
         },
       });
     },
+    add2Table() {
+      interval(1000).subscribe({
+        next: () => {
+          this.setState(state => {
+            // console.log(state.array2[0].__ARRAY_KEY__);
+            const _state = { ...state };
+            const other = [..._state.array2];
+            const first = other.splice(0, 1);
+            _state.array2 = [
+              ...first,
+              [time(-8), time(-9), time(+5)],
+              ...other,
+            ];
+            return _state;
+          });
+        },
+      });
+    },
+    countIt() {
+      const countTest = interval(1).subscribe({
+        next: () => {
+          this.setState(state => {
+            const _state = state;
+            _state.count++;
+            return _state;
+          });
+        },
+      });
+      setTimeout(() => {
+        countTest.unsubscribe();
+      }, 60 * 60 * 1000);
+    },
   },
   whenInit() {
-    const countTest = interval(1).subscribe({
-      next: () => {
-        this.setState(state => {
-          const _state = state;
-          _state.count++;
-          return _state;
-        });
-      },
-    });
-    setTimeout(() => {
-      countTest.unsubscribe();
-    }, 2 * 60 * 1000);
+    this.countIt();
     // this._interval();
     this.timeTable();
+    // this.add2Table();
   },
 });

@@ -6,7 +6,12 @@
     "allowJs": true,
     // "noImplicitAny": true,
     // "strict": true
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "paths": {
+      "vph/*": ["./vph/*"]
+    }
   },
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
+  "include": ["./vph/**/*"]
 }
