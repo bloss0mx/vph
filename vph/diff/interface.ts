@@ -1,8 +1,6 @@
-
-
 export interface ARR_CONTENT {
-  __ARRAY_KEY__: number | string;
-  item?: any;
+  __ARRAY_KEY__?: number | string;
+  [name: string]: any;
 }
 
 export interface CHGED {

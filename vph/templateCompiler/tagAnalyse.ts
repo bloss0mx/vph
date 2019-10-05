@@ -19,19 +19,20 @@ import attrM from "./attrAnalyse";
 import tagSlicer from "./tagSlicer";
 // const { attrM } = require('./attrAnalyse');
 
-const matchTagsNValue = origin =>
+const matchTagsNValue = (origin: string) =>
   origin.match(/<[\/!-]{0,1}[^<]*[^-]>|{{[^\s]+}}/g);
-const splitTagsNValue = origin =>
+const splitTagsNValue = (origin: string) =>
   origin
     .split(/<[\/!-]{0,1}[^<]*[^-]>|{{[^\s]+}}/g)
     .map(item => item.replace(/\n|\t/g, ""));
-const rmComment = origin => origin.replace(/<!--[\w\W\r\n]*?-->/gim, "");
+const rmComment = (origin: string) =>
+  origin.replace(/<!--[\w\W\r\n]*?-->/gim, "");
 
 /**
  * 分割模板
  * @param tmp 模板
  */
-function splitTagNChildren(tmp) {
+function splitTagNChildren(tmp: string) {
   const _tmp = rmComment(tmp);
   const tags = matchTagsNValue(_tmp);
   const text = splitTagsNValue(_tmp);
@@ -43,21 +44,21 @@ function splitTagNChildren(tmp) {
   return fragments.map(item => item.replace(/^ *| *$/g, ""));
 }
 
-const getTag = tag => {
+const getTag = (tag: string) => {
   const match = tag.match(/<[^ <\/]* |<[^ <\/]*\/?>/);
   return match && match[0].replace(/<|>| |\//g, "");
 };
 
-const cleanDirective = (origin, type) =>
+const cleanDirective = (origin: string, type: RegExp) =>
   origin && origin.replace(type, "").replace(/^['"]|['"]$/g, "");
 
-class Container {
+export class Container {
   private tag: string;
   private tagName: string;
   private children: Array<any>;
   private attr: Array<any>;
   private directive: Array<any>;
-  constructor(tag) {
+  constructor(tag: string) {
     this.tag = tag;
     this.children = [];
     this.getAttr();
@@ -104,15 +105,15 @@ class Container {
   getChildren() {
     return this.children;
   }
-  pushChildren(child) {
+  pushChildren(child: Container | string) {
     this.children.push(child);
   }
 }
 
-const matchHead = origin => origin.match(/^<[\s\S]+>$/);
-const matchTail = origin => origin.match(/^<[\s\S]+>$/);
+const matchHead = (origin: string) => origin.match(/^<[\s\S]+>$/);
+const matchTail = (origin: string) => origin.match(/^<[\s\S]+>$/);
 
-function tagMaker(splitedTmp) {
+function tagMaker(splitedTmp: string[]) {
   if (splitedTmp.length === 0) {
     return;
   }
@@ -155,5 +156,6 @@ function tagMaker(splitedTmp) {
 /**
  * 此处的true是有webpack插件去掉注释
  */
-export default origin => tagMaker(tagSlicer(true ? origin : rmComment(origin)));
+export default (origin: string) =>
+  tagMaker(tagSlicer(true ? origin : rmComment(origin)));
 // export default origin => tagMaker(tagSlicer(origin));

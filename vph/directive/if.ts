@@ -33,7 +33,7 @@ export default class IfDirective<T> extends Directive {
     this.storeKeeper.register(this.flagName, this);
   }
 
-  run(data) {
+  run(data: any) {
     this.ifDirectiveOperate(data == this.key);
   }
 

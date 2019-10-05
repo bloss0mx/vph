@@ -1,13 +1,17 @@
 import { ARR_CONTENT, CHGED, NO_CHG } from "./interface";
 
+type keyed = {
+  [name: string]: any;
+};
+
 /**
  * 新建key map
  * @param oldArr
  * @param newArr
  */
-function makeKeyMap(oldArr, newArr) {
-  const keyedBase = {};
-  const keyedNew = {};
+function makeKeyMap(oldArr: any[], newArr: any[]) {
+  const keyedBase: keyed = {};
+  const keyedNew: keyed = {};
   oldArr.map((item, index) => {
     keyedBase[item.__ARRAY_KEY__] = {
       item,
@@ -36,8 +40,8 @@ export default function(
   _oldArr: Array<ARR_CONTENT>,
   _newArr: Array<ARR_CONTENT>,
   tool: {
-    diff; // 权宜之计
-    path;
+    diff: Function; // 权宜之计
+    path: Function;
   }
 ) {
   const oldArr = [..._oldArr];

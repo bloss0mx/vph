@@ -17,7 +17,7 @@ export default class forDirective<T> extends Directive {
   private pt: VirtualDom<T>;
   private childrenPt: Array<any>;
   private childrenDom: Array<any>;
-  private varibleName;
+  private varibleName: string;
   private baseDataName: string;
   constructor(init: {
     storeKeeper: StoreKeeper<T>;
@@ -46,17 +46,17 @@ export default class forDirective<T> extends Directive {
 
   init() {
     const baseData = this.storeKeeper.findDataByType(this.baseDataName);
-    const childrenStore = baseData.map((item, index) => {
+    const childrenStore = baseData.map((item: any) => {
       return item;
     });
 
-    childrenStore.map((item, index) => {
+    childrenStore.map((item: any, index: number) => {
       const { tmpDom, tmpChildrenPt } = this.pt.makeForChildren({
         varibleName: this.varibleName,
         storeKeeper: this.storeKeeper,
         baseData: baseData, // TODO 查清这个的用法
         baseDataName: this.baseDataName,
-        index,
+        index: index.toString(),
         // ...item
       });
       this.pt.giveDom().appendChild(tmpDom);
@@ -75,7 +75,7 @@ export default class forDirective<T> extends Directive {
    * @param {*} data
    * @param {*} index
    */
-  addToList(data, index: number) {
+  addToList(data: any, index: number) {
     const targetIndex = index - 1;
     // const _storeKeeper = new StoreKeeper(...this.storeKeeper.outputAll());
     const _storeKeeper = this.storeKeeper;
@@ -125,7 +125,7 @@ export default class forDirective<T> extends Directive {
     }
 
     this.pt.childrenPt.splice(index, 0, tmpChildrenPt);
-    (<DataUnit>childrenStore).addPush(tmpChildrenPt);
+    (<DataUnit<T>>childrenStore).addPush(tmpChildrenPt);
     this.childrenDom.splice(index, 0, tmpDom);
     this.childrenPt.splice(index, 0, tmpChildrenPt);
   }
@@ -135,7 +135,7 @@ export default class forDirective<T> extends Directive {
    * @param {*} data
    * @param {*} index
    */
-  rmFromList(data, index: number) {
+  rmFromList(data: any, index: number) {
     this.pt.childrenPt.splice(index, 1);
     this.childrenPt[index].rmSelf();
     this.childrenPt.splice(index, 1);

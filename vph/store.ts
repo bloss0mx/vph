@@ -1,28 +1,29 @@
 import { DataUnit, Arrayy, Objecty, dataFactory, toJS } from "./DataUnit";
+import { anyType } from "./dataUnit/dataUnit";
 import Diff from "./diff/index";
 
-interface forStore {}
+interface forStore {
+  [name: string]: any;
+}
 
-interface props {}
+interface props {
+  [name: string]: any;
+}
 
 /**
  * 数据托管器
  */
-class StoreKeeper<T> {
+class StoreKeeper<T extends anyType> {
   private diff: Diff<T>;
-  private store: DataUnit | Objecty | Arrayy<T>;
+  store: DataUnit<T>;
   private forStore: forStore;
   private props: props;
-  constructor(
-    _store: DataUnit | Objecty | Arrayy<T>,
-    _forStore?: object,
-    _props?: object
-  ) {
+  constructor(_store: DataUnit<T>, _forStore?: object, _props?: object) {
     this.store = _store;
     this.forStore = _forStore || {};
     this.props = _props || {};
 
-    this.diff = new Diff(toJS(_store), this);
+    this.diff = new Diff(toJS(_store), this) as any;
   }
 
   /**
@@ -31,7 +32,7 @@ class StoreKeeper<T> {
    * @param pt 引用
    * @param callback 回调
    */
-  register(name: string, pt, callback?: Function) {
+  register(name: string, pt: any, callback?: Function) {
     let found = this.findDataByType(name);
     if (found !== undefined) {
       found.addPush(pt);
@@ -44,7 +45,7 @@ class StoreKeeper<T> {
    * @param pt
    * @param callback
    */
-  unregister(name: string, pt, callback?: Function) {
+  unregister(name: string, pt: any, callback?: Function) {
     let found = this.findDataByType(name);
     if (found !== undefined && found !== null) {
       found.rmPush && found.rmPush(pt);
@@ -56,7 +57,7 @@ class StoreKeeper<T> {
    * 设置store
    * @param data
    */
-  setStore(data) {
+  setStore(data: any) {
     this.store = data;
   }
 
@@ -66,7 +67,7 @@ class StoreKeeper<T> {
    */
   setProps(
     callback: (
-      store?: DataUnit,
+      store?: DataUnit<T>,
       forStore?: Object,
       props?: Object,
       pt?: StoreKeeper<T>
@@ -82,7 +83,7 @@ class StoreKeeper<T> {
    */
   setForStore(
     callback: (
-      store?: DataUnit,
+      store?: DataUnit<T>,
       forStore?: Object,
       props?: Object,
       pt?: StoreKeeper<T>
@@ -94,7 +95,7 @@ class StoreKeeper<T> {
   /**
    * 输出store
    */
-  outputStore(): DataUnit | Objecty | Arrayy<T> {
+  outputStore(): DataUnit<T> | Objecty<T> | Arrayy<T> {
     return this.store;
   }
 
@@ -117,7 +118,7 @@ class StoreKeeper<T> {
   /**
    * 输出全部
    */
-  outputAll(): [DataUnit, forStore, props] {
+  outputAll(): [DataUnit<T>, forStore, props] {
     return [this.store, this.forStore, this.props];
   }
 
@@ -125,14 +126,14 @@ class StoreKeeper<T> {
    * 批量获取store
    * @param params
    */
-  getValues(...params): object {
+  getValues(...params: string[]): object {
     if (this.store instanceof Objecty) {
       return this.store.getValues(...params);
     }
   }
 
-  getMultiValue(...names: Array<string>): object {
-    const answer = {};
+  getMultiValue(...names: string[]): object {
+    const answer: any = {};
     names.map(item => {
       answer[item.replace(/^for@|^props@|^state@/, "")] = this.findDataByType(
         item
@@ -145,8 +146,8 @@ class StoreKeeper<T> {
    * 使用name查找store，props，forStore
    * @param name
    */
-  findBaseData(name: string): DataUnit {
-    let found: DataUnit;
+  findBaseData(name: string): DataUnit<T> {
+    let found: DataUnit<T>;
     if (name.match(/\./g)) {
       const [first, ...other] = name.split(".");
       if (this.forStore[first] !== undefined) {
@@ -176,15 +177,15 @@ class StoreKeeper<T> {
    * name = store@name | props@name | for@name | name
    * @param name
    */
-  findDataByType(name: string): DataUnit | any {
+  findDataByType(name: string): DataUnit<T> | any {
     const _type = name.match(/^for@|^props@|^state@/);
     const type = _type && _type[0].replace(/@/, "");
     const _name = name.replace(/^for@|^props@|^state@/, "");
     if (type) {
       if (type === "for") {
-        return <DataUnit>this.forStore[_name];
+        return <DataUnit<T>>this.forStore[_name];
       } else if (type === "props") {
-        return <DataUnit>this.props[_name];
+        return <DataUnit<T>>this.props[_name];
       } else if (type === "state") {
         return this.store.showData(_name);
       } else {

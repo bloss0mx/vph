@@ -2,8 +2,8 @@
  * 柯里化函数
  * @param fn 需要柯里化的函数
  ************/
-function curry(fn) {
-  function act(..._args) {
+function curry(fn: Function) {
+  function act(..._args: any[]) {
     if (fn.length === _args.length) {
       return fn(..._args);
     } else {
@@ -19,10 +19,10 @@ function curry(fn) {
  * 代码组合
  * @argument 右侧函数的值作为左侧函数的参数
  ***********/
-const compose = function(..._args): Function {
+const compose = function(..._args: Function[]): Function {
   //后者的结果为前者的参数
   const args = [..._args].reverse();
-  return function(param) {
+  return function(param: any) {
     let lastParam = param;
     for (let i = 0; i < args.length; i++) {
       lastParam = args[i](lastParam);
@@ -31,25 +31,25 @@ const compose = function(..._args): Function {
   };
 };
 //基础函数
-const checkSingleTag = tag =>
+const checkSingleTag = (tag: string) =>
   tag &&
   tag.match(
     "area|base|col|command|embed|keygen|param|source|track|wbr|br|hr|img|input|link|meta|video"
   ) !== null;
-const getTagFromHead = tag => {
+const getTagFromHead = (tag: string) => {
   const match = tag.match(/^<[^ <\/]* |^<[^ <\/]*>/);
   return match && match[0].replace(/<|>| /g, "");
 };
-const getTagFromTail = tag => {
+const getTagFromTail = (tag: string) => {
   const match = tag.match(/^<\/[^<]*>/);
   return match && match[0].replace(/^<\/|>/g, "");
 };
-const matchTags = origin => origin.match(/^<[\/!-]{0,1}[^<]*[^-]>/g);
-const splitText = origin =>
+const matchTags = (origin: string) => origin.match(/^<[\/!-]{0,1}[^<]*[^-]>/g);
+const splitText = (origin: string) =>
   origin
     .split(/^<[\/!-]{0,1}[^<]*[^-]>/g)
     .map(item => item.replace(/\n|\t/g, ""));
-const equel = curry((a, b) => a === b);
+const equel = curry((a: any, b: any) => a === b);
 // const attr = (tag) => tag.replace(/<[^\s<>]*|>/g, '').replace(/^ | $/g, '').split(' ').map(item => ({ attr: item.split('=')[0], value: item.split('=')[1] }));
 
 //复合函数
@@ -57,12 +57,12 @@ const singleTags = compose(
   checkSingleTag,
   getTagFromHead
 );
-const duoTag_Count0 = (current, tag) =>
+const duoTag_Count0 = (current: string, tag: string) =>
   compose(
     equel(current),
     getTagFromHead
   )(tag);
-const closeTag = (current, tag) =>
+const closeTag = (current: string, tag: string) =>
   compose(
     equel(current),
     getTagFromTail
@@ -71,14 +71,14 @@ const closeTag = (current, tag) =>
 // const checkBaseTag = name => tags.find(i => i === name);
 const SINGLE_TAGS = "br,hr,img,input,param,meta,link".split(",");
 
-const testTag = origin => !!origin.match(/^<[^>]+>$/);
-const testSingleTag = origin => {
+const testTag = (origin: string) => !!origin.match(/^<[^>]+>$/);
+const testSingleTag = (origin: string) => {
   const tag = origin.match(/^<[^\s>]+/)[0].replace(/</, "");
   const forceSingle = origin.match(/^<[^>]\/>$/);
   return !!SINGLE_TAGS.find(i => i === tag) || forceSingle;
 };
-const testSingle = origin => testTag(origin) && testSingleTag(origin);
-const singleComponent = origin => !!origin.match(/^<[A-Z][^>]+\/>$/);
+const testSingle = (origin: string) => testTag(origin) && testSingleTag(origin);
+const singleComponent = (origin: string) => !!origin.match(/^<[A-Z][^>]+\/>$/);
 
 export {
   checkSingleTag,

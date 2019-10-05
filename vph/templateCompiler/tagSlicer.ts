@@ -7,9 +7,9 @@ const tmp = `<div class="J_TbSearchContent J_TbPlaceholder J_Placeholder search-
 
 const symbol = /[<>'"` ]|{{[^\s{]+}}/g;
 // const symbol = /<\/?pre>|[<>'"` ]|{{[^\s{]+}}/g;
-const splitSymbol = origin => origin.split(symbol);
-const matchSymbol = origin => origin.match(symbol);
-const reconstruct = origin => {
+const splitSymbol = (origin: string) => origin.split(symbol);
+const matchSymbol = (origin: string) => origin.match(symbol);
+const reconstruct = (origin: string) => {
   const symbols = splitSymbol(origin);
   const text = matchSymbol(origin);
   const fragments = [];
@@ -22,11 +22,11 @@ const reconstruct = origin => {
 
 // console.log(attrMaker(reconstruct(tmp)));
 
-function attrMaker(splitSymbol) {
+function attrMaker(splitSymbol: string[]) {
   if (splitSymbol.length === 0) {
     return;
   }
-  const symbolStack = [];
+  const symbolStack: string[] = [];
   let index = 0;
   let container = "";
   const attrs = [];
@@ -99,6 +99,6 @@ function attrMaker(splitSymbol) {
   return attrs.filter(item => !item.match(/^[\s]*$/));
 }
 
-export default function(origin) {
+export default function(origin: string) {
   return attrMaker(reconstruct(origin));
 }

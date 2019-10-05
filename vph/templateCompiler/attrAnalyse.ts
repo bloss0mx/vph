@@ -1,14 +1,14 @@
-const getAttrs = origin =>
+const getAttrs = (origin: string) =>
   origin.replace(/^<[^\s]+|>$/g, "").replace(/^ | $/g, "");
 const SYMBOL = /,|'|"|`| /g;
-const matchSymbol = origin => origin.match(SYMBOL);
-const splitSymbol = origin => origin.split(SYMBOL);
+const matchSymbol = (origin: string) => origin.match(SYMBOL);
+const splitSymbol = (origin: string) => origin.split(SYMBOL);
 
 /**
  * 分割模板
  * @param tag 模板
  */
-function splitSymbolNText(tag) {
+function splitSymbolNText(tag: string) {
   const symbols = matchSymbol(tag);
   const text = splitSymbol(tag);
   const fragments = [];
@@ -19,11 +19,11 @@ function splitSymbolNText(tag) {
   return fragments.map(item => item.replace(/ +/, " "));
 }
 
-function attrMaker(splitSymbol) {
+function attrMaker(splitSymbol: string[]) {
   if (splitSymbol.length === 0) {
     return;
   }
-  const symbolStack = [];
+  const symbolStack: string[] = [];
   let index = 0;
   let currentContainer = "";
   const attrs = [];
@@ -63,7 +63,7 @@ function attrMaker(splitSymbol) {
   return attrs;
 }
 
-function attr(tag) {
+function attr(tag: string) {
   return attrMaker(splitSymbolNText(getAttrs(tag)));
 }
 // exports.attrM = attr;

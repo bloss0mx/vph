@@ -19,11 +19,16 @@ export default class onDirective<T> extends Directive {
   private directive: string;
   private eventType: string;
   private callbackName: string;
-  constructor(init) {
+  constructor(init: {
+    storeKeeper: StoreKeeper<T>;
+    pt: VirtualDom<T>;
+    // callback: Function;
+    directive: string;
+  }) {
     super(init);
     this.storeKeeper = init.storeKeeper;
     this.pt = init.pt;
-    this.callback = init.callback;
+    // this.callback = init.callback;
     this.directive = init.directive; //'input.'
 
     this.init();

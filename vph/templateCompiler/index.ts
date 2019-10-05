@@ -1,7 +1,23 @@
-import tagAnalyse from "./tagAnalyse";
+import tagAnalyse, { Container } from "./tagAnalyse";
 import { TAGS, SPLITED_TAGS } from "../constant";
 
-function basicIterator(container) {
+interface code {
+  tag: string;
+  attr: string[];
+  props: string;
+  ifDirective: string;
+  forDirective: string;
+  onDirective: string;
+  valueBind: string;
+  slotDirective: string;
+  children: string[];
+}
+
+interface Component {
+  [name: string]: Function;
+}
+
+function basicIterator(container: Container) {
   let code = "";
   const tagName = container.getTagName();
   const attr = container.getAttr();
@@ -15,7 +31,7 @@ function basicIterator(container) {
   // code += `tag:'${tagName}',`;
   code += ComponentAnalyse(tagName);
   code += attr ? `attr:[${attr.join(",")}],` : "";
-  code += props ? `props:[${props.join(",")}],` : "";
+  code += props ? `props:[${props}],` : ""; // todo
   code += ifDirective ? `ifDirective:${ifDirective},` : "";
   code += forDirective ? `forDirective:${forDirective},` : "";
   code += onDirective ? `onDirective:${onDirective},` : "";
@@ -34,7 +50,7 @@ function basicIterator(container) {
   return code;
 }
 
-function basicReconstruct(tmp, components) {
+function basicReconstruct(tmp: string, components: Component) {
   const analysed = tagAnalyse(tmp);
   // const code = basicIterator(analysed);
   const code = _basicIterator(analysed, components);
@@ -42,7 +58,7 @@ function basicReconstruct(tmp, components) {
   return code;
 }
 
-function ComponentAnalyse(tagName) {
+function ComponentAnalyse(tagName: string) {
   const isBasic = SPLITED_TAGS.find(item => item === tagName);
   if (isBasic) {
     //基本
@@ -55,7 +71,7 @@ function ComponentAnalyse(tagName) {
 
 export default basicReconstruct;
 
-function _basicIterator(container, components) {
+function _basicIterator(container: Container, components: Component) {
   const tagName = container.getTagName();
   const attr = container.getAttr();
   const ifDirective = container.getIf();
@@ -93,7 +109,7 @@ function _basicIterator(container, components) {
   return code;
 }
 
-function _ComponentAnalyse(code, components) {
+function _ComponentAnalyse(code: code, components: Component) {
   const isBasic = SPLITED_TAGS.find(item => item === code.tag);
   if (isBasic) {
     //基本

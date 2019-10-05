@@ -1,4 +1,5 @@
 import {} from "../DataUnit";
+import { anyType } from "../dataUnit/dataUnit";
 
 interface chged {
   name: number | string;
@@ -11,8 +12,8 @@ interface chged {
  * @param newObj
  */
 export default function(
-  oldObj: object,
-  newObj: object
+  oldObj: anyType,
+  newObj: anyType
 ): {
   add: Array<chged>;
   rm: Array<string | number>;

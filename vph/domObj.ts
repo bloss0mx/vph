@@ -11,6 +11,7 @@ import {
   append,
 } from "./domOperator";
 import { Fragment, Element, TextNode } from "./domKeeper";
+import { Element_Type } from "./domOperator";
 
 const TEMPLATE_REGEXP = /\{\{[^\s]+\}\}/;
 
@@ -23,7 +24,7 @@ class BaseObj {
    * @param {*} store
    * @param {*} index
    */
-  constructor(name, store?, index?) {}
+  constructor(name: any, store?: any, index?: any) {}
   /**
    * 数据更新
    * @param {*} data
@@ -31,14 +32,14 @@ class BaseObj {
    * @param {*} index
    * @param {*} opeate
    */
-  run(data, type, index, opeate) {}
+  run(data: any) {}
   /**
    * 查找DataUnit源
    * @param {*} name
    * @param {*} node
    * @param {*} index
    */
-  findOrigin(name, node, index) {}
+  findOrigin(name: string, node: any, index: number) {}
   /**
    * 输出dom
    */
@@ -69,7 +70,7 @@ class TextDom<T> extends BaseObj {
     this.storeKeeper.register(name.replace(/\{|\}/g, ""), this);
   }
 
-  run(data, type, index) {
+  run(data: string) {
     if (this.name.match(TEMPLATE_REGEXP)) {
     }
     if (this.dom && this.dom.textContent) {
@@ -115,7 +116,11 @@ class AttrObj<T> extends BaseObj {
   private template: string;
   private value: string;
   protected dom: Element<T>;
-  constructor(init) {
+  constructor(init: {
+    dom: Element<T>;
+    attr: string;
+    storeKeeper: StoreKeeper<T>;
+  }) {
     super(init);
     this.dom = init.dom;
     const attrData = init.attr.split("=");
@@ -129,7 +134,7 @@ class AttrObj<T> extends BaseObj {
     this.defaultAttr(this.value);
   }
 
-  defaultAttr(tmp) {
+  defaultAttr(tmp: string) {
     const valueName = tmp.match(TEMPLATE_REGEXP);
     if (!valueName) {
       const value = tmp.replace(/['\\"]/g, "");
@@ -139,7 +144,7 @@ class AttrObj<T> extends BaseObj {
     }
   }
 
-  findOrigin(tmp) {
+  findOrigin(tmp: string) {
     const valueName = tmp.match(TEMPLATE_REGEXP);
     if (valueName) {
       const value = valueName[0] && valueName[0].replace(/\{|\}/g, "");
@@ -156,13 +161,13 @@ class AttrObj<T> extends BaseObj {
     this.dom = null;
   }
 
-  run(data) {
+  run(data: any) {
     if (data) {
       this.value = data;
       const value = this.template.replace(TEMPLATE_REGEXP, data);
       attr(this.dom, this.name, value);
     } else {
-      removeAttr(this.dom, this.name);
+      removeAttr(this.dom.outputDom() as HTMLElement, this.name);
     }
   }
 }

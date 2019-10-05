@@ -19,6 +19,10 @@ import {
 } from "./domOperator";
 import { Fragment, Element, TextNode } from "./domKeeper";
 
+type Actions = {
+  [name: string]: Function;
+};
+
 export interface init<T> {
   attr: Array<string>;
   isComponent: boolean;
@@ -29,13 +33,13 @@ export interface init<T> {
   father: VirtualDom<any>;
   index: number;
   storeKeeper: StoreKeeper<T>;
-  actions: Array<Function>;
+  actions: Actions;
   components: Array<VirtualDom<any>>;
   onDirective: string;
   ifDirective: string;
   forDirective: string;
   valueBind: string;
-  state: object;
+  state: T;
   props: object;
   whenInit: Function;
   whenMount: Function;
@@ -50,7 +54,7 @@ export interface init<T> {
 export default class VirtualDom<T> {
   index: number;
   father: VirtualDom<any>;
-  actions: Array<Function>;
+  actions: Actions;
   components: Array<VirtualDom<any>>;
   childrenPt: Array<VirtualDom<any> | BaseObj>;
   isComponent: boolean;
@@ -93,7 +97,7 @@ export default class VirtualDom<T> {
     this.storeKeeper =
       init.storeKeeper instanceof StoreKeeper
         ? init.storeKeeper
-        : new StoreKeeper(dataFactory({})); //StoreKeeper
+        : new StoreKeeper(dataFactory({}) as any); //StoreKeeper
     this.actions = init.actions;
     this.components = init.components;
 
@@ -143,7 +147,7 @@ export default class VirtualDom<T> {
    * @param {*} father
    * @param {*} index
    */
-  setFather(father, index) {
+  setFather(father: VirtualDom<any>, index: number) {
     this.father = father;
     this.index = index;
   }
@@ -152,7 +156,7 @@ export default class VirtualDom<T> {
    * 初始化state
    * @param {*} data
    */
-  initState(data) {
+  initState(data: T) {
     this.storeKeeper.setStore(dataFactory(data));
   }
 
@@ -160,14 +164,14 @@ export default class VirtualDom<T> {
    * 初始化props
    * @param data
    */
-  initProps(data) {
+  initProps(data: any) {
     this.storeKeeper.setProps(() => this.getDatas(...data));
   }
 
   /**
    * 初始化if指令
    */
-  initIf(ifDirective) {
+  initIf(ifDirective: string): IfDirective<T> | undefined {
     if (!ifDirective) {
       return;
     }
@@ -181,7 +185,7 @@ export default class VirtualDom<T> {
   /**
    * 初始化for指令
    */
-  initFor(_directive) {
+  initFor(_directive: string): forDirective<T> | undefined {
     if (!_directive) {
       return;
     }
@@ -195,7 +199,7 @@ export default class VirtualDom<T> {
   /**
    * 初始化on指令
    */
-  initOn(_directive) {
+  initOn(_directive: string): onDirective<T> | undefined {
     if (!_directive) return;
     return new onDirective({
       directive: _directive,
@@ -208,7 +212,7 @@ export default class VirtualDom<T> {
    * store到dom
    * @param _directive
    */
-  initValueBind(_directive) {
+  initValueBind(_directive: string): ValueBind<T> | undefined {
     if (!_directive) return;
     return new ValueBind({
       directive: _directive,
@@ -221,7 +225,7 @@ export default class VirtualDom<T> {
    * 触发whenInit钩子
    * @param whenInit
    */
-  fireWhenInit(whenInit) {
+  fireWhenInit(whenInit: VirtualDom<T>["whenInit"]) {
     if (typeof whenInit === "function") {
       // setTimeout(() => {
       whenInit.apply(this);
@@ -248,7 +252,7 @@ export default class VirtualDom<T> {
     const actions = this.actions;
     if (actions !== undefined) {
       for (let i in actions) {
-        this[i] = actions[i].bind(this);
+        (this as any)[i] = actions[i].bind(this);
       }
     }
   }
@@ -256,7 +260,7 @@ export default class VirtualDom<T> {
   /**
    * 初始化属性
    */
-  initAttr() {
+  initAttr(): AttrObj<T>[] {
     const attrArray = this.init.attr;
     if (!attrArray) {
       return [];
@@ -264,7 +268,7 @@ export default class VirtualDom<T> {
     return attrArray.map((item, index) => {
       return new AttrObj({
         attr: item,
-        dom: this.dom,
+        dom: this.dom as Element<T>,
         storeKeeper: this.storeKeeper,
       });
     });
@@ -325,7 +329,7 @@ export default class VirtualDom<T> {
     varibleName: string;
     index: string;
     storeKeeper: StoreKeeper<T>;
-    baseData: DataUnit;
+    baseData: DataUnit<T>;
     baseDataName: string;
   }) {
     const init = this.init;
@@ -338,7 +342,7 @@ export default class VirtualDom<T> {
     init.storeKeeper = this.storeKeeper;
     init.storeKeeper.setForStore((store, forStore, props) => {
       const _forStore = { ...forStore };
-      _forStore[init.varibleName] = childInitMsg.baseData.showData(
+      (_forStore as any)[init.varibleName] = childInitMsg.baseData.showData(
         childInitMsg.index
       );
       return _forStore;
@@ -411,12 +415,12 @@ export default class VirtualDom<T> {
    * @param {*} dom
    * @param {*} deviation
    */
-  insertToAvilableBefore(dom) {
+  insertToAvilableBefore(dom: DocumentFragment | HTMLElement | Text) {
     const previousBrother = this.previousBrother();
     if (previousBrother) {
       insertAfter(previousBrother, dom);
     } else {
-      prepend(this.dom, dom);
+      prepend(this.dom.outputDom(), dom);
     }
   }
 
@@ -431,7 +435,10 @@ export default class VirtualDom<T> {
      * @param pt
      * @param index
      */
-    function fetchChildrenPt(pt: VirtualDom<any>, index: number) {
+    function fetchChildrenPt(
+      pt: VirtualDom<any>,
+      index: number
+    ): undefined | DocumentFragment | HTMLElement | Text {
       if (checkChild(pt, index)) {
         return fetchChildrenPt(
           <any>pt.childrenPt[pt.childrenPt.length - 1],
@@ -443,7 +450,10 @@ export default class VirtualDom<T> {
         ) {
           return undefined;
         } else {
-          return (pt.giveDom && pt.giveDom()) || pt;
+          return ((pt.giveDom && pt.giveDom()) || pt) as
+            | DocumentFragment
+            | HTMLElement
+            | Text;
         }
       }
     }
@@ -460,6 +470,7 @@ export default class VirtualDom<T> {
         Object.getPrototypeOf(pt.giveDom()) === FRAGMENT_PROTO
       );
     }
+
     if (this.father) {
       for (var i = this.index - 1; i >= 0; i--) {
         if (this.father.childrenPt[i] && this.father.childrenPt[i].giveDom()) {
@@ -488,7 +499,7 @@ export default class VirtualDom<T> {
   /**
    *
    */
-  getDatas(...params): object {
+  getDatas(...params: string[]): object {
     const store = this.storeKeeper.outputStore();
     if (store instanceof Objecty) {
       return store.getValues(...params);

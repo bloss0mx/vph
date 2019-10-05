@@ -2,8 +2,8 @@
  * 柯里化
  * @param fn
  */
-function curry(fn) {
-  function act(...args) {
+function curry(fn: Function) {
+  function act(...args: any) {
     if (fn.length === args.length) {
       return fn(...args);
     } else {
@@ -18,10 +18,10 @@ function curry(fn) {
 /**
  * 函数组合
  */
-function compose(..._args) {
+function compose(..._args: Function[]) {
   //后者的结果为前者的参数
   const args = [..._args].reverse();
-  return function(param) {
+  return function(param: any) {
     let lastParam = param;
     for (let i = 0; i < args.length; i++) {
       lastParam = args[i](lastParam);
@@ -33,7 +33,7 @@ function compose(..._args) {
  * 匹配单标签
  * @param tag
  */
-const checkSingleTag = tag =>
+const checkSingleTag = (tag: string) =>
   tag &&
   tag.match(
     "area|base|col|command|embed|keygen|param|source|track|wbr|br|hr|img|input|link|meta|video|^[A-Z]"
@@ -42,7 +42,7 @@ const checkSingleTag = tag =>
  * 获取头标签名
  * @param tag
  */
-const getTagFromHead = tag => {
+const getTagFromHead = (tag: string) => {
   const match = tag.match(/<[^ </]* |<[^ </]*>/);
   return match && match[0].replace(/<|>| /g, "");
 };
@@ -50,7 +50,7 @@ const getTagFromHead = tag => {
  * 获取尾标签名
  * @param tag
  */
-const getTagFromTail = tag => {
+const getTagFromTail = (tag: string) => {
   const match = tag.match(/<\/[^<]*>/);
   return match && match[0].replace(/<\/|>/g, "");
 };
@@ -58,29 +58,29 @@ const getTagFromTail = tag => {
  * 匹配组件名
  * @param origin
  */
-const matchComponent = origin => origin.match(/^[A-Z]/);
+const matchComponent = (origin: string) => origin.match(/^[A-Z]/);
 /**
  * 匹配tag
  * @param origin
  */
-const matchTags = origin => origin.match(/<[/!-]{0,1}[^<]*[^-]>/g);
+const matchTags = (origin: string) => origin.match(/<[/!-]{0,1}[^<]*[^-]>/g);
 /**
  * 切片文本
  * @param origin
  */
-const splitText = origin =>
+const splitText = (origin: string) =>
   origin
     .split(/<[/!-]{0,1}[^<]*[^-]>/g)
     .map(item => item.replace(/\n|\t/g, ""));
 /**
  * 全等
  */
-const equel = curry((a, b) => a === b);
+const equel = curry((a: any, b: any) => a === b);
 /**
  * 获取attr
  * @param tag
  */
-const attr = tag =>
+const attr = (tag: string) =>
   (tag.replace(/<[^\s<>]*|>/g, "").replace(/^ | $/g, "").length > 0 &&
     tag
       .replace(/<[^\s<>]*|>/g, "")
@@ -105,7 +105,7 @@ const singleTags = compose(
  * @param current
  * @param tag
  */
-const duoTag_Count0 = (current, tag) =>
+const duoTag_Count0 = (current: string, tag: string) =>
   compose(
     equel(current),
     getTagFromHead
@@ -115,7 +115,7 @@ const duoTag_Count0 = (current, tag) =>
  * @param current
  * @param tag
  */
-const closeTag = (current, tag) =>
+const closeTag = (current: string, tag: string) =>
   compose(
     equel(current),
     getTagFromTail
@@ -126,26 +126,26 @@ const closeTag = (current, tag) =>
  * @param {*Any} value 需要检查的值
  * @return {*String}
  */
-const testType = value => {
+const testType = <T>(value: T) => {
   if (value === undefined) {
     return "undefined";
   }
   if (value !== value) {
     return "NaN";
   }
-  const proto = Object.getPrototypeOf(value);
+  const proto = value.constructor;
   switch (proto) {
-    case Object.getPrototypeOf(0):
+    case Number:
       return "number";
-    case Object.getPrototypeOf(""):
+    case String:
       return "string";
-    case Object.getPrototypeOf(true):
+    case Boolean:
       return "bool";
-    case Object.getPrototypeOf([]):
+    case Array:
       return "array";
-    case Object.getPrototypeOf({}):
+    case Object:
       return "object";
-    case Object.getPrototypeOf(() => {}):
+    case Function:
       return "function";
   }
 };
@@ -154,7 +154,7 @@ const testType = value => {
  * 返回类型名
  * @param origin
  */
-const typeName = origin => origin.__proto__.constructor.name;
+const typeName = (origin: any) => origin.__proto__.constructor.name;
 
 /**
  * 代替console.log

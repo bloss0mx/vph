@@ -5,21 +5,24 @@ import uniq from "lodash/uniq";
 import { ARRAYY_OPERATE } from "../constant";
 import { forDirective } from "../directive/index";
 import { BaseObj } from "../domObj";
-import DataUnit from "./dataUnit";
+import DataUnit, { anyType } from "./dataUnit";
 import { dataFactory } from "./index";
+import Objecty from "./objecty";
 
-export default class Arrayy<T> extends DataUnit {
-  protected data: Array<any>;
+export default class Arrayy<T> extends DataUnit<T> {
+  protected data: Array<DataUnit<T> | Arrayy<T> | DataUnit<T>>;
   protected pushList: Array<forDirective<T>>;
 
-  constructor(data: Array<any>) {
+  constructor(data: Array<T>) {
     super(data);
     this.pushList = [];
     this.data = this.dataInit(data);
     this.type = "array";
   }
 
-  protected dataInit(data: Array<any>): Array<DataUnit | Arrayy<T>> {
+  protected dataInit(
+    data: Array<T>
+  ): Array<DataUnit<T> | Arrayy<T> | DataUnit<T>> {
     const _data = data.map((item, index) => dataFactory(item));
     // this.data = _data;
     return _data;
@@ -30,7 +33,7 @@ export default class Arrayy<T> extends DataUnit {
    * @param len 长度
    * @param data 新内容
    */
-  private splice(index: number, len: number, data) {
+  private splice(index: number, len: number, data: anyType) {
     const newData = dataFactory(data);
     this.data.splice(index, len, newData);
     return newData;
@@ -50,7 +53,7 @@ export default class Arrayy<T> extends DataUnit {
    * @param newData
    * @param index
    */
-  addCallback(newData: DataUnit, index: number) {
+  addCallback(newData: DataUnit<T>, index: number) {
     this.pushList.map(item => {
       item.addToList && item.addToList(newData, index);
     });
@@ -60,16 +63,16 @@ export default class Arrayy<T> extends DataUnit {
    * @param _data
    * @param index
    */
-  rmCallback(_data: Array<any>, index: number) {
-    _data.map(item => {
-      item.rmSelf();
+  rmCallback(_data: Arrayy<T>, index: number) {
+    _data.map((item: Arrayy<any> | DataUnit<any> | Objecty<any>) => {
+      (item as any).rmSelf();
     });
     this.pushList.map(item => {
       item.rmFromList && item.rmFromList(_data, index);
     });
   }
 
-  push(tmp): Arrayy<T> {
+  push(tmp: anyType): Arrayy<T> {
     const newData = this.splice(this.data.length, 0, tmp);
     this.addCallback(newData, this.data.length - 1);
     return this;
@@ -78,11 +81,13 @@ export default class Arrayy<T> extends DataUnit {
   pop() {
     const _data = this.difference(this.data.length, 1);
     this.data = difference(this.data, _data);
-    this.rmCallback(_data, this.data.length);
+    this.data.forEach(item => {
+      this.rmCallback(item as any, this.data.length);
+    });
     return _data;
   }
 
-  unshift(tmp): Arrayy<T> {
+  unshift(tmp: anyType): Arrayy<T> {
     const newData = this.splice(0, 0, tmp);
     this.addCallback(newData, 0);
     return this;
@@ -92,25 +97,25 @@ export default class Arrayy<T> extends DataUnit {
     if (this.data.length === 0) return;
     const _data = this.difference(0, 1);
     this.data = difference(this.data, _data);
-    this.rmCallback(_data, 0);
+    this.rmCallback(_data[0] as any, 0);
     return _data;
   }
 
-  insertTo(tmp, index) {
+  insertTo(tmp: anyType, index: number) {
     const newData = this.splice(index, 0, tmp);
     this.addCallback(newData, index);
     return this;
   }
 
-  rmFrom(index) {
+  rmFrom(index: number) {
     const _data = this.difference(index, 1);
     this.data = difference(this.data, _data);
-    this.rmCallback(_data, index);
+    this.rmCallback(_data[0] as any, index);
     return _data;
   }
 
-  map(callback) {
-    return this.data.map(callback);
+  map(callback: Function) {
+    return this.data.map(callback as any);
   }
 
   getLen() {

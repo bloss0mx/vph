@@ -9,14 +9,14 @@ interface Window {
 
 declare var window: Window;
 
-const exposeToWindow = (name, pt) => {
+const exposeToWindow = (name: string, pt: any) => {
   if (!window.expose) {
     window.expose = {};
   }
   window.expose[name] = pt;
 };
 
-const fetchFromWindow = name => {
+const fetchFromWindow = (name: string) => {
   if (!window.expose) {
     throw 'Didn\'t expose any param yet!';
   }
@@ -36,11 +36,8 @@ const overflowChecker = <T>(
   env: "prod" | "dev" = "dev"
 ) =>
   setInterval(() => {
-    const checked = [];
-    const recursionCheckOverflow = (
-      current: VirtualDom<T>,
-      path: string = ""
-    ) => {
+    const checked: any[] = [];
+    const recursionCheckOverflow = (current: any, path: string = "") => {
       if (typeof current === "object") {
         checked.push(current);
         const keys = Object.keys(current);
@@ -101,7 +98,7 @@ const overflowCheckerQ = <T>(
 
           const data = keys.map(item => ({
             path: path + "." + item,
-            current: current[item],
+            current: (current as any)[item],
           }));
           checkStack.push(...data);
         }

@@ -8,13 +8,15 @@ import { ARR_CONTENT } from "./interface";
 import { Subject } from "rxjs";
 import { throttleTime } from "rxjs/operators";
 
-export default class Diff<T> {
-  private store;
-  private storeKeeper;
+import { anyType } from "../dataUnit/dataUnit";
 
-  private oldState;
-  private subject$;
-  constructor(store = {}, storeKeeper?: StoreKeeper<T>) {
+export default class Diff<T extends anyType> {
+  private store: T;
+  storeKeeper: StoreKeeper<T>;
+
+  private oldState: T;
+  private subject$: Subject<T>;
+  constructor(store: T, storeKeeper?: StoreKeeper<T>) {
     this.store = store;
     this.storeKeeper = storeKeeper;
     this.oldState = this.store;
@@ -33,7 +35,7 @@ export default class Diff<T> {
    * 设置state
    * @param callback
    */
-  setState(callback: (state: object) => object) {
+  setState(callback: (state: T) => T) {
     const newStore = callback({ ...this.store });
     if (newStore === undefined) {
       console.error(`setState must return a value, got ${newStore}`);
@@ -49,7 +51,7 @@ export default class Diff<T> {
    * @param oldPath
    * @param newPath
    */
-  diff(oldStore, newStore, oldPath: string, newPath: string) {
+  diff(oldStore: T, newStore: T, oldPath: string, newPath: string) {
     const oldProto = Object.getPrototypeOf(oldStore);
     const newProto = Object.getPrototypeOf(newStore);
     if (oldProto !== newProto) {
@@ -81,7 +83,7 @@ export default class Diff<T> {
       const _pathArr = path.split(".");
       const name = _pathArr.pop();
       const _path = _pathArr.join();
-      return this.storeKeeper.getValues(_path)[_path];
+      return (this.storeKeeper.getValues(_path) as anyType)[_path];
     }
   }
 
@@ -92,14 +94,9 @@ export default class Diff<T> {
    * @param oldPath
    * @param newPath
    */
-  objectOpt(
-    oldStore: object,
-    newStore: object,
-    oldPath: string,
-    newPath: string
-  ) {
+  objectOpt(oldStore: T, newStore: T, oldPath: string, newPath: string) {
     const { add, rm, update } = objectDiff(oldStore, newStore);
-    const addTarget = this.storeKeeper.getValues(oldPath)[oldPath];
+    const addTarget = (this.storeKeeper.getValues(oldPath) as anyType)[oldPath];
     const mvTarget = this.objectFetcher(oldPath);
     for (let i in add) {
       addTarget.add(add[i].name, add[i].item);
@@ -125,17 +122,16 @@ export default class Diff<T> {
    * @param oldPath
    * @param newPath
    */
-  arrayOpt(
-    oldStore: Array<ARR_CONTENT>,
-    newStore: Array<ARR_CONTENT>,
-    oldPath: string,
-    newPath: string
-  ) {
-    const { add, rm, mv, exist, chg } = arrayDiff(oldStore, newStore, {
-      diff: this.diff,
-      path: this.path,
-    });
-    const target = this.storeKeeper.getValues(oldPath)[oldPath];
+  arrayOpt(oldStore: T, newStore: T, oldPath: string, newPath: string) {
+    const { add, rm, mv, exist, chg } = arrayDiff(
+      oldStore as any,
+      newStore as any,
+      {
+        diff: this.diff,
+        path: this.path,
+      }
+    );
+    const target = (this.storeKeeper.getValues(oldPath) as anyType)[oldPath];
     for (let i = 0; i < rm.length; i++) {
       if (rm[i]) target.rmFrom(parseInt(<string>rm[i].index) - i);
       else console.warn(rm[i]);
@@ -175,12 +171,12 @@ export default class Diff<T> {
    * @param newPath
    */
   baseOpt(
-    oldStore: DataUnit,
-    newStore: DataUnit,
+    oldStore: T,
+    newStore: T,
     oldPath: string,
     newPath: string
   ) {
-    const target = this.storeKeeper.getValues(oldPath)[oldPath];
+    const target = (this.storeKeeper.getValues(oldPath) as anyType)[oldPath];
     target.setData(newStore);
   }
 

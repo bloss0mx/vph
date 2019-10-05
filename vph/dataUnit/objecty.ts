@@ -5,21 +5,21 @@ import uniq from "lodash/uniq";
 import { ARRAYY_OPERATE } from "../constant";
 import { forDirective } from "../directive/index";
 import { BaseObj } from "../domObj";
-import DataUnit from "./dataUnit";
+import DataUnit, { anyType } from "./dataUnit";
 import { dataFactory, toJS } from "./index";
 
-export default class Objecty extends DataUnit {
-  protected data: Object;
+export default class Objecty<T> extends DataUnit<T> {
+  protected data: anyType;
 
-  constructor(data: Array<any>) {
+  constructor(data: T) {
     super(data);
     this.pushList = [];
     this.data = this.dataInit(data);
     this.type = "object";
   }
 
-  protected dataInit(data: Array<any>): Object {
-    let _data = {};
+  protected dataInit(data: T): Object {
+    let _data: anyType = {};
     for (let i in data) {
       _data[i] = dataFactory(data[i]);
     }
@@ -30,11 +30,11 @@ export default class Objecty extends DataUnit {
    * 删除值
    * @param key
    */
-  delete(key) {
+  delete(key: string) {
     delete this.data[key];
   }
 
-  add(name: string, data) {
+  add(name: string, data: anyType) {
     this.data[name] = dataFactory(data);
   }
 
@@ -42,9 +42,9 @@ export default class Objecty extends DataUnit {
    * 批量获取store
    * @param params
    */
-  getValues(...params) {
+  getValues(...params: string[]) {
     const queue = [...params];
-    const _data = {};
+    const _data: anyType = {};
     queue.forEach(item => {
       _data[item] = this.showData(item);
     });

@@ -14,7 +14,7 @@ import {
 // TODO 不要让指令直接操作vdom
 
 export default class Directive {
-  constructor(init) {}
+  constructor(init: any) {}
   /**
    * 初始化
    */
@@ -26,7 +26,7 @@ export default class Directive {
   /**
    * 数据更新
    */
-  run(data, type?, index?, operate?) {}
+  run(data: any, type?: any, index?: any, operate?: any) {}
   /**
    * 删除自己，去掉所有引用
    */

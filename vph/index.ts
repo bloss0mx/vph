@@ -71,7 +71,7 @@ interface componentInit<T> {
   /**
    * 注册组件
    */
-  components?: object;
+  components?: any;
   /**
    * 挂载时触发
    */
@@ -149,7 +149,7 @@ export function vdFactory<T>(init: VDInit<T>) {
   return new VirtualDom(init);
 }
 
-function basicTagConstruct(init) {
+function basicTagConstruct(init: any) {
   return init;
 }
 
@@ -169,7 +169,11 @@ window.basicTagConstruct = basicTagConstruct;
  * @param {*} vdom vdom实例
  * @param {*} productEnv 生产环境
  */
-export function init(selector, vdom, productEnv = false) {
+export function init<T>(
+  selector: string,
+  vdom: VirtualDom<T>,
+  productEnv = false
+) {
   if (productEnv) {
     console.assert(window.vdom === undefined, "window.vdom 已被占用");
     if (window.vdom === undefined) {
@@ -191,7 +195,7 @@ export default function Vph<T>(init: {
   attr?: string;
   state?: T;
   actions?: object;
-  components?: object;
+  components?: any;
   whenInit?: Function;
   whenUninit?: Function;
 }) {

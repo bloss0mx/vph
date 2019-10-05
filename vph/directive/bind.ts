@@ -45,7 +45,7 @@ export default class ValueBind<T> extends Directive {
     this.storeKeeper.register(this.valueName, this);
   }
 
-  run(data) {
-    this.pt.giveDom()[this.valueType] = data;
+  run(data: any) {
+    (this.pt.giveDom() as any)[this.valueType] = data;
   }
 }

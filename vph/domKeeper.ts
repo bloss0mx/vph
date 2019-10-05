@@ -5,7 +5,7 @@ import { remove } from "./domOperator";
 class DomKeeper<T> {
   protected dom: DocumentFragment | HTMLElement | Text;
   protected master: VirtualDom<T>; // 主vdom
-  constructor(init) {}
+  constructor(init: {}) {}
   createDom(type: domType, inf?: string) {
     switch (type) {
       case domType.element:
@@ -39,10 +39,10 @@ class DomKeeper<T> {
 }
 
 class Fragment<T> extends DomKeeper<T> {
-  constructor(init) {
+  constructor(init: { master: any }) {
     super(init);
     this.master = init.master;
-    this.createDom(domType.fragement, init.inf);
+    this.createDom(domType.fragement);
   }
   appendChild(dom: DocumentFragment | HTMLElement | Text) {
     this.dom.appendChild(dom);
@@ -51,7 +51,7 @@ class Fragment<T> extends DomKeeper<T> {
 
 class Element<T> extends DomKeeper<T> {
   protected dom: HTMLElement;
-  constructor(init) {
+  constructor(init: { master: any; tag: string }) {
     super(init);
     this.master = init.master;
     this.createDom(domType.element, init.tag);
@@ -59,13 +59,13 @@ class Element<T> extends DomKeeper<T> {
   appendChild(dom: DocumentFragment | HTMLElement | Text) {
     this.dom.appendChild(dom);
   }
-  setAttribute(name, value) {
+  setAttribute(name: string, value: string) {
     this.dom.setAttribute(name, value);
   }
 }
 
 class TextNode<T> extends DomKeeper<T> {
-  constructor(init) {
+  constructor(init: { master: any; text: string }) {
     super(init);
     this.master = init.master;
     this.createDom(domType.text, init.text);
@@ -78,4 +78,4 @@ class TextNode<T> extends DomKeeper<T> {
   }
 }
 
-export { Fragment, Element, TextNode };
+export { Fragment, Element, TextNode, DomKeeper };
