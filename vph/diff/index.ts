@@ -21,7 +21,9 @@ export default class Diff<T> {
     this.subject$ = new Subject();
     this.subject$.pipe(throttleTime(30)).subscribe({
       next: newState => {
+        // console.time("diff");
         this.diff(this.oldState, newState, "", "");
+        // console.timeEnd("diff");
         this.oldState = newState;
       },
     });
@@ -135,22 +137,20 @@ export default class Diff<T> {
     });
     const target = this.storeKeeper.getValues(oldPath)[oldPath];
     for (let i = 0; i < rm.length; i++) {
-      target.rmFrom(parseInt(<string>rm[i].index) - i);
+      if (rm[i]) target.rmFrom(parseInt(<string>rm[i].index) - i);
+      else console.warn(rm[i]);
     }
     for (let i = 0; i < add.length; i++) {
-      target.insertTo(add[i].item, parseInt(<string>add[i].index));
+      if (add[i]) target.insertTo(add[i].item, parseInt(<string>add[i].index));
+      else console.warn(add[i]);
     }
     for (let i in mv) {
-      const tmp = target.rmFrom(mv[i].beforeIdx);
-      target.insertTo(parseInt(<string>mv[i].afterIdx) + 1, tmp[0]);
+      if (mv[i]) {
+        const tmp = target.rmFrom(mv[i].beforeIdx);
+        target.insertTo(parseInt(<string>mv[i].afterIdx) + 1, tmp[0]);
+      } else console.warn(mv[i]);
     }
     chg.forEach((item, index) => {
-      // console.log(
-      //   ">>>",
-      //   oldPath,
-      //   newPath,
-      //   this.path(oldPath, newPath, item.beforeIdx, item.afterIdx)
-      // );
       this.diff(
         item.beforeItem,
         item.afterItem,

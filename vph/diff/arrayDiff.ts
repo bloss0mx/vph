@@ -148,7 +148,6 @@ export default function(
       _add.push(add[i]);
     }
   });
-
   return {
     add: _add,
     rm: _rm,

@@ -82,6 +82,7 @@ export default Component({
     setTimeout(() => {
       this.setState(state => {
         state.color = "red";
+        state.inputText = "我再变！";
         return state;
       });
     }, 4000);

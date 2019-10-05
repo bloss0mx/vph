@@ -9,12 +9,14 @@ const time = area =>
   moment()
     .utc()
     .utcOffset(area)
-    .format("YYYY-MM-DD HH:mm:ss");
+    .format("YYYY-MM-DD HH:mm:ss")
+  //+ ":" +
+  // new Date().getMilliseconds();
 
 export default Component({
   render: template,
   state: {
-    array2: [["北京", "东京", "纽约"], [time(-8), time(-9), time(+5)]],
+    array2: [["北京", "东京", "纽约"], [time(+8), time(+9), time(-5)]],
     count: 0,
   },
   actions: {
@@ -25,9 +27,9 @@ export default Component({
           // array2.showData('1.0').setData(timer("Asia/Taipei"));
           // array2.showData('1.1').setData(timer("Asia/Tokyo"));
           // array2.showData('1.2').setData(timer("America/New_York"));
-          array2.showData("1.0").setData(time(-8));
-          array2.showData("1.1").setData(time(-9));
-          array2.showData("1.2").setData(time(+5));
+          array2.showData("1.0").setData(time(+8));
+          array2.showData("1.1").setData(time(+9));
+          array2.showData("1.2").setData(time(-5));
         },
       });
     },
@@ -37,7 +39,7 @@ export default Component({
           this.setState(state => {
             // console.log(state.array2[0].__ARRAY_KEY__);
             const _state = { ...state };
-            _state.array2 = [_state.array2[0], [time(-8), time(-9), time(+5)]];
+            _state.array2 = [_state.array2[0], [time(+8), time(+9), time(-5)]];
             return _state;
           });
         },
@@ -53,7 +55,7 @@ export default Component({
             const first = other.splice(0, 1);
             _state.array2 = [
               ...first,
-              [time(-8), time(-9), time(+5)],
+              [time(+8), time(+9), time(-5)],
               ...other,
             ];
             return _state;
@@ -75,11 +77,26 @@ export default Component({
         countTest.unsubscribe();
       }, 60 * 60 * 1000);
     },
+    testSetState() {
+      interval(1).subscribe({
+        next: () => {
+          this.setState(state => {
+            const _state = { ...state };
+            _state.array2 = [
+              ["北京", "东京", "纽约"],
+              [time(+8), time(+9), time(-5)],
+            ];
+            return _state;
+          });
+        },
+      });
+    },
   },
   whenInit() {
     this.countIt();
     // this._interval();
-    this.timeTable();
+    // this.timeTable();
     // this.add2Table();
+    this.testSetState();
   },
 });
