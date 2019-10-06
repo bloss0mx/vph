@@ -1,4 +1,9 @@
 <table style='width: 100%'>
+  <div>
+    <span>计数：</span>
+    <span>{{count}}</span>
+  </div>
+  <br />
   <tbody>
     <!-- x -->
     <tr :for='x in array2'>

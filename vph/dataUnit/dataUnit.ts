@@ -1,21 +1,38 @@
-import { testType } from '../utils';
+import { testType } from "../utils";
 // import { difference, uniq } from 'lodash';
-import difference from 'lodash/difference';
-import uniq from 'lodash/uniq';
-import {
-  ARRAYY_OPERATE,
-} from '../constant';
-import { forDirective } from '../directive/index';
-import { BaseObj } from '../domObj';
-import Objecty from './objecty';
-import Arrayy from './arrayy';
+import difference from "lodash/difference";
+import uniq from "lodash/uniq";
+import { ARRAYY_OPERATE } from "../constant";
+import { forDirective } from "../directive/index";
+import { BaseObj } from "../domObj";
+import Objecty from "./objecty";
+import Arrayy from "./arrayy";
+import { BaseType, PushAbleType } from "type/index";
 
-export default class DataUnit {
-  protected data: any;
-  protected pushList: Array<BaseObj | any>;
+export type anyType = {
+  [name: string]: any;
+};
+
+// type S<T> = {
+//   [P in keyof T]: T[P] extends Array<any>
+//     ? Arrayy<T[P]>
+//     : T[P] extends Object
+//     ? Objecty<T[P]>
+//     : DataUnit<T[P]>;
+// }[keyof T];
+
+// type x = (
+//   obj: anyType
+// ) => {
+//   [key in keyof typeof obj]: S<typeof obj[key]>;
+// };
+
+export default class DataUnit<T> {
+  protected data: BaseType;
+  protected pushList: Array<PushAbleType>;
   protected type: String;
 
-  constructor(data: any) {
+  constructor(data: BaseType) {
     this.data = data;
     this.pushList = [];
     this.type = testType(data);
@@ -25,7 +42,7 @@ export default class DataUnit {
 
   // /**
   //  * 异步
-  //  * @param data 
+  //  * @param data
   //  */
   // protected dataInit(data) {
   //   // 数组和对象不进行数值初始化
@@ -42,9 +59,9 @@ export default class DataUnit {
 
   /**
    * 增加依赖
-   * @param pushOrigin 
+   * @param pushOrigin
    */
-  addPush(pushOrigin) {
+  addPush(pushOrigin: PushAbleType) {
     this.pushList.push(pushOrigin);
     this.pushList = uniq(this.pushList);
     setTimeout(() => {
@@ -54,81 +71,77 @@ export default class DataUnit {
 
   /**
    * 删除依赖
-   * @param pushOrigin 
+   * @param pushOrigin
    */
-  rmPush(pushOrigin) {
+  rmPush(pushOrigin: PushAbleType) {
     this.pushList = difference(this.pushList, [pushOrigin]);
   }
 
   /**
    * 输出值
-   * @param index 
+   * @param index
    */
-  showData(index?: string): DataUnit | any {
+  showData(index?: string): DataUnit<T> | any {
     //深度取值
-    if (
-      index
-      && testType(index) === 'string'
-      && index.split('.').length > 1
-    ) {
-      return [this.data, ...index.split('.')].reduce((t, i) => {
-        return t.showData ? t.showData(i) : t[i];
-      });
+    if (index && testType(index) === "string" && index.split(".").length > 1) {
+      return [this.data as any, ...index.split(".")].reduce(
+        (t: DataUnit<any>, i: string) => {
+          return t.showData ? t.showData(i) : (t as any)[i];
+        }
+      );
     }
     //数组，无参数 => 取全部
-    if ((index === undefined || index === '') && this.type === 'array') {
-      return this.data.map(item => {
-        return item;
-      });
+    if ((index === undefined || index === "") && this.type === "array") {
+      return this.data as any;
     }
     //对象，无参数 => 取全部
-    if ((index === undefined || index === '') && this.type === 'object') {
-      let _data = {};
-      for (let i in this.data) {
-        _data[i] = this.data[i];
+    if ((index === undefined || index === "") && this.type === "object") {
+      let _data: anyType = {};
+      for (let i in this.data as anyType) {
+        _data[i] = (this.data as anyType)[i];
       }
       return _data;
     }
     //有参数，数组或对象 => 取全部
     if (
-      index !== undefined
-      && index !== ''
-      && (this.type === 'array' || this.type === 'object')
+      index !== undefined &&
+      index !== "" &&
+      (this.type === "array" || this.type === "object")
     ) {
-      return this.data[index];
+      return (this.data as anyType)[index];
     }
-    //非数组或对象 => 取基本值 
-    if (this.type !== 'array' && this.type !== 'object') {
+    //非数组或对象 => 取基本值
+    if (this.type !== "array" && this.type !== "object") {
       return this.data;
     }
   }
 
   /**
    * 设置值
-   * @param data 
-   * @param name 
+   * @param data
+   * @param name
    */
-  setData(data, name?: string): DataUnit {
-    let isChanged = '';
+  setData(data: T, name?: string): DataUnit<T> {
+    let isChanged = "";
 
-    if (this.type === 'object' && name !== undefined) {
+    if (this.type === "object" && name !== undefined) {
       this.showData(name).setData(data);
-    } else if (this.type === 'array' && name !== undefined) {
+    } else if (this.type === "array" && name !== undefined) {
       this.showData(name).setData(data);
     } else if (
-      (this.type === 'object' || this.type === 'array')
-      && name === undefined
+      (this.type === "object" || this.type === "array") &&
+      name === undefined
     ) {
     } else {
       this.type = testType(data);
-      this.data = data;
-      isChanged = ARRAYY_OPERATE['set'];
+      (this.data as anyType) = data;
+      isChanged = ARRAYY_OPERATE["set"];
     }
 
     //修改以后，推送值
-    if (isChanged !== '') {
+    if (isChanged !== "") {
       this.pushList.map((item, index) => {
-        item.run && item.run(this.data, this.type, index, ARRAYY_OPERATE['set']);
+        if (item.run) item.run(this.data);
       });
     }
     return this;

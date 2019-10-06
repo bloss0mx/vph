@@ -1,4 +1,5 @@
-import { } from '../DataUnit';
+import {} from "../DataUnit";
+import { anyType } from "../dataUnit/dataUnit";
 
 interface chged {
   name: number | string;
@@ -7,16 +8,16 @@ interface chged {
 
 /**
  * object diff
- * @param oldObj 
- * @param newObj 
+ * @param oldObj
+ * @param newObj
  */
-export default function (
-  oldObj: object,
-  newObj: object
+export default function(
+  oldObj: anyType,
+  newObj: anyType
 ): {
-  add: Array<chged>,
-  rm: Array<string | number>,
-  update: Array<string | number>
+  add: Array<chged>;
+  rm: Array<string | number>;
+  update: Array<string | number>;
 } {
   const keys = new Set([...Object.keys(oldObj), ...Object.keys(newObj)]);
   const add: Array<chged> = [];
@@ -35,6 +36,6 @@ export default function (
   return {
     add,
     rm,
-    update
+    update,
   };
 }

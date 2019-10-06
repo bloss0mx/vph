@@ -2,9 +2,17 @@
   "compilerOptions": {
     "target": "es2015",
     "module": "es2015",
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "allowJs": true,
+    // "strict": true,
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "noImplicitAny": true,
+    "paths": {
+      "vph/*": ["./vph/*"],
+      "type/*":["./type"]
+    }
   },
-  "exclude": [
-    "node_modules",
-  ]
+  "exclude": ["node_modules"],
+  "include": ["./vph/**/*"]
 }

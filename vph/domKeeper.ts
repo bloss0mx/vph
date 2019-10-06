@@ -1,13 +1,11 @@
 import VirtualDom from "./vdom";
-import { domType } from './enums';
+import { domType } from "./enums";
 import { remove } from "./domOperator";
 
-
-class DomKeeper {
+class DomKeeper<T> {
   protected dom: DocumentFragment | HTMLElement | Text;
-  protected master: VirtualDom;// 主vdom
-  constructor(init) {
-  }
+  protected master: VirtualDom<T>; // 主vdom
+  constructor(init: {}) {}
   createDom(type: domType, inf?: string) {
     switch (type) {
       case domType.element:
@@ -40,20 +38,20 @@ class DomKeeper {
   }
 }
 
-class Fragment extends DomKeeper {
-  constructor(init) {
+class Fragment<T> extends DomKeeper<T> {
+  constructor(init: { master: any }) {
     super(init);
     this.master = init.master;
-    this.createDom(domType.fragement, init.inf);
+    this.createDom(domType.fragement);
   }
   appendChild(dom: DocumentFragment | HTMLElement | Text) {
     this.dom.appendChild(dom);
   }
 }
 
-class Element extends DomKeeper {
-  protected dom: HTMLElement
-  constructor(init) {
+class Element<T> extends DomKeeper<T> {
+  protected dom: HTMLElement;
+  constructor(init: { master: any; tag: string }) {
     super(init);
     this.master = init.master;
     this.createDom(domType.element, init.tag);
@@ -61,13 +59,13 @@ class Element extends DomKeeper {
   appendChild(dom: DocumentFragment | HTMLElement | Text) {
     this.dom.appendChild(dom);
   }
-  setAttribute(name, value) {
+  setAttribute(name: string, value: string) {
     this.dom.setAttribute(name, value);
   }
 }
 
-class TextNode extends DomKeeper {
-  constructor(init) {
+class TextNode<T> extends DomKeeper<T> {
+  constructor(init: { master: any; text: string }) {
     super(init);
     this.master = init.master;
     this.createDom(domType.text, init.text);
@@ -80,8 +78,4 @@ class TextNode extends DomKeeper {
   }
 }
 
-export {
-  Fragment,
-  Element,
-  TextNode,
-}
+export { Fragment, Element, TextNode, DomKeeper };

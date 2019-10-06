@@ -6,6 +6,7 @@ const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const CompressionPlugin = require('compression-webpack-plugin');
+const PrepackWebpackPlugin = require('prepack-webpack-plugin').default;
 const PRODUCTION = process.env.NODE_ENV === 'production';
 
 const extractCSS = new ExtractTextPlugin('[name].css');
@@ -21,7 +22,9 @@ module.exports = {
     filename: '[name].js'
   },
   devServer: {
-    contentBase: './dist'
+    contentBase: './dist',
+    port: 4000,
+    host: '0.0.0.0'
   },
   resolve: {
     extensions: ['.ts', '.js', '.css', '.less'],
@@ -93,6 +96,7 @@ module.exports = {
       const plugins = [];
       if (PRODUCTION) {
         // 生产模式插件
+        // plugins.push(new PrepackWebpackPlugin({}));a
         plugins.push(new UglifyJSPlugin());
         plugins.push(new webpack.SourceMapDevToolPlugin({}));
         plugins.push(new CleanWebpackPlugin(['dist']));

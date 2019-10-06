@@ -15,19 +15,24 @@ import {
   testSingle,
   singleComponent,
 } from "./tools";
-import attrM from './attrAnalyse';
-import tagSlicer from './tagSlicer';
+import attrM from "./attrAnalyse";
+import tagSlicer from "./tagSlicer";
 // const { attrM } = require('./attrAnalyse');
 
-const matchTagsNValue = (origin) => origin.match(/<[\/!-]{0,1}[^<]*[^-]>|{{[^\s]+}}/g);
-const splitTagsNValue = (origin) => origin.split(/<[\/!-]{0,1}[^<]*[^-]>|{{[^\s]+}}/g).map(item => item.replace(/\n|\t/g, ''));
-const rmComment = origin => origin.replace(/<!--[\w\W\r\n]*?-->/gmi, '');
+const matchTagsNValue = (origin: string) =>
+  origin.match(/<[\/!-]{0,1}[^<]*[^-]>|{{[^\s]+}}/g);
+const splitTagsNValue = (origin: string) =>
+  origin
+    .split(/<[\/!-]{0,1}[^<]*[^-]>|{{[^\s]+}}/g)
+    .map(item => item.replace(/\n|\t/g, ""));
+const rmComment = (origin: string) =>
+  origin.replace(/<!--[\w\W\r\n]*?-->/gim, "");
 
 /**
  * 分割模板
  * @param tmp 模板
  */
-function splitTagNChildren(tmp) {
+function splitTagNChildren(tmp: string) {
   const _tmp = rmComment(tmp);
   const tags = matchTagsNValue(_tmp);
   const text = splitTagsNValue(_tmp);
@@ -36,23 +41,24 @@ function splitTagNChildren(tmp) {
     !text[i].match(/^\s{0,}$/) && fragments.push(text[i]);
     fragments.push(tags[i]);
   }
-  return fragments.map(item => item.replace(/^ *| *$/g, ''));
+  return fragments.map(item => item.replace(/^ *| *$/g, ""));
 }
 
-const getTag = (tag) => {
-  const match = tag.match(/<[^ <\/]* |<[^ <\/]*\/?>/)
-  return match && match[0].replace(/<|>| |\//g, '');
-}
+const getTag = (tag: string) => {
+  const match = tag.match(/<[^ <\/]* |<[^ <\/]*\/?>/);
+  return match && match[0].replace(/<|>| |\//g, "");
+};
 
-const cleanDirective = (origin, type) => origin && origin.replace(type, '').replace(/^['"]|['"]$/g, '');
+const cleanDirective = (origin: string, type: RegExp) =>
+  origin && origin.replace(type, "").replace(/^['"]|['"]$/g, "");
 
-class Container {
+export class Container {
   private tag: string;
   private tagName: string;
   private children: Array<any>;
   private attr: Array<any>;
   private directive: Array<any>;
-  constructor(tag) {
+  constructor(tag: string) {
     this.tag = tag;
     this.children = [];
     this.getAttr();
@@ -63,8 +69,13 @@ class Container {
   }
   getAttr() {
     const attr = attrM(this.tag);
-    this.attr = attr && attr.filter(item => !item.match(/^:/)).map(item => '' + item.replace(/"/g, '\\"') + '') || [];
-    this.directive = attr && attr.filter(item => item.match(/^:/)) || [];
+    this.attr =
+      (attr &&
+        attr
+          .filter(item => !item.match(/^:/))
+          .map(item => "" + item.replace(/"/g, '\\"') + "")) ||
+      [];
+    this.directive = (attr && attr.filter(item => item.match(/^:/))) || [];
     return this.attr;
   }
   getIf() {
@@ -94,15 +105,15 @@ class Container {
   getChildren() {
     return this.children;
   }
-  pushChildren(child) {
+  pushChildren(child: Container | string) {
     this.children.push(child);
   }
 }
 
-const matchHead = origin => origin.match(/^<[\s\S]+>$/);
-const matchTail = origin => origin.match(/^<[\s\S]+>$/);
+const matchHead = (origin: string) => origin.match(/^<[\s\S]+>$/);
+const matchTail = (origin: string) => origin.match(/^<[\s\S]+>$/);
 
-function tagMaker(splitedTmp) {
+function tagMaker(splitedTmp: string[]) {
   if (splitedTmp.length === 0) {
     return;
   }
@@ -119,16 +130,20 @@ function tagMaker(splitedTmp) {
     const headTag = getTagFromHead(currentTag);
     const tailTag = getTagFromTail(currentTag);
 
-    if (testSingle(currentTag) || singleComponent(currentTag)) {//单标签
+    if (testSingle(currentTag) || singleComponent(currentTag)) {
+      //单标签
       const newContainer = new Container(currentTag);
       tagStack[tagStack.length - 1].pushChildren(newContainer);
-    } else if (headTag) {//头
+    } else if (headTag) {
+      //头
       const newContainer = new Container(currentTag);
       tagStack[tagStack.length - 1].pushChildren(newContainer);
       tagStack.push(newContainer);
-    } else if (tailTag) {//尾
+    } else if (tailTag) {
+      //尾
       tagStack.pop();
-    } else {//纯文本
+    } else {
+      //纯文本
       tagStack[tagStack.length - 1].pushChildren(currentTag);
     }
     index++;
@@ -141,5 +156,6 @@ function tagMaker(splitedTmp) {
 /**
  * 此处的true是有webpack插件去掉注释
  */
-export default origin => tagMaker(tagSlicer(true ? origin : rmComment(origin)));
+export default (origin: string) =>
+  tagMaker(tagSlicer(true ? origin : rmComment(origin)));
 // export default origin => tagMaker(tagSlicer(origin));

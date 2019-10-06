@@ -1,7 +1,7 @@
-import { ARRAYY_OPERATE } from '../constant';
-import { DataUnit } from '../DataUnit/index';
-import VirtualDom from '../vdom';
-import StoreKeeper from '../store';
+import { ARRAYY_OPERATE } from "../constant";
+import { DataUnit } from "../DataUnit/index";
+import VirtualDom from "../vdom";
+import StoreKeeper from "../store";
 import {
   prepend,
   insertAfter,
@@ -9,23 +9,27 @@ import {
   attr,
   removeAttr,
   append,
-} from '../domOperator';
-import Directive from './directive';
+} from "../domOperator";
+import Directive from "./directive";
 
-
-export default class onDirective extends Directive {
-  private storeKeeper: StoreKeeper;
-  private pt: VirtualDom;
-  private callback: any;// FIX ME
+export default class onDirective<T> extends Directive {
+  private storeKeeper: StoreKeeper<T>;
+  private pt: VirtualDom<T>;
+  private callback: any; // FIX ME
   private directive: string;
   private eventType: string;
   private callbackName: string;
-  constructor(init) {
+  constructor(init: {
+    storeKeeper: StoreKeeper<T>;
+    pt: VirtualDom<T>;
+    // callback: Function;
+    directive: string;
+  }) {
     super(init);
     this.storeKeeper = init.storeKeeper;
     this.pt = init.pt;
-    this.callback = init.callback;
-    this.directive = init.directive;//'input.'
+    // this.callback = init.callback;
+    this.directive = init.directive; //'input.'
 
     this.init();
     this.findCallback();
@@ -33,9 +37,9 @@ export default class onDirective extends Directive {
   }
 
   init() {
-    const splited = this.directive.split('.');
+    const splited = this.directive.split(".");
     const handled = splited.map(item => {
-      return item.replace(/[\s]*/, '');
+      return item.replace(/[\s]*/, "");
     });
     this.eventType = handled[0];
     this.callbackName = handled[1];
@@ -52,7 +56,7 @@ export default class onDirective extends Directive {
    */
   findCallback() {
     let pt = this.pt;
-    for (; ;) {
+    for (;;) {
       if (!pt.isComponent) {
         pt = pt.father;
       } else {
@@ -67,5 +71,4 @@ export default class onDirective extends Directive {
   rmSelf() {
     this.pt.giveDom().removeEventListener(this.eventType, this.callback);
   }
-
 }

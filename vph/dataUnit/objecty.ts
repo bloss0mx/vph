@@ -1,30 +1,40 @@
-import { testType } from '../utils';
+import { testType } from "../utils";
 // import { difference, uniq } from 'lodash';
-import difference from 'lodash/difference';
-import uniq from 'lodash/uniq';
-import {
-  ARRAYY_OPERATE,
-} from '../constant';
-import { forDirective } from '../directive/index';
-import { BaseObj } from '../domObj';
-import DataUnit from './dataUnit';
-import { dataFactory, toJS } from './index';
+import difference from "lodash/difference";
+import uniq from "lodash/uniq";
+import { ARRAYY_OPERATE } from "../constant";
+import { forDirective } from "../directive/index";
+import { BaseObj } from "../domObj";
+import DataUnit, { anyType } from "./dataUnit";
+import Arrayy from "./arrayy";
+import { dataFactory, toJS } from "./index";
 
+type DataFactory_<T> = {
+  [P in keyof T]: T[P] extends Array<any>
+    ? Arrayy<T[P]>
+    : T[P] extends Object
+    ? Objecty<T[P]>
+    : DataUnit<T[P]>;
+}[keyof T];
 
-export default class Objecty extends DataUnit {
-  protected data: Object;
+type ObjectyData<T> = {
+  [key in keyof T]: DataFactory_<T[key]>;
+};
 
-  constructor(data: Array<any>) {
-    super(data);
+export default class Objecty<T> extends DataUnit<T> {
+  protected data: ObjectyData<T>;
+
+  constructor(data: T) {
+    super(data as any);
     this.pushList = [];
     this.data = this.dataInit(data);
-    this.type = 'object';
+    this.type = "object";
   }
 
-  protected dataInit(data: Array<any>): Object {
-    let _data = {}
+  protected dataInit(data: T): ObjectyData<T> {
+    const _data = {} as ObjectyData<T>;
     for (let i in data) {
-      _data[i] = dataFactory(data[i]);
+      (_data as any)[i] = dataFactory(data[i]);
     }
     return _data;
   }
@@ -33,21 +43,21 @@ export default class Objecty extends DataUnit {
    * 删除值
    * @param key
    */
-  delete(key) {
-    delete this.data[key];
+  delete(key: string) {
+    delete (this.data as any)[key];
   }
 
-  add(name: string, data) {
-    this.data[name] = dataFactory(data);
+  add(name: string, data: anyType) {
+    (this.data as any)[name] = dataFactory(data);
   }
 
   /**
    * 批量获取store
-   * @param params 
+   * @param params
    */
-  getValues(...params) {
+  getValues(...params: string[]) {
     const queue = [...params];
-    const _data = {};
+    const _data: anyType = {};
     queue.forEach(item => {
       _data[item] = this.showData(item);
     });
@@ -57,5 +67,4 @@ export default class Objecty extends DataUnit {
   toJS() {
     return toJS(this);
   }
-
 }

@@ -1,28 +1,30 @@
-const getFatherDom = node => {
+import { DomKeeper } from "./domKeeper";
+export type Element_Type = HTMLElement | DocumentFragment | Text;
+
+const getFatherDom = (node: Element_Type) => {
   return node && node.parentNode;
-}
-const selectorFilter = value => {
-  if (typeof value === 'string') {
+};
+const selectorFilter = (value: string): HTMLElement | undefined => {
+  if (typeof value === "string") {
     if (value.match(/^#/)) {
       return document.querySelector(value);
-    } else {
-      return document.querySelectorAll(value);
     }
-  } else if (true) {
-    return Element;
+    // else {
+    //   return document.querySelectorAll(value)[0];
+    // }
+  } else {
+    Element;
   }
-  else {
-    throw (`Unknow param: ${value}`);
-  }
-}
+};
 
-const prepend = (bro, target) => {
-  const fatherDom = getFatherDom(selectorFilter(bro));
+const prepend = (bro: Element_Type, target: Element_Type) => {
+  const fatherDom = getFatherDom(bro);
   fatherDom.insertBefore(target, fatherDom.childNodes[0]);
 };
-const insertAfter = (referenceNode, newNode) => referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
-const remove = (target) => {
-  if (target.outputDom) {
+const insertAfter = (referenceNode: Element_Type, newNode: Element_Type) =>
+  referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+const remove = <T>(target: DomKeeper<T> | Element_Type | any) => {
+  if (target.outputDom !== undefined) {
     const fatherDom = getFatherDom(target.outputDom());
     fatherDom && fatherDom.removeChild(target.outputDom());
   } else {
@@ -32,23 +34,16 @@ const remove = (target) => {
   // const fatherDom = getFatherDom(target);
   // fatherDom && fatherDom.removeChild(target);
 };
-const attr = (target, name, value) => {
-  target.outputDom().setAttribute(name, value);
+const attr = <T>(target: DomKeeper<T>, name: string, value: string) => {
+  (target.outputDom() as any).setAttribute(name, value);
   // target.setAttribute(name, value);
 };
-const removeAttr = (target, name) => {
-  target.setAttribute(name, '');
+const removeAttr = (target: HTMLElement, name: string) => {
+  target.setAttribute(name, "");
 };
-const append = (bro, target) => {
+const append = (bro: string, target: Element_Type) => {
   const fatherDom = getFatherDom(selectorFilter(bro));
   fatherDom.appendChild(target);
 };
 
-export {
-  prepend,
-  insertAfter,
-  remove,
-  attr,
-  removeAttr,
-  append,
-}
+export { prepend, insertAfter, remove, attr, removeAttr, append };

@@ -1,24 +1,33 @@
-import { DataUnit, Arrayy, Objecty, dataFactory, toJS } from './DataUnit';
-import Diff from './diff/index';
+import { DataUnit, Arrayy, Objecty, dataFactory, toJS } from "./DataUnit";
+import { anyType } from "./dataUnit/dataUnit";
+import Diff from "./diff/index";
 
-interface forStore { }
+interface forStore {
+  [name: string]: any;
+}
 
-interface props { }
+interface props {
+  [name: string]: any;
+}
 
 /**
  * 数据托管器
  */
-class StoreKeeper {
-  private diff: Diff;
-  private store: DataUnit | Objecty | Arrayy;
+class StoreKeeper<T extends anyType> {
+  private diff: Diff<T>;
+  store: DataUnit<T> | Arrayy<T> | Objecty<T>;
   private forStore: forStore;
   private props: props;
-  constructor(_store: DataUnit | Objecty | Arrayy, _forStore?: object, _props?: object) {
+  constructor(
+    _store: DataUnit<T> | Arrayy<T> | Objecty<T>,
+    _forStore?: object,
+    _props?: object
+  ) {
     this.store = _store;
     this.forStore = _forStore || {};
     this.props = _props || {};
 
-    this.diff = new Diff(toJS(_store), this);
+    this.diff = new Diff(toJS(_store), this) as any;
   }
 
   /**
@@ -27,7 +36,7 @@ class StoreKeeper {
    * @param pt 引用
    * @param callback 回调
    */
-  register(name: string, pt, callback?: Function) {
+  register(name: string, pt: any, callback?: Function) {
     let found = this.findDataByType(name);
     if (found !== undefined) {
       found.addPush(pt);
@@ -36,11 +45,11 @@ class StoreKeeper {
   }
   /**
    * 清除推送
-   * @param name 
-   * @param pt 
-   * @param callback 
+   * @param name
+   * @param pt
+   * @param callback
    */
-  unregister(name: string, pt, callback?: Function) {
+  unregister(name: string, pt: any, callback?: Function) {
     let found = this.findDataByType(name);
     if (found !== undefined && found !== null) {
       found.rmPush && found.rmPush(pt);
@@ -50,33 +59,47 @@ class StoreKeeper {
 
   /**
    * 设置store
-   * @param data 
+   * @param data
    */
-  setStore(data) {
+  setStore(data: any) {
     this.store = data;
   }
 
   /**
    * 设置props
-   * @param callback 
+   * @param callback
    */
-  setProps(callback: (store?: DataUnit, forStore?: Object, props?: Object, pt?: StoreKeeper) => {}) {
-    console.error('setProps');
+  setProps(
+    callback: (
+      store?: DataUnit<T> | Arrayy<T> | Objecty<T>,
+      forStore?: Object,
+      props?: Object,
+      pt?: StoreKeeper<T>
+    ) => {}
+  ) {
+    console.error("setProps");
     this.props = callback(this.store, this.forStore, this.props, this);
   }
   // 只在for指令工作时使用
   /**
    * 设置forStore
-   * @param callback 
+   * @param callback
    */
-  setForStore(callback: (store?: DataUnit, forStore?: Object, props?: Object, pt?: StoreKeeper) => {}) {
+  setForStore(
+    callback: (
+      store?: DataUnit<T> | Arrayy<T> | Objecty<T>,
+      forStore?: Object,
+      props?: Object,
+      pt?: StoreKeeper<T>
+    ) => {}
+  ) {
     this.forStore = callback(this.store, this.forStore, this.props, this);
   }
 
   /**
    * 输出store
    */
-  outputStore(): DataUnit | Objecty | Arrayy {
+  outputStore(): DataUnit<T> | Objecty<T> | Arrayy<T> {
     return this.store;
   }
 
@@ -84,7 +107,7 @@ class StoreKeeper {
    * 输出forStore
    */
   outputForStore() {
-    console.error('outputForStore');
+    console.error("outputForStore");
     return this.forStore;
   }
 
@@ -92,47 +115,45 @@ class StoreKeeper {
    * 输出props
    */
   outputProps() {
-    console.error('outputProps');
+    console.error("outputProps");
     return this.props;
   }
 
   /**
    * 输出全部
    */
-  outputAll(): [DataUnit, forStore, props] {
-    return [
-      this.store,
-      this.forStore,
-      this.props,
-    ]
+  outputAll(): [DataUnit<T> | Arrayy<T> | Objecty<T>, forStore, props] {
+    return [this.store, this.forStore, this.props];
   }
 
   /**
    * 批量获取store
-   * @param params 
+   * @param params
    */
-  getValues(...params): object {
+  getValues(...params: string[]): object {
     if (this.store instanceof Objecty) {
       return this.store.getValues(...params);
     }
   }
 
-  getMultiValue(...names: Array<string>): object {
-    const answer = {};
+  getMultiValue(...names: string[]): object {
+    const answer: any = {};
     names.map(item => {
-      answer[item.replace(/^for@|^props@|^state@/, '')] = this.findDataByType(item);
+      answer[item.replace(/^for@|^props@|^state@/, "")] = this.findDataByType(
+        item
+      );
     });
     return answer;
   }
 
   /**
    * 使用name查找store，props，forStore
-   * @param name 
+   * @param name
    */
-  findBaseData(name: string): DataUnit {
-    let found: DataUnit;
+  findBaseData(name: string): DataUnit<T> {
+    let found: DataUnit<T>;
     if (name.match(/\./g)) {
-      const [first, ...other] = name.split('.');
+      const [first, ...other] = name.split(".");
       if (this.forStore[first] !== undefined) {
         return this.forStore[first].showData(other);
       }
@@ -153,34 +174,34 @@ class StoreKeeper {
   /**
    * 析构函数
    */
-  rmSelf() { }
+  rmSelf() {}
 
   /**
    * 使用带type的name查找
    * name = store@name | props@name | for@name | name
-   * @param name 
+   * @param name
    */
-  findDataByType(name: string): DataUnit | any {
+  findDataByType(name: string): DataUnit<T> | any {
     const _type = name.match(/^for@|^props@|^state@/);
-    const type = _type && _type[0].replace(/@/, '');
-    const _name = name.replace(/^for@|^props@|^state@/, '');
+    const type = _type && _type[0].replace(/@/, "");
+    const _name = name.replace(/^for@|^props@|^state@/, "");
     if (type) {
-      if (type === 'for') {
-        return <DataUnit>this.forStore[_name];
-      } else if (type === 'props') {
-        return <DataUnit>this.props[_name];
-      } else if (type === 'state') {
+      if (type === "for") {
+        return <DataUnit<T>>this.forStore[_name];
+      } else if (type === "props") {
+        return <DataUnit<T>>this.props[_name];
+      } else if (type === "state") {
         return this.store.showData(_name);
       } else {
-        throw (`found an error from findDataByType, param is ${name}`);
+        throw `found an error from findDataByType, param is ${name}`;
       }
     } else {
       return this.findBaseData(_name);
     }
   }
 
-  setState(callback) {
-    this.diff.setState(callback);
+  setState(callback: (stat: T) => T) {
+    this.diff.setState(callback as any);
   }
 }
 
