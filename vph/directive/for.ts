@@ -125,7 +125,7 @@ export default class forDirective<T> extends Directive {
     }
 
     this.pt.childrenPt.splice(index, 0, tmpChildrenPt);
-    (<DataUnit<T>>childrenStore).addPush(tmpChildrenPt);
+    (<DataUnit<T>>childrenStore).addPush(tmpChildrenPt as any);
     this.childrenDom.splice(index, 0, tmpDom);
     this.childrenPt.splice(index, 0, tmpChildrenPt);
   }

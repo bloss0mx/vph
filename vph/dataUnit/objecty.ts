@@ -6,22 +6,35 @@ import { ARRAYY_OPERATE } from "../constant";
 import { forDirective } from "../directive/index";
 import { BaseObj } from "../domObj";
 import DataUnit, { anyType } from "./dataUnit";
+import Arrayy from "./arrayy";
 import { dataFactory, toJS } from "./index";
 
+type DataFactory_<T> = {
+  [P in keyof T]: T[P] extends Array<any>
+    ? Arrayy<T[P]>
+    : T[P] extends Object
+    ? Objecty<T[P]>
+    : DataUnit<T[P]>;
+}[keyof T];
+
+type ObjectyData<T> = {
+  [key in keyof T]: DataFactory_<T[key]>;
+};
+
 export default class Objecty<T> extends DataUnit<T> {
-  protected data: anyType;
+  protected data: ObjectyData<T>;
 
   constructor(data: T) {
-    super(data);
+    super(data as any);
     this.pushList = [];
     this.data = this.dataInit(data);
     this.type = "object";
   }
 
-  protected dataInit(data: T): Object {
-    let _data: anyType = {};
+  protected dataInit(data: T): ObjectyData<T> {
+    const _data = {} as ObjectyData<T>;
     for (let i in data) {
-      _data[i] = dataFactory(data[i]);
+      (_data as any)[i] = dataFactory(data[i]);
     }
     return _data;
   }
@@ -31,11 +44,11 @@ export default class Objecty<T> extends DataUnit<T> {
    * @param key
    */
   delete(key: string) {
-    delete this.data[key];
+    delete (this.data as any)[key];
   }
 
   add(name: string, data: anyType) {
-    this.data[name] = dataFactory(data);
+    (this.data as any)[name] = dataFactory(data);
   }
 
   /**

@@ -15,10 +15,14 @@ interface props {
  */
 class StoreKeeper<T extends anyType> {
   private diff: Diff<T>;
-  store: DataUnit<T>;
+  store: DataUnit<T> | Arrayy<T> | Objecty<T>;
   private forStore: forStore;
   private props: props;
-  constructor(_store: DataUnit<T>, _forStore?: object, _props?: object) {
+  constructor(
+    _store: DataUnit<T> | Arrayy<T> | Objecty<T>,
+    _forStore?: object,
+    _props?: object
+  ) {
     this.store = _store;
     this.forStore = _forStore || {};
     this.props = _props || {};
@@ -67,7 +71,7 @@ class StoreKeeper<T extends anyType> {
    */
   setProps(
     callback: (
-      store?: DataUnit<T>,
+      store?: DataUnit<T> | Arrayy<T> | Objecty<T>,
       forStore?: Object,
       props?: Object,
       pt?: StoreKeeper<T>
@@ -83,7 +87,7 @@ class StoreKeeper<T extends anyType> {
    */
   setForStore(
     callback: (
-      store?: DataUnit<T>,
+      store?: DataUnit<T> | Arrayy<T> | Objecty<T>,
       forStore?: Object,
       props?: Object,
       pt?: StoreKeeper<T>
@@ -118,7 +122,7 @@ class StoreKeeper<T extends anyType> {
   /**
    * 输出全部
    */
-  outputAll(): [DataUnit<T>, forStore, props] {
+  outputAll(): [DataUnit<T> | Arrayy<T> | Objecty<T>, forStore, props] {
     return [this.store, this.forStore, this.props];
   }
 

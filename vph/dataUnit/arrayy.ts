@@ -8,10 +8,13 @@ import { BaseObj } from "../domObj";
 import DataUnit, { anyType } from "./dataUnit";
 import { dataFactory } from "./index";
 import Objecty from "./objecty";
+import { DatayType, PushAbleType, addToListAbleType } from "type/index";
+
+type ArrayyData<T> = Array<Objecty<T> | DataUnit<T> | Arrayy<T>>;
 
 export default class Arrayy<T> extends DataUnit<T> {
-  protected data: Array<DataUnit<T> | Arrayy<T> | DataUnit<T>>;
-  protected pushList: Array<forDirective<T>>;
+  protected data: ArrayyData<T>;
+  protected pushList: Array<addToListAbleType<T>>;
 
   constructor(data: Array<T>) {
     super(data);
@@ -20,9 +23,7 @@ export default class Arrayy<T> extends DataUnit<T> {
     this.type = "array";
   }
 
-  protected dataInit(
-    data: Array<T>
-  ): Array<DataUnit<T> | Arrayy<T> | DataUnit<T>> {
+  protected dataInit(data: Array<T>): ArrayyData<T> {
     const _data = data.map((item, index) => dataFactory(item));
     // this.data = _data;
     return _data;
@@ -53,7 +54,7 @@ export default class Arrayy<T> extends DataUnit<T> {
    * @param newData
    * @param index
    */
-  addCallback(newData: DataUnit<T>, index: number) {
+  addCallback(newData: DatayType<T>, index: number) {
     this.pushList.map(item => {
       item.addToList && item.addToList(newData, index);
     });

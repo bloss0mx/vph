@@ -11,29 +11,59 @@ import DataUnit, { anyType } from "./dataUnit";
 
 export { Objecty, Arrayy, DataUnit };
 
+type DataFactory_<T> = {
+  [P in keyof T]: T[P] extends Array<any>
+    ? Arrayy<T[P]>
+    : T[P] extends Object
+    ? Objecty<T[P]>
+    : DataUnit<T[P]>;
+}[keyof T];
+
+// type dataFactory = (
+//   obj: anyType
+// ) => {
+//   [key in keyof typeof obj]: S<typeof obj[key]>;
+// };
+
+type DataFactory = (obj: any) => DataFactory_<typeof obj>;
+
 /**
  * 转换为DataUnit对象
  * @param data
  */
-export function dataFactory<T>(data: T): DataUnit<T> {
+export const dataFactory: DataFactory = (data: any) => {
   const type = testType(data);
   if (type === "array") {
-    return new Arrayy(data as any) as any;
+    return new Arrayy(data);
   } else if (type === "object") {
     return new Objecty(data);
   } else {
     const _data = new DataUnit(data);
     return _data;
   }
-}
+};
+
+type ToJS_<T> = {
+  [P in keyof T]: T[P] extends Arrayy<any>
+    ? Array<T[P]>
+    : T[P] extends Objecty<any>
+    ? Object
+    : any;
+}[keyof T];
+
+type ToJS = (
+  obj: anyType
+) => {
+  [key in keyof typeof obj]: ToJS_<typeof obj[key]>;
+};
 
 /**
  * 转换为js对象
  * @param pt
  */
-export function toJS<T>(
+export const toJS: ToJS = <T>(
   pt: DataUnit<T> | Array<DataUnit<T>> | anyType
-): object {
+) => {
   if (Object.getPrototypeOf(pt).constructor === Objecty) {
     const _pt = (<DataUnit<T>>pt).showData();
     const data: anyType = {};
@@ -66,4 +96,4 @@ export function toJS<T>(
   } else {
     console.warn(pt);
   }
-}
+};

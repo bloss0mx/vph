@@ -7,17 +7,32 @@ import { forDirective } from "../directive/index";
 import { BaseObj } from "../domObj";
 import Objecty from "./objecty";
 import Arrayy from "./arrayy";
+import { BaseType, PushAbleType } from "type/index";
 
 export type anyType = {
   [name: string]: any;
 };
 
+// type S<T> = {
+//   [P in keyof T]: T[P] extends Array<any>
+//     ? Arrayy<T[P]>
+//     : T[P] extends Object
+//     ? Objecty<T[P]>
+//     : DataUnit<T[P]>;
+// }[keyof T];
+
+// type x = (
+//   obj: anyType
+// ) => {
+//   [key in keyof typeof obj]: S<typeof obj[key]>;
+// };
+
 export default class DataUnit<T> {
-  protected data: anyType;
-  protected pushList: Array<BaseObj | any>;
+  protected data: BaseType;
+  protected pushList: Array<PushAbleType>;
   protected type: String;
 
-  constructor(data: anyType) {
+  constructor(data: BaseType) {
     this.data = data;
     this.pushList = [];
     this.type = testType(data);
@@ -46,7 +61,7 @@ export default class DataUnit<T> {
    * 增加依赖
    * @param pushOrigin
    */
-  addPush(pushOrigin: any) {
+  addPush(pushOrigin: PushAbleType) {
     this.pushList.push(pushOrigin);
     this.pushList = uniq(this.pushList);
     setTimeout(() => {
@@ -58,7 +73,7 @@ export default class DataUnit<T> {
    * 删除依赖
    * @param pushOrigin
    */
-  rmPush(pushOrigin: any) {
+  rmPush(pushOrigin: PushAbleType) {
     this.pushList = difference(this.pushList, [pushOrigin]);
   }
 
@@ -82,8 +97,8 @@ export default class DataUnit<T> {
     //对象，无参数 => 取全部
     if ((index === undefined || index === "") && this.type === "object") {
       let _data: anyType = {};
-      for (let i in this.data) {
-        _data[i] = this.data[i];
+      for (let i in this.data as anyType) {
+        _data[i] = (this.data as anyType)[i];
       }
       return _data;
     }
@@ -119,15 +134,14 @@ export default class DataUnit<T> {
     ) {
     } else {
       this.type = testType(data);
-      this.data = data;
+      (this.data as anyType) = data;
       isChanged = ARRAYY_OPERATE["set"];
     }
 
     //修改以后，推送值
     if (isChanged !== "") {
       this.pushList.map((item, index) => {
-        item.run &&
-          item.run(this.data, this.type, index, ARRAYY_OPERATE["set"]);
+        if (item.run) item.run(this.data);
       });
     }
     return this;

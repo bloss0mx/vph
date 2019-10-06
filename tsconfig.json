@@ -4,13 +4,13 @@
     "module": "es2015",
     "allowSyntheticDefaultImports": true,
     "allowJs": true,
-    // "noImplicitAny": true,
-    // "strict": true
+    // "strict": true,
     "moduleResolution": "node",
     "baseUrl": ".",
     "noImplicitAny": true,
     "paths": {
-      "vph/*": ["./vph/*"]
+      "vph/*": ["./vph/*"],
+      "type/*":["./type"]
     }
   },
   "exclude": ["node_modules"],
