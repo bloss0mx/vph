@@ -27,7 +27,7 @@ class StoreKeeper<T extends anyType> {
     this.forStore = _forStore || {};
     this.props = _props || {};
 
-    this.diff = new Diff(toJS(_store), this) as any;
+    this.diff = new Diff(toJS(_store), this as any) as any;
   }
 
   /**

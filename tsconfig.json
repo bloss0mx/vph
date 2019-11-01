@@ -10,8 +10,10 @@
     "noImplicitAny": true,
     "paths": {
       "vph/*": ["./vph/*"],
-      "type/*":["./type"]
-    }
+      "type/*": ["./type"]
+    },
+    "sourceMap": true,
+    "sourceRoot": "."
   },
   "exclude": ["node_modules"],
   "include": ["./vph/**/*"]

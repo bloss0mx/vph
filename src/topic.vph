@@ -12,8 +12,8 @@
   <table style='width: 100%'>
     <p>
       <span :for='x in table' style='display: inline-block;line-height: 20px;'>
-        <span :for='y in x' style='display: inline-block;line-height: 20px;'>
-          <span :for='z in y' style='display: inline-block;line-height: 20px;'>{{z}}</span>
+        <span :for='y in x'>
+          <span :for='z in y'>{{z}}</span>
         </span>
       </span>
     </p>

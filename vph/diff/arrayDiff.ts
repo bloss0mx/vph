@@ -80,7 +80,7 @@ export default function(
         configurable: false,
         value:
           new Date().getTime().toString(36) +
-          Math.floor(Math.random() * 10000000000000000).toString(36),
+          Math.floor(Math.random() * 100000000000).toString(36),
       });
     }
     newKey.push(i.__ARRAY_KEY__);
@@ -139,8 +139,8 @@ export default function(
   const chg: Array<NO_CHG> = [];
   const _rm: Array<CHGED> = [];
   const _add: Array<CHGED> = [];
-  add.forEach((item, i) => {
-    if (rm[i] && item.index === rm[i].index) {
+  for (let i = 0; i < Math.max(rm.length, add.length); i++) {
+    if (rm[i] && add[i] && add[i].index === rm[i].index) {
       chg.push({
         beforeIdx: rm[i].index,
         afterIdx: add[i].index,
@@ -148,10 +148,10 @@ export default function(
         afterItem: add[i].item,
       });
     } else {
-      _rm.push(rm[i]);
-      _add.push(add[i]);
+      if (rm[i]) _rm.push(rm[i]);
+      if (add[i]) _add.push(add[i]);
     }
-  });
+  }
   return {
     add: _add,
     rm: _rm,

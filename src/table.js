@@ -9,9 +9,9 @@ const time = area =>
   moment()
     .utc()
     .utcOffset(area)
-    .format("YYYY-MM-DD HH:mm:ss")
-  //+ ":" +
-  // new Date().getMilliseconds();
+    .format("YYYY-MM-DD HH:mm:ss");
+//+ ":" +
+// new Date().getMilliseconds();
 
 export default Component({
   render: template,
@@ -91,6 +91,33 @@ export default Component({
         },
       });
     },
+    addNRmTest() {
+      interval(1000).subscribe({
+        next: n => {
+          this.setState(state => {
+            const _state = { ...state };
+            if (n % 2 === 0) {
+              _state.array2 = [["北京", "东京", "纽约"]];
+            } else {
+              _state.array2 = [
+                ["北京", "东京", "纽约"],
+                [time(+8), time(+9), time(-5)],
+              ];
+            }
+            return _state;
+          });
+        },
+      });
+    },
+    rmFromList() {
+      setTimeout(() => {
+        this.setState(state => {
+          const _state = { ...state };
+          _state.array2 = [["北京", "东京", "纽约"]];
+          return _state;
+        });
+      }, 2000);
+    },
   },
   whenInit() {
     this.countIt();
@@ -98,5 +125,7 @@ export default Component({
     // this.timeTable();
     // this.add2Table();
     this.testSetState();
+    // this.addNRmTest();
+    // this.rmFromList();
   },
 });

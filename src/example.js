@@ -61,7 +61,6 @@ export default Component({
   actions: {
     saveInput(e) {
       this.setState(state => {
-        console.log(e.target.value);
         state.inputText = e.target.value;
         return state;
       });

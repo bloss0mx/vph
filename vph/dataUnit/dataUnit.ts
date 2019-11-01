@@ -28,8 +28,8 @@ export type anyType = {
 // };
 
 export default class DataUnit<T> {
-  protected data: BaseType;
-  protected pushList: Array<PushAbleType>;
+  protected data: BaseType | any;
+  protected pushList: Array<PushAbleType> | any;
   protected type: String;
 
   constructor(data: BaseType) {
@@ -140,7 +140,7 @@ export default class DataUnit<T> {
 
     //修改以后，推送值
     if (isChanged !== "") {
-      this.pushList.map((item, index) => {
+      this.pushList.map((item: any, index: number) => {
         if (item.run) item.run(this.data);
       });
     }

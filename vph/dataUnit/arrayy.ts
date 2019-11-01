@@ -17,7 +17,7 @@ export default class Arrayy<T> extends DataUnit<T> {
   protected pushList: Array<addToListAbleType<T>>;
 
   constructor(data: Array<T>) {
-    super(data);
+    super(data as any);
     this.pushList = [];
     this.data = this.dataInit(data);
     this.type = "array";

@@ -116,6 +116,6 @@ const overflowCheckerQ = <T>(
       `checked ${count} times, and ${checked.length} object nodes,`,
       `max key's length is ${maxLen}.`
     );
-  }, 2000);
+  }, 2 * 1000);
 
 export { exposeToWindow, overflowChecker, overflowCheckerQ };

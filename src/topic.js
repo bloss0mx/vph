@@ -1,40 +1,43 @@
-import html from './topic.vph';
-import {
-  Component
-} from '../vph';
-import moment from 'moment';
-
+import html from "./topic.vph";
+import { Component } from "../vph";
+import moment from "moment";
 
 export default Component({
   render: html,
   state: {
     preArr: [],
-    arr: ['a', 'c'].map(item => ({
-      name: item
+    arr: ["a", "c"].map(item => ({
+      name: item,
     })),
     ifyo: false,
     subArr: [],
-    diff: '',
-    table:[],
+    diff: "",
+    table: [],
+  },
+  actions: {
+    maxTableChg() {
+      setInterval(() => {
+        this.setState(state => {
+          state.table = [];
+          const LEN = 10;
+          for (let i = 0; i < LEN; i++) {
+            const tmp = [];
+            for (let j = 0; j < LEN; j++) {
+              const tmp2 = [];
+              for (let k = 0; k < LEN; k++) {
+                tmp2.push(Math.floor(10 * Math.random()));
+              }
+              tmp.push(tmp2);
+            }
+            state.table.push(tmp);
+          }
+          return state;
+        });
+      }, 5000);
+    },
   },
   whenMount() {
-    setInterval(() => {
-      this.setState(state => {
-        state.table = [];
-        for(let i = 0;i<3;i++){
-          const tmp = [];
-          for(let j = 0;j<3;j++){
-            const tmp2 = [];
-            for(let k = 0;k<3;k++){
-              tmp2.push(Math.floor(10*Math.random()));
-            }
-            tmp.push(tmp2);
-          }
-          state.table.push(tmp);
-        }
-        return state;
-      })
-    }, 2000);
+    this.maxTableChg();
     // setTimeout(() => {
     //   this.setState(state => {
     //     state.diff = 'haha';
@@ -104,5 +107,5 @@ export default Component({
     // setTimeout(() => {
     //   console.dir(this.storeKeeper.store.toJS());
     // }, 9000);
-  }
+  },
 });

@@ -170,12 +170,7 @@ export default class Diff<T extends anyType> {
    * @param oldPath
    * @param newPath
    */
-  baseOpt(
-    oldStore: T,
-    newStore: T,
-    oldPath: string,
-    newPath: string
-  ) {
+  baseOpt(oldStore: T, newStore: T, oldPath: string, newPath: string) {
     const target = (this.storeKeeper.getValues(oldPath) as anyType)[oldPath];
     target.setData(newStore);
   }
