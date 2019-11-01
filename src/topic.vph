@@ -1,10 +1,11 @@
 <div id='top' class='textCenter' style='position: relative;padding-bottom: 100px'>
-  <h1 class='textCenter myVph'><span style='color: greenyellow;font-size: 90px'>V</span>ph.js</h1>
-  <h3 class='textCenter description'>Virtual dom，数据绑定视图</h3>
+  <h1 class='textCenter myVph'><span style='color: {{color}};font-size: 90px;'>V</span>ph.js</h1>
+  <!-- <h3 class='textCenter description' style="border: 0;color: #999">Virtual dom，数据绑定视图</h3> -->
+  <div class='textCenter description' style="border: 0;color: #999">基于Virtual Dom，数据映射到视图</div>
   <a class='textCenter' href='https://github.com/bloss0mx/vph.ts'>
     Github -- bloss0mx/vph.ts
   </a>
-  <div>这里测试diff: {{diff}}</div>
+  <!-- <div>这里测试diff: {{diff}}</div>
   <div :for='v in preArr'>{{v.name}}</div>
   <div :for='v in arr'>{{v.name}}</div>
   <div :if='ifyo'>hey</div>
@@ -17,5 +18,5 @@
         </span>
       </span>
     </p>
-  </table>
+  </table> -->
 </div>

@@ -1,36 +1,62 @@
 <div id='eg' style='text-align: center'>
-  <span class='{{style.example}}' style="display: inline-block;text-align: left;">
-    <h4>
+  <div class='{{style.example}}' style="display: inline-block;text-align: left;">
+    <h3>
       轻松实现数据绑定
-    </h4>
-    <input :bind='value.inputText' :on='input.saveInput' type="text" style="color:{{color}};width: 100%" >
-    <br />
-    <br />
-    {{inputText}}
-    <br />
-    <hr />
-    <span>
-      <Table></Table>
+    </h3>
+    <p>
+      有限条件下实现双向绑定，高效开发与充足性能兼备
+    </p>
+    <span style='vertical-align: middle;'>
+      <input :bind='value.inputText' :on='input.saveInput' type="text" style="color:{{color}};width: 200px;font-size: 14px;height: 28px" >
+      &nbsp;
+      {{inputText}}
     </span>
-    <h4>
+    <h4>html:</h4>
+    <pre>
+      <code class='html'>
+        {{easyDataBindHtml}}
+      </code>
+    </pre>
+    <h4>js:</h4>
+    <pre>
+      <code class='javascript'>
+        {{easyDataBindJs}}
+      </code>
+    </pre>
+    <br />
+    <h3>
+      超强性能
+    </h3>
+    <p>
+      同步修改state，异步渲染。每秒最多执行30次比较和映射，即便改变数据速度过快也不会造成产生性能问题。
+    </p>
+    <Table></Table>
+    <br />
+    <h3>
       像写html一样写模板
-    </h4>
+    </h3>
     <pre>
       <code class='html'>
         {{htmlcode}}
       </code>
     </pre>
-    <h4>与多种js库密切配合</h4>
+    <br />
+    <h3>
+      与多种js库密切配合
+    </h3>
     <pre>
       <code class='javascript'>
         {{jscode}}
       </code>
     </pre>
-    <h4>
-      支持局部style
-    </h4>
-
-  <p class='{{style.colors}}'>
+    <br />
+    <h3>
+      使用灵活
+    </h3>
+    <p>
+      vph模板功能单一，state与核心隔离，vph只做映射和事件注册工作，留出更多编码空间。
+    </p>
+    <p class='{{style.colors}}'>
       <span class='red'>红</span>
       <span class='orange'>橙</span>
       <span class='yellow'>黄</span>
@@ -39,5 +65,5 @@
       <span class='indigo'>靛</span>
       <span class='purple'>紫</span>
     </p>
-  </span>
+  </div>
 </div>

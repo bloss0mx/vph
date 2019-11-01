@@ -8,6 +8,17 @@ export default Component({
   render: html,
   state: {
     style: STYLE,
+    easyDataBindHtml: 
+      `<!-- :bind 绑定inputText的value；:on 绑定input事件给saveInput -->
+<input :bind='value.inputText' :on='input.saveInput'> {{inputText}}`,
+    easyDataBindJs: 
+      `// 由saveInput来处理事件，setState将输入值保存到store中
+saveInput(e) {
+  this.setState(state => {
+    state.inputText = e.target.value;
+    return state;
+  });
+}`,
     inputText: "这是初始值",
     color: "black",
     htmlcode: `<!-- time.html -->
@@ -29,29 +40,25 @@ const timer = area => moment().tz(area).format('YYYY-MM-DD HH:mm:ss');
 export default Component({
   render: template,
   state: {
-    array2: [
-      ['北京', '东京', '纽约'],
-      [
-        timer("Asia/Taipei"),
-        timer("Asia/Tokyo"),
-        timer("America/New_York"),
-      ],
-    ]
+    array2: [["北京", "东京", "纽约"], [time(+8), time(+9), time(-5)]],
   },
   actions: {
-    interval() {
-      const { array2 } = this.getDatas('array2');
-      interval(1000).subscribe({
+    // 纯函数是性能的基石
+    dateRefreash() {
+      interval(1).subscribe({
         next: () => {
-          array2.showData('1.0').setData(timer("Asia/Taipei"));
-          array2.showData('1.1').setData(timer("Asia/Tokyo"));
-          array2.showData('1.2').setData(timer("America/New_York"));
-        }
+          this.setState(state => {
+            const _state = { ...state };
+            _state.array2 = [..._state.array2];
+            _state.array2[1] = [time(+8), time(+9), time(-5)];
+            return _state;
+          });
+        },
       });
-    }
+    },
   },
   whenInit() {
-    this.interval();
+    this.dateRefreash();
   }
 });`,
   },

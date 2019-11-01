@@ -118,14 +118,40 @@ export default Component({
         });
       }, 2000);
     },
+    unStdSetState() {
+      interval(1).subscribe({
+        next: () => {
+          this.setState(state => {
+            const _state = { ...state };
+            _state.array2[1][0] = time(+8);
+            _state.array2[1][1] = time(+9);
+            _state.array2[1][2] = time(-5);
+            return _state;
+          });
+        },
+      });
+    },
+    dateRefreash() {
+      interval(1).subscribe({
+        next: () => {
+          this.setState(state => {
+            const _state = { ...state };
+            _state.array2 = [..._state.array2];
+            _state.array2[1] = [time(+8), time(+9), time(-5)];
+            return _state;
+          });
+        },
+      });
+    },
   },
   whenInit() {
     this.countIt();
     // this._interval();
     // this.timeTable();
     // this.add2Table();
-    this.testSetState();
+    // this.testSetState();
     // this.addNRmTest();
     // this.rmFromList();
+    this.dateRefreash();
   },
 });
