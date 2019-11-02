@@ -182,7 +182,8 @@ export function init<T>(
     }
   }
   setTimeout(() => {
-    document.querySelector(selector).appendChild(vdom.giveDom());
+    const target = document.querySelector(selector);
+    target.parentNode.replaceChild(vdom.giveDom(), target);
   }, 0);
 }
 
