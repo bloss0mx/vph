@@ -24,7 +24,7 @@ module.exports = {
   },
   devServer: {
     contentBase: "./dist",
-    port: 4000,
+    port: PRODUCTION ? 8080 : 4000,
     host: "0.0.0.0",
   },
   resolve: {
