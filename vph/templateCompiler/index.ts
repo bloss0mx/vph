@@ -52,6 +52,7 @@ function basicIterator(container: Container) {
 
 function basicReconstruct(tmp: string, components: Component) {
   const analysed = tagAnalyse(tmp);
+  console.log(analysed);
   // const code = basicIterator(analysed);
   const code = _basicIterator(analysed, components);
 

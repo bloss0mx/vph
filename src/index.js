@@ -1,7 +1,7 @@
 import { init } from "vph";
 import Vph from "../vph";
 import { interval } from "rxjs";
-import index_tmp from "./index.html";
+import index_tmp from "./index.vph";
 import Header from "./header";
 import Topic from "./topic";
 import Example from "./example";

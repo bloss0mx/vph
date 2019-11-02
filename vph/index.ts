@@ -114,7 +114,7 @@ export function Component<T>(init: componentInit<T>): Function {
       let analysed;
       if (init) {
         if (typeof init.render === "string") {
-          analysed = tmpAnalyse(init.render, init.components);
+          // analysed = tmpAnalyse(init.render, init.components);
         } else if (typeof init.render === "function") {
           analysed = init.render(init.components);
         }
@@ -191,7 +191,7 @@ export function init<T>(
  * @param init
  */
 export default function Vph<T>(init: {
-  render: string;
+  render: Function;
   attr?: string;
   state?: T;
   actions?: object;
@@ -199,7 +199,8 @@ export default function Vph<T>(init: {
   whenInit?: Function;
   whenUninit?: Function;
 }) {
-  const analysed = tmpAnalyse(init.render, init.components);
+  // const analysed = tmpAnalyse(init.render, init.components);
+  const analysed = init.render(init.components);
   const _init = {
     isComponent: true,
     ...init,

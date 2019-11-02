@@ -12,7 +12,7 @@ const bigV = new BehaviorSubject("").pipe(
       timer(0, 2000).pipe(
         map(() => [randomColor(), randomColor(), randomColor()])
       ),
-      timer(0, 10)
+      timer(0, 3)
     )
   ),
   // tap(item => {
@@ -30,7 +30,7 @@ const bigV = new BehaviorSubject("").pipe(
       ) {
         _sum.current = [];
         sum.current.forEach((_, idx) => {
-          _sum.current[idx] = (curr[idx] - sum.target[idx]) / 200;
+          _sum.current[idx] = (curr[idx] - sum.target[idx]) / 300;
         });
         _sum.target = [...curr];
       }
