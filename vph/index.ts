@@ -1,7 +1,7 @@
 import VirtualDom, { init as VDInit } from "./vdom";
 import { TAGS } from "./constant";
 import StoreKeeper from "./store";
-import { dataFactory, toJS } from "./DataUnit/index";
+import { dataFactory, toJS } from "./dataUnit/index";
 import {
   prepend,
   insertAfter,

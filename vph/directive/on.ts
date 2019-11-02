@@ -1,5 +1,5 @@
 import { ARRAYY_OPERATE } from "../constant";
-import { DataUnit } from "../DataUnit/index";
+import { DataUnit } from "../dataUnit/index";
 import VirtualDom from "../vdom";
 import StoreKeeper from "../store";
 import {

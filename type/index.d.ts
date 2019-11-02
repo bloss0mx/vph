@@ -1,4 +1,4 @@
-import { DataUnit, Arrayy, Objecty } from "vph/DataUnit";
+import { DataUnit, Arrayy, Objecty } from "vph/dataUnit";
 import { forDirective } from "vph/directive";
 
 export class BaseObj {

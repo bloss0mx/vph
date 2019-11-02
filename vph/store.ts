@@ -1,4 +1,4 @@
-import { DataUnit, Arrayy, Objecty, dataFactory, toJS } from "./DataUnit";
+import { DataUnit, Arrayy, Objecty, dataFactory, toJS } from "./dataUnit";
 import { anyType } from "./dataUnit/dataUnit";
 import Diff from "./diff/index";
 

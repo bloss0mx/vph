@@ -1,7 +1,7 @@
 import arrayDiff from "./arrayDiff";
 import objectDiff from "./objectDiff";
 
-import { Objecty, Arrayy, DataUnit, dataFactory, toJS } from "../DataUnit";
+import { Objecty, Arrayy, DataUnit, dataFactory, toJS } from "../dataUnit";
 import StoreKeeper from "../store";
 import { ARR_CONTENT } from "./interface";
 

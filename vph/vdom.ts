@@ -1,4 +1,4 @@
-import { DataUnit, Arrayy, Objecty, dataFactory } from "./DataUnit/index";
+import { DataUnit, Arrayy, Objecty, dataFactory } from "./dataUnit/index";
 import { TextDom, PlainText, AttrObj, BaseObj } from "./domObj";
 import { vdFactory } from "./index";
 import {
