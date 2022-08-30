@@ -47,7 +47,7 @@
     "acorn": "^6.0.6",
     "html-loader": "^0.5.5",
     "moment": "^2.22.2",
-    "moment-timezone": "^0.5.23",
+    "moment-timezone": "^0.5.35",
     "moveto": "^1.8.0",
     "rxjs": "^6.3.3"
   }
